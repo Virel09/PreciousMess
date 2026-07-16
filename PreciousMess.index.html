@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRECIOUS MESS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+        body {
+            background-color: #050505;
+            color: #c9c9c9;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            background-image: radial-gradient(#181818 0.7px, #050505 0.7px);
+            background-size: 14px 14px;
+        }
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                rgba(20,20,20,0.15) 1px,
+                transparent 2px
+            );
+            z-index: 9;
+        }
+        .main-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 5rem;
+            letter-spacing: 12px;
+            color: #f1f1f1;
+            position: relative;
+            text-shadow:
+                0 0 4px #fff,
+                0 0 12px #cc0000,
+                0 0 24px #cc0000,
+                0 0 48px #700000;
+            animation: flicker 7s infinite alternate, glitch 12s infinite;
+            opacity: 0.9;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.75; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        @keyframes glitch {
+            2% { transform: translate(-1px, 1px); }
+            4% { transform: translate(-1px, -1px); }
+            6% { transform: translate(1px, 1px); }
+            8% { transform: translate(0, 0); }
+        }
+        header {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .marquee-box {
+            margin-top: 24px;
+            padding: 8px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .marquee-box::before,
+        .marquee-box::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,transparent,#ff4d4d,transparent);
+            animation: borderRun 2s linear infinite;
+        }
+        .marquee-box::before { top: 0; left: -100%; }
+        .marquee-box::after { bottom: 0; right: -100%; animation-delay: 1s; }
+        @keyframes borderRun {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(200%); }
+        }
+        .marquee-text {
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: #ff6666;
+            text-shadow: 0 0 6px #990000;
+            animation: fadeLoop 6s infinite ease-in-out;
+        }
+        @keyframes fadeLoop {
+            0%,100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        nav {
+            margin-top: 60px;
+            margin-bottom: 80px;
+        }
+        nav a {
+            color: #888;
+            text-decoration: none;
+            margin: 0 18px;
+            font-size: 13px;
+            transition: 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+        nav a:hover {
+            color: #ff4d4d;
+            border-bottom: 1px solid #990000;
+            text-shadow: 0 0 8px #990000;
+        }
+        .container-wrap {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 60px;
+            align-items: flex-start;
+            width: 80%;
+            margin: 0 auto 140px;
+        }
+        .text-block {
+            flex: 1;
+            min-width: 320px;
+        }
+        .section-heading {
+            font-family: Cormorant Garamond;
+            font-size: 32px;
+            padding-bottom: 12px;
+            border-left: 3px solid #990000;
+            padding-left: 14px;
+            margin-bottom: 30px;
+        }
+        .text-content {
+            line-height: 1.9;
+            font-size: 15px;
+            color: #999;
+        }
+        .fragment-box {
+            margin-top: 40px;
+            margin-bottom: 80px;  /* 增加下边距，让 Inner Thoughts 部分离引用框更远 */
+            border: 1px solid #222;
+            padding: 30px;
+            background: #080808;
+        }
+        .fragment-box p {
+            color: #990000;
+            font-style: italic;
+        }
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            color: #444;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: #990000;
+            border-radius: 50%;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 8;
+        }
+        .cursor-glow {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,80,80,0.9), rgba(153,0,0,0.5), transparent 65%);
+            pointer-events: none;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            filter: blur(12px);
+        }
+        .player-container {
+            flex-shrink: 0;
+            width: 440px;
+            background: linear-gradient(135deg, #111 0%, #080808 50%, #111 100%);
+            border: 1px solid #222;
+            box-shadow:
+                0 0 18px rgba(153,0,0,0.6),
+                0 0 45px rgba(0,0,0,0.9),
+                inset 0 0 12px rgba(153,0,0,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .player-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(transparent 50%, rgba(153,0,0,0.04) 50%),
+                linear-gradient(90deg, transparent 50%, rgba(153,0,0,0.04) 50%);
+            background-size: 4px 4px;
+            pointer-events: none;
+        }
+        .player-head {
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            color: #fff;
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            border-bottom: 1px solid #990000;
+            box-shadow: 0 1px 0 #000;
+        }
+        .player-head .player-title {
+            color: #ff4d4d;
+            text-shadow: 0 0 6px #990000;
+            font-weight: bold;
+        }
+        .player-head .player-menu {
+            display: flex;
+            gap: 12px;
+        }
+        .player-head .player-menu span {
+            cursor: default;
+            transition: 0.2s;
+        }
+        .player-head .player-menu span:hover {
+            color: #ff4d4d;
+            text-shadow: 0 0 8px #990000;
+        }
+        .player-lights {
+            display: flex;
+            gap: 6px;
+            margin-right: 8px;
+        }
+        .led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #222;
+            box-shadow: inset 0 0 4px #000;
+        }
+        .led.red {
+            background: #ff2222;
+            box-shadow: 0 0 8px #ff2222, inset 0 0 4px #ff5555;
+            animation: ledPulse 1.4s infinite alternate;
+        }
+        .led.orange {
+            background: #ff9900;
+            box-shadow: 0 0 8px #ff9900, inset 0 0 4px #ffcc00;
+            animation: ledPulse 2s infinite alternate;
+        }
+        @keyframes ledPulse {
+            0% { opacity: 0.25; }
+            100% { opacity: 1; }
+        }
+        .player-content {
+            background: #000;
+            height: 650px;
+            padding: 15px;
+            position: relative;
+        }
+        .player-content::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                rgba(255,255,255,0.03) 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+        }
+        .player-bubble {
+            background: rgba(120,120,120,0.35);
+            backdrop-filter: blur(4px);
+            border-left: 2px solid rgba(180,180,180,0.6);
+            border-right: 2px solid rgba(180,180,180,0.6);
+            border-top: 1px dashed rgba(150,150,150,0.2);
+            border-bottom: 1px dashed rgba(150,150,150,0.2);
+            clip-path: polygon(0 8px, 100% 3px, 100% calc(100% - 6px), 0 100%);
+            padding: 20px 24px;
+            position: relative;
+            z-index: 2;
+        }
+        .pixel-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            color: #ff6666;
+            text-shadow:
+                0 0 4px #ff4d4d,
+                0 0 8px #990000;
+        }
+        .player-bottom {
+            height: 56px;
+            background: linear-gradient(180deg, #990000 0%, #660000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            gap: 20px;
+            color: #fff;
+            font-size: 20px;
+            border-top: 1px solid #cc0000;
+            box-shadow: inset 0 1px 0 #ff4d4d;
+        }
+        .player-buttons {
+            display: flex;
+            gap: 14px;
+        }
+        .player-buttons span {
+            cursor: default;
+            transition: 0.2s;
+            text-shadow: 0 0 6px rgba(255,255,255,0.4);
+        }
+        .player-buttons span:hover {
+            color: #ff4d4d;
+            text-shadow: 0 0 10px #ff4d4d;
+        }
+        .player-volume {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #bbb;
+        }
+        .volume-bar {
+            width: 80px;
+            height: 6px;
+            background: #222;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: inset 0 0 4px #000;
+        }
+        .volume-fill {
+            width: 68%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff4d4d, #990000);
+            box-shadow: 0 0 8px #ff4d4d;
+        }
+        .player-label {
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #777;
+            text-transform: uppercase;
+        }
+        @media (max-width: 900px) {
+            .main-title {
+                font-size: 2.6rem;
+                letter-spacing: 6px;
+            }
+            .container-wrap {
+                flex-direction: column;
+                align-items: center;
+                width: 90%;
+            }
+            .player-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <header>
+        <h1 class="main-title">PRECIOUS MESS</h1>
+        <div class="marquee-box">
+            <div class="marquee-text">PRECIOUS MESS website —— 珍贵的混乱网站</div>
+        </div>
+        <nav>
+            <a href="#about">ABOUT</a>
+            <!-- WORKS 已删除 -->
+            <a href="#thoughts">THOUGHTS</a>
+            <a href="#contact">CONTACT</a>
+        </nav>
+    </header>
+    <div class="container-wrap">
+        <div class="text-block">
+            <section id="about">
+                <h2 class="section-heading">About Me</h2>
+                <p class="text-content">
+                    建这个站。就是。想表达。<br><br>
+                    这是我分出来的一部分人生。你点开它，你就进来了。<br>
+                    那些想法建了这个网站，这对你来说它不重要。没人真的关心别人脑袋里装了什么，大家只关心自己。<br>
+                    我还是想让你看到我的那部分，所以我一直努力，一直试着把它放好，一直试着把它说清楚。
+                </p>
+                <div class="fragment-box">
+                    <p>"We are a beautiful mess, decaying but glowing."</p>
+                </div>
+            </section>
+            <!-- WORKS 版块已删除 -->
+            <section id="thoughts">
+                <h2 class="section-heading">Inner Thoughts</h2>
+                <p class="text-content">
+                    给你所有我想告诉你的那些事。我脑子里转的那些，我白天不说出口的那些，我半夜醒了突然想到的那些。<br><br>
+                    放东西的地方，是永远不够用的。我想，一个人心中的某种想法，可以真正的被人理解吗。那些肮脏的，烂掉的东西。我把它们放进我的网站，让它们终于有了栖息之地。
+                </p>
+            </section>
+        </div>
+        <div class="player-container">
+            <div class="player-head">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="player-lights">
+                        <span class="led red"></span>
+                        <span class="led orange"></span>
+                        <span class="led"></span>
+                    </div>
+                    <span class="player-title">Virel09</span>
+                </div>
+                <div class="player-menu">
+                    <span>Now Playing</span>
+                    <span>Library</span>
+                    <span>Rip</span>
+                </div>
+            </div>
+            <div class="player-content">
+                <div class="player-bubble">
+                    <span class="pixel-text">
+                        欢迎来到 PRECIOUS MESS Website.<br><br>
+                        它不完美，不工整，不循规蹈矩。<br><br>
+                        因为所有真实的东西，都是混乱的——爱是混乱的，成长是混乱的，活着本身就是一场美丽的失控。我们花太多时间整理归类，假装井然有序，却忘了那些最珍贵的时刻往往诞生于意外、错误和无法复制的慌张里。
+                    </span>
+                </div>
+                <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;">
+                    <span class="player-label">TRACK 09</span>
+                    <span class="player-label">Meeting</span>
+                </div>
+                <div style="margin-top:12px;height:2px;background:#222;position:relative;overflow:hidden;">
+                    <div style="width:42%;height:100%;background:#ff4d4d;box-shadow:0 0 10px #ff4d4d;"></div>
+                </div>
+                <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:12px;color:#666;">
+                    <span>02:17</span>
+                    <span>05:48</span>
+                </div>
+            </div>
+            <div class="player-bottom">
+                <div class="player-buttons">
+                    <span>◀◀</span>
+                    <span>▶</span>
+                    <span>▶▶</span>
+                </div>
+                <div class="player-volume">
+                    <span>VOL</span>
+                    <div class="volume-bar">
+                        <div class="volume-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer id="contact">
+        © 2026 PRECIOUS MESS | 2009 VIREL
+    </footer>
+    <script>
+        const cursorGlow = document.getElementById('cursorGlow');
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            cursorGlow.style.left = x + 'px';
+            cursorGlow.style.top = y + 'px';
+        });
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add("particle");
+            let size = Math.random() * 3 + 1;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = '100%';
+            document.body.appendChild(particle);
+            let fallSpeed = Math.random() * 2 + 0.8;
+            let pos = parseFloat(particle.style.top);
+            function animate() {
+                pos -= fallSpeed;
+                particle.style.top = pos + "px";
+                if (pos < -10) {
+                    particle.remove();
+                } else {
+                    requestAnimationFrame(animate);
+                }
+            }
+            animate();
+        }
+        setInterval(createParticle, 180);
+    </script>
+</body>
+</html>
