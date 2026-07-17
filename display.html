@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DISPLAY of Depp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #050505;
+            color: #d0d0d0;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            background-image: radial-gradient(#0a1a2a 0.7px, #050505 0.7px);
+            background-size: 14px 14px;
+            min-height: 100vh;
+        }
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                rgba(20, 40, 60, 0.06) 1px,
+                transparent 2px
+            );
+            z-index: 9;
+        }
+
+        /* ===== 光标发光 ===== */
+        .cursor-glow {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(80, 180, 220, 0.5), rgba(30, 80, 120, 0.25), transparent 65%);
+            pointer-events: none;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            filter: blur(12px);
+        }
+
+        /* ===== 粒子特效 ===== */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+            mix-blend-mode: screen;
+            background: rgba(100, 180, 220, 0.35);
+            box-shadow: 0 0 12px rgba(70, 150, 200, 0.15);
+        }
+
+        /* ===== 主容器 ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== 导航栏 ===== */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(100, 180, 220, 0.15);
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .top-nav .logo {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 24px;
+            letter-spacing: 6px;
+            color: #f0f0f0;
+            text-shadow: 0 0 12px rgba(100, 180, 220, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .top-nav .logo:hover {
+            text-shadow: 0 0 24px rgba(100, 180, 220, 0.6), 0 0 48px rgba(100, 180, 220, 0.2);
+            transform: scale(1.02);
+        }
+        .top-nav .logo span {
+            color: #7ab7d4;
+        }
+        .top-nav .nav-links {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+        .top-nav .nav-links a {
+            color: #888;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: 0.3s ease;
+        }
+        .top-nav .nav-links a:hover {
+            color: #7ab7d4;
+            border-bottom: 1px solid #4a7d9c;
+        }
+        .top-nav .nav-links a.active {
+            color: #7ab7d4;
+            border-bottom: 1px solid #7ab7d4;
+        }
+
+        /* ===== 左上角音乐按钮 ===== */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+        }
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.08);
+            box-shadow: 0 0 24px rgba(100, 180, 220, 0.2);
+        }
+        .music-btn:active {
+            transform: scale(0.92);
+        }
+        .music-btn.playing {
+            border-color: rgba(100, 180, 220, 0.4);
+            box-shadow: 0 0 24px rgba(100, 180, 220, 0.15);
+        }
+
+        /* ===== 标题区（间距加大） ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 70px;  /* 从 50px 改为 70px，标题下移 */
+        }
+        .hero h1 {
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 600;
+            font-size: 3.8rem;
+            letter-spacing: 12px;
+            color: #f0f0f0;
+            text-shadow: 0 0 20px rgba(70, 150, 200, 0.25), 0 0 60px rgba(40, 100, 150, 0.08);
+            margin-bottom: 6px;
+        }
+        .hero .sub {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: #667;
+            letter-spacing: 4px;
+            margin-top: 4px;
+            border-top: 1px solid rgba(100, 180, 220, 0.12);
+            display: inline-block;
+            padding-top: 8px;
+        }
+
+        /* ===== 双栏布局 ===== */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 0.8fr 1fr;
+            gap: 80px;
+            margin-top: 10px;
+            align-items: start;
+            position: relative;
+        }
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+        }
+
+        /* ===== 左栏：照片墙 ===== */
+        .photo-wall {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            padding-right: 6px;
+            align-items: center;
+        }
+        .photo-item {
+            border-radius: 4px;
+            overflow: visible;
+            border: 2px solid rgba(70, 150, 200, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #0a0f1a;
+            position: relative;
+            width: 72%;
+            aspect-ratio: 1 / 1;
+        }
+        .photo-item:hover {
+            transform: scale(1.03) translateY(-4px);
+            border-color: #7ab7d4;
+            box-shadow: 0 8px 40px rgba(70, 150, 200, 0.2), 0 0 30px rgba(70, 150, 200, 0.06);
+            z-index: 3;
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 3px;
+            transition: filter 0.4s ease;
+            object-fit: cover;
+        }
+        .photo-item:hover img {
+            filter: brightness(1.05) contrast(1.05);
+        }
+
+        .photo-item:nth-child(odd) {
+            transform: rotate(-0.8deg) translateX(-3px);
+        }
+        .photo-item:nth-child(even) {
+            transform: rotate(1.0deg) translateX(5px);
+        }
+        .photo-item:nth-child(3n) {
+            transform: rotate(-0.5deg) translateX(-6px);
+        }
+        .photo-item:nth-child(5n) {
+            transform: rotate(0.7deg) translateX(3px);
+        }
+        .photo-item:nth-child(7n) {
+            transform: rotate(-1.0deg) translateX(-2px);
+        }
+        .photo-item:hover {
+            transform: scale(1.03) translateY(-4px) rotate(0deg) !important;
+        }
+
+        /* ===== 胶带效果 ===== */
+        .photo-item .tape {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(var(--rot, 0deg));
+            width: 50px;
+            height: 18px;
+            background: rgba(220, 210, 190, 0.35);
+            backdrop-filter: blur(2px);
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .photo-item .tape-2 {
+            position: absolute;
+            bottom: -6px;
+            right: 15%;
+            width: 35px;
+            height: 14px;
+            background: rgba(210, 200, 180, 0.3);
+            backdrop-filter: blur(2px);
+            border-radius: 2px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+            z-index: 2;
+            transform: rotate(12deg);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .photo-item .tape-3 {
+            position: absolute;
+            top: 20%;
+            right: -6px;
+            width: 30px;
+            height: 14px;
+            background: rgba(200, 190, 170, 0.25);
+            backdrop-filter: blur(2px);
+            border-radius: 2px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 2;
+            transform: rotate(25deg);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .photo-item:nth-child(1) .tape { --rot: -2deg; }
+        .photo-item:nth-child(2) .tape { --rot: 4deg; }
+        .photo-item:nth-child(3) .tape { --rot: -5deg; }
+        .photo-item:nth-child(4) .tape { --rot: 3deg; }
+        .photo-item:nth-child(5) .tape { --rot: -1deg; }
+        .photo-item:nth-child(6) .tape { --rot: 6deg; }
+        .photo-item:nth-child(7) .tape { --rot: -3deg; }
+        .photo-item:nth-child(8) .tape { --rot: 2deg; }
+
+        /* ===== 右栏：便签墙 ===== */
+        .note-wall {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            padding-left: 6px;
+        }
+
+        .note {
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(70, 150, 200, 0.15);
+            border-radius: 6px;
+            padding: 22px 28px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 0 30px rgba(30, 80, 120, 0.03);
+            transition: border-color 0.4s ease, transform 0.3s ease;
+            position: relative;
+            width: 100%;
+            max-width: 390px;
+            margin-left: auto;
+            margin-right: 20px;
+        }
+        .note:hover {
+            border-color: rgba(100, 180, 220, 0.4);
+            transform: translateY(-2px);
+        }
+        .note::before {
+            content: '✦';
+            position: absolute;
+            top: -6px;
+            right: 12px;
+            font-size: 12px;
+            color: #4a7d9c;
+            opacity: 0.4;
+        }
+
+        .note p {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            line-height: 2.0;
+            color: #c8d0d8;
+            letter-spacing: 0.4px;
+            margin-bottom: 0;
+        }
+        .note p:last-child {
+            margin-bottom: 0;
+        }
+
+        .note:nth-child(odd) {
+            transform: rotate(-0.5deg) translateX(-2px);
+        }
+        .note:nth-child(even) {
+            transform: rotate(0.7deg) translateX(4px);
+        }
+        .note:nth-child(3n) {
+            transform: rotate(-0.3deg) translateX(-5px);
+        }
+        .note:nth-child(5n) {
+            transform: rotate(0.4deg) translateX(2px);
+        }
+        .note:hover {
+            transform: translateY(-2px) rotate(0deg) !important;
+        }
+
+        .note .hl {
+            color: #7ab7d4;
+            text-shadow: 0 0 12px rgba(70, 150, 200, 0.12);
+        }
+
+        /* ========================================================== */
+        /* ===== 🎥 COURSE 区域（整体下移，间距加大） ===== */
+        /* ========================================================== */
+        .course-section {
+            margin-top: 140px;  /* 从 100px 改为 140px，整体下移 */
+            padding-top: 40px;
+            position: relative;
+        }
+
+        .divider {
+            position: relative;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(100, 180, 220, 0.6), transparent);
+            margin-bottom: 50px;
+            box-shadow: 0 0 20px rgba(100, 180, 220, 0.15);
+        }
+        .divider::before {
+            content: '✦ ✦ ✦';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #050505;
+            padding: 0 24px;
+            color: #7ab7d4;
+            font-size: 14px;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(100, 180, 220, 0.3);
+        }
+
+        .course-title {
+            font-family: "Cormorant Garamond", serif;
+            font-weight: 600;
+            font-size: 3rem;
+            letter-spacing: 16px;
+            color: #f0f0f0;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(70, 150, 200, 0.2);
+        }
+
+        /* ===== 滑动容器 ===== */
+        .slider-wrapper {
+            position: relative;
+            overflow: visible;
+            padding: 40px 0 30px;
+        }
+
+        .slider-track-wrapper {
+            position: relative;
+            overflow: visible;
+            mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+        }
+
+        .rope {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background: rgba(150, 180, 200, 0.25);
+            margin-bottom: 28px;
+            box-shadow: 0 0 12px rgba(100, 180, 220, 0.08);
+            mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+        }
+        .rope::before,
+        .rope::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            width: 8px;
+            height: 14px;
+            background: rgba(150, 180, 200, 0.15);
+            border-radius: 0 0 4px 4px;
+            border: 1px solid rgba(150, 180, 200, 0.1);
+            border-top: none;
+        }
+        .rope::before {
+            left: 10px;
+        }
+        .rope::after {
+            right: 10px;
+        }
+
+        .slider-track {
+            display: flex;
+            gap: 30px;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+            padding-top: 8px;
+            position: relative;
+        }
+
+        .slider-item {
+            flex: 0 0 calc(100% / 2.8);
+            min-width: 240px;
+            background: rgba(10, 20, 35, 0.4);
+            border: 1px solid rgba(70, 150, 200, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .slider-item:hover {
+            border-color: #7ab7d4;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(70, 150, 200, 0.15);
+        }
+
+        .slider-item::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 18px;
+            background: rgba(150, 180, 200, 0.2);
+            border-left: 1px solid rgba(150, 180, 200, 0.08);
+            border-right: 1px solid rgba(150, 180, 200, 0.08);
+        }
+        .slider-item::after {
+            content: '⚬';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: rgba(150, 180, 200, 0.3);
+            text-shadow: 0 0 8px rgba(100, 180, 220, 0.05);
+        }
+
+        .slider-item img {
+            width: 80%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+            margin: 12px auto 0;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .slider-item .caption {
+            padding: 22px 20px 26px;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 0.3px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-item .caption .year {
+            display: inline-block;
+            color: #7ab7d4;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 6px;
+            text-shadow: 0 0 14px rgba(70, 150, 200, 0.15);
+        }
+        .slider-item .caption .movie {
+            display: block;
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 26px;
+            color: #e8eef4;
+            margin: 8px 0 14px;
+            letter-spacing: 2px;
+            border-left: 2px solid #4a7d9c;
+            padding-left: 16px;
+            line-height: 1.3;
+        }
+        .slider-item .caption .movie .sub-en {
+            font-size: 15px;
+            font-style: italic;
+            color: #8899aa;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .slider-item .caption .desc {
+            font-size: 15px;
+            color: #aab2ba;
+            line-height: 1.9;
+            margin-top: 4px;
+            flex: 1;
+        }
+
+        /* ===== 滑动按钮 ===== */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 58px;
+            height: 58px;
+            background: rgba(20, 30, 45, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 34px;
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            box-shadow: 0 0 40px rgba(100, 180, 220, 0.08), 0 4px 20px rgba(0, 0, 0, 0.6);
+            font-family: 'Georgia', serif;
+            line-height: 1;
+            pointer-events: auto;
+        }
+        .slider-btn:hover:not(:disabled) {
+            background: rgba(40, 60, 90, 0.8);
+            color: #ffffff;
+            border-color: rgba(100, 180, 220, 0.4);
+            box-shadow: 0 0 60px rgba(100, 180, 220, 0.3), 0 0 120px rgba(100, 180, 220, 0.08);
+            transform: translateY(-50%) scale(1.06);
+        }
+        .slider-btn:active:not(:disabled) {
+            transform: translateY(-50%) scale(0.92);
+        }
+        .slider-btn:disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: rgba(20, 30, 45, 0.3);
+        }
+
+        .slider-btn.prev {
+            left: -68px;
+        }
+        .slider-btn.next {
+            right: -68px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 1024px) {
+            .slider-btn.prev {
+                left: -32px;
+            }
+            .slider-btn.next {
+                right: -32px;
+            }
+            .slider-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 26px;
+            }
+        }
+        @media (max-width: 900px) {
+            .slider-item {
+                flex: 0 0 calc(100% / 1.8);
+                min-width: 200px;
+            }
+            .slider-btn.prev {
+                left: -16px;
+            }
+            .slider-btn.next {
+                right: -16px;
+            }
+            .slider-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+            .slider-item .caption .movie {
+                font-size: 22px;
+            }
+            .slider-item .caption .desc {
+                font-size: 14px;
+            }
+            .slider-item .caption .year {
+                font-size: 16px;
+            }
+        }
+        @media (max-width: 600px) {
+            .slider-item {
+                flex: 0 0 calc(100% / 1.2);
+                min-width: 160px;
+            }
+            .slider-item .caption .movie {
+                font-size: 20px;
+            }
+            .slider-item .caption .desc {
+                font-size: 13px;
+            }
+            .slider-item .caption .year {
+                font-size: 14px;
+            }
+            .slider-item .caption .movie .sub-en {
+                font-size: 13px;
+            }
+            .slider-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+            .slider-btn.prev {
+                left: 2px;
+            }
+            .slider-btn.next {
+                right: 2px;
+            }
+            .course-title {
+                font-size: 2.2rem;
+                letter-spacing: 8px;
+            }
+            .divider::before {
+                font-size: 11px;
+                letter-spacing: 4px;
+                padding: 0 14px;
+            }
+            .slider-item img {
+                width: 85%;
+                margin: 8px auto 0;
+            }
+            .slider-item .caption {
+                padding: 14px 14px 18px;
+            }
+            .rope {
+                margin-bottom: 20px;
+            }
+            .slider-item::before {
+                height: 14px;
+                top: -14px;
+            }
+            .slider-item::after {
+                top: -18px;
+            }
+            .slider-track-wrapper {
+                mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+            }
+        }
+        @media (max-width: 400px) {
+            .slider-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 15px;
+            }
+            .slider-btn.prev {
+                left: 0px;
+            }
+            .slider-btn.next {
+                right: 0px;
+            }
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            margin-top: 80px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(70, 150, 200, 0.12);
+            text-align: center;
+            color: #445;
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+        .footer a {
+            color: #4a7d9c;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: #7ab7d4;
+        }
+
+        /* ===== 右下角返回顶部 ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 36px;
+            right: 36px;
+            width: 58px;
+            height: 58px;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 0 60px rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            outline: none;
+            user-select: none;
+        }
+        .back-to-top:hover {
+            background: rgba(255, 255, 255, 0.45);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            transform: scale(0.94);
+        }
+        .back-to-top:active {
+            transform: scale(0.86);
+        }
+        .back-to-top svg {
+            width: 26px;
+            height: 26px;
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.75);
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            pointer-events: none;
+            margin-top: -2px;
+        }
+        .back-to-top:hover svg {
+            stroke: rgba(255, 255, 255, 1);
+        }
+
+        /* ===== Canvas 连线层 ===== */
+        #lineCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- 扫描线 -->
+    <div class="scanline"></div>
+    <!-- 光标发光 -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- ===== 左上角音乐按钮 ===== -->
+    <button class="music-btn" id="musicBtn" aria-label="播放/暂停音乐">▶</button>
+
+    <!-- ===== 音频播放器 ===== -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="too late,i already died.mp3" type="audio/mpeg">
+        你的浏览器不支持音频播放
+    </audio>
+
+    <!-- ===== Canvas 连线层 ===== -->
+    <canvas id="lineCanvas"></canvas>
+
+    <!-- ===== 主容器 ===== -->
+    <div class="container">
+
+        <!-- ===== 导航 ===== -->
+        <nav class="top-nav">
+            <div class="logo" id="refreshLogo">✦ <span>PRECIOUS</span> MESS</div>
+            <div class="nav-links">
+                <a href="index.html">HOME</a>
+                <a href="dispaly.html" class="active">DISPALY</a>
+                <a href="#course">COURSE</a>
+            </div>
+        </nav>
+
+        <!-- ===== 标题（间距已加大） ===== -->
+        <div class="hero">
+            <h1>DISPLAY of Depp</h1>
+            <div class="sub">✦ 愚蠢的真挚的情感 ✦</div>
+        </div>
+
+        <!-- ===== 主体（照片墙 + 便签） ===== -->
+        <div class="main-grid" id="mainGrid">
+            <!-- 左栏：照片墙 -->
+            <div class="photo-wall" id="photoWall">
+                <div class="photo-item" data-idx="0">
+                    <div class="tape"></div>
+                    <div class="tape-2"></div>
+                    <img src="depp1.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="1">
+                    <div class="tape"></div>
+                    <div class="tape-3"></div>
+                    <img src="depp2.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="2">
+                    <div class="tape"></div>
+                    <div class="tape-2"></div>
+                    <img src="depp3.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="3">
+                    <div class="tape"></div>
+                    <div class="tape-3"></div>
+                    <img src="depp4.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="4">
+                    <div class="tape"></div>
+                    <div class="tape-2"></div>
+                    <img src="depp5.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="5">
+                    <div class="tape"></div>
+                    <div class="tape-3"></div>
+                    <img src="depp6.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="6">
+                    <div class="tape"></div>
+                    <div class="tape-2"></div>
+                    <img src="depp7.jpg" alt="Johnny Depp" />
+                </div>
+                <div class="photo-item" data-idx="7">
+                    <div class="tape"></div>
+                    <div class="tape-3"></div>
+                    <img src="depp8.jpg" alt="Johnny Depp" />
+                </div>
+            </div>
+
+            <!-- 右栏：便签墙 -->
+            <div class="note-wall" id="noteWall">
+                <div class="note"><p>我爱的你：</p></div>
+                <div class="note"><p>我常常会对着空气发呆。<br />有时候，或许很多时候，我觉得空气也并不是空的。它里面有灰尘，有光的碎屑，还有一些叫不出名字的东西。它们飘着，转着，然后就慢慢汇成了你的样子。</p></div>
+                <div class="note"><p>目光放空的时候，时间会从我眼前悄悄溜过，无声无息。但我并不在意它。你的身影就停在那里，把时间遮住了。一小时，两小时，我也不知道过去了多久。那些模糊的印象，像褪了色的照片在水里慢慢显影，一点一点被填满，最终汇成了无数个清晰的你，仿佛你就在我伸手可及的地方。</p></div>
+                <div class="note"><p>我为你所吸引。我被你卷了进去，像一片叶子落在水流里，不想挣扎，也不想上岸。</p></div>
+                <div class="note"><p>我迷恋你的眼睛，那双半眯着的、忧郁的眼睛。它们像一道缓和的流水，围绕着我，也浸透了我的眼睛。我迷恋你的声音，你在夜晚念诗的声音。我记得的，我记得的。它平和却极富深情。它没有那股力量，也没有那份激昂。它是温和的，像一只手轻轻按在我那片躁动的海浪上，让它一点一点平息下去。我迷恋你的嘴唇。当它微笑的时候，是云层后面的朝霞，忽然就亮了，把我心里的阴霾驱散。那微微弯起的弧度，比世间任何曲线都更迷人。我曾在无数个夜晚想象那道弧线，想着想着，天就亮了。</p></div>
+                <div class="note"><p>我迷恋你的一切。我爱着任何样子的你。我爱你年轻时灿烂的微笑，像夏天的阳光砸在水面上。爱你壮年时沉稳的绅士风度，像深秋的树，不言不语却让人安心。爱你中年时对孩子无私的慷慨，也爱你年老时不惧污秽的清白姿态。你的每一种情绪，开心、生气、悲伤，所有的模样，都深深地烙印在我的心里，像刻在石头上的字，风吹不掉，雨也洗不净。</p></div>
+                <div class="note"><p>别人常问，为什么会有人独自闭着眼坐在那里。因为当我闭上眼的时候，面前就是你。我想让你知道，我渴望你，渴望你出现在我面前，渴望你能坐在这里，和我一起共进晚餐。我要向你讲述我的故事，我是如何迷恋你的故事。你或许会看着我的眼睛，告诉我你在听。你或许会羞涩地低下头，惊讶于我如此直白的感情。又或许你觉得这个故事太过无聊，却还是愿意让我把它讲下去。讲到蜡烛烧完，讲到窗外的灯一盏一盏灭掉。你会在吗？你不会。可我还是要讲。</p></div>
+                <div class="note"><p>我对你的关注越来越多。我看着你的脸，想象它的触感。是柔软的？也许是冰冷的。隔着屏幕，隔着海洋，隔着无数个日夜，我永远也无法知道。可我偏偏一遍一遍地想。我收集你的资料，了解你出生的地方，记下你的生日，用最真挚的语言为你祝福。我了解你是如何成长的，了解你身边的人。我看遍了你的人生，你是如何地耀眼夺目，你拿着奖杯的身姿，你对着镜头鞠躬的模样，让我再一次迷恋上了你。每一次迷恋都像第一次，又比第一次更深。</p></div>
+                <div class="note"><p>我对你的爱，像是一座装满金银宝藏的藏屋。我向全世界炫耀它，却又害怕别人从我身前抢走它。我向别人介绍你，向别人吐露我是如何被你吸引的。当别人称赞你时，我心中无比骄傲，却又恼怒他们提到你的名字。我不能独自享有你。可当我看到荧幕里你和别人的欢声笑语，你牵着陌生人的手，你的唇落在别人脸上时，尽管知道那也许不是真的，说不清的恼怒仍会涌上心头，让我不知所措。</p></div>
+                <div class="note"><p>我的脑海里一遍遍放着你念的诗，你唱的歌，你画的画，你弹的琴。仿佛这样便能让我原谅你。可是，我有什么资格怪你呢？我是如此地爱你。我甚至没有资格说"原谅"这个词。我只是坐在黑暗里，一遍又一遍地听着你的声音，直到它把我全部淹没。</p></div>
+                <div class="note"><p>我常常后悔，自己没有早点出生，没有早点认识你。当我爱上你时，你却已是将烧尽残烛，你被日月所割出的皱纹，无声地刺痛我的心弦。我无比心疼你，却又想让你坚强。当人们误会你时，贬低你时，我的心好像也随你而去了，它与你一起经受打击，想要分担哪怕一点痛苦。</p></div>
+                <div class="note"><p>无数的岁月里，我将会一直在你身边，我用毕生的语言表达对你的支持，它会化作天上的繁星，空中的雪花，和你眼里的光辉，时刻伴随着你。所有的时光都是值得的，我会永远爱你。</p></div>
+                <div class="note"><p>我的字打完了。晚安，祝你一觉好梦。</p></div>
+                <div class="note"><p style="text-align:right; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:18px; color:#7ab7d4;">BY Virel</p></div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- ===== 🎥 COURSE 区域（整体下移） ===== -->
+        <!-- ========================================================== -->
+        <section class="course-section" id="course">
+            <div class="divider"></div>
+            <h2 class="course-title">COURSE</h2>
+
+            <div class="slider-wrapper">
+                <div class="slider-track-wrapper">
+                    <div class="rope"></div>
+                    <div class="slider-track" id="sliderTrack">
+                        <div class="slider-item">
+                            <img src="course1.jpg" alt="猛鬼街" />
+                            <div class="caption">
+                                <span class="year">1984</span>
+                                <span class="movie">《猛鬼街》<br /><span class="sub-en">（A Nightmare on Elm Street）</span></span>
+                                <div class="desc">Depp银幕首秀饰阳光男友格伦，被拖入床底吞噬的死亡场景血腥震撼，20岁的他青涩稚嫩却已展露独特银幕魅力。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course2.jpg" alt="剪刀手爱德华" />
+                            <div class="caption">
+                                <span class="year">1990</span>
+                                <span class="movie">《剪刀手爱德华》<br /><span class="sub-en">（Edward Scissorhands）</span></span>
+                                <div class="desc">Depp成名作饰孤独机器人，仅凭眼神与肢体传递渴望融入人类的悲伤，苍白造型成流行符号，奠定怪诞深情戏路。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course3.jpg" alt="断头谷" />
+                            <div class="caption">
+                                <span class="year">1999</span>
+                                <span class="movie">《断头谷》<br /><span class="sub-en">（Sleepy Hollow）</span></span>
+                                <div class="desc">Depp饰胆小警探克瑞恩，遇事就晕却智破无头骑士案，神经质与可爱拿捏精准，贡献大量笑点，与伯顿首次合作成功。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course4.jpg" alt="加勒比海盗" />
+                            <div class="caption">
+                                <span class="year">2003</span>
+                                <span class="movie">《加勒比海盗》<br /><span class="sub-en">（Pirates of the Caribbean）</span></span>
+                                <div class="desc">Depp饰杰克船长，兰花指烟熏妆醉步疯癫，亦正亦邪即兴表演获奥斯卡提名，盘活整个系列，成其最耀目标签。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course5.jpg" alt="查理和巧克力工厂" />
+                            <div class="caption">
+                                <span class="year">2005</span>
+                                <span class="movie">《查理和巧克力工厂》<br /><span class="sub-en">（Charlie and the Chocolate Factory）</span></span>
+                                <div class="desc">Depp饰威利·旺卡，尖细嗓音神经质笑声，童真与刻薄并存，紫红天鹅绒造型诠释童年创伤的古怪天才。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course6.jpg" alt="理发师陶德" />
+                            <div class="caption">
+                                <span class="year">2007</span>
+                                <span class="movie">《理发师陶德》<br /><span class="sub-en">（Sweeney Todd）</span></span>
+                                <div class="desc">Depp饰复仇理发师，苍白眼神空洞，剃刀下爆发惊人戾气，亲自献唱低沉悲愤，凭此片获金球奖影帝，展暗黑歌剧实力。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course7.jpg" alt="爱丽丝梦游仙境" />
+                            <div class="caption">
+                                <span class="year">2010</span>
+                                <span class="movie">《爱丽丝梦游仙境》<br /><span class="sub-en">（Alice in Wonderland）</span></span>
+                                <div class="desc">Depp饰疯帽子，红发烟熏癫狂下藏破碎之心，时而疯笑时而泪崩，天真忠诚如孩子，成仙境中最温暖盟友。</div>
+                            </div>
+                        </div>
+                        <div class="slider-item">
+                            <img src="course8.jpg" alt="神奇动物在哪里" />
+                            <div class="caption">
+                                <span class="year">2016</span>
+                                <span class="movie">《神奇动物在哪里》<br /><span class="sub-en">（Fantastic Beasts and Where to Find Them）</span></span>
+                                <div class="desc">Depp饰黑巫师格林德沃，苍白银发异色瞳优雅蛊惑，煽动演讲尽显反派魅力，虽戏份少却为续作埋下巨大悬念。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 左右滑动键 -->
+                <button class="slider-btn prev" id="prevBtn" disabled>‹</button>
+                <button class="slider-btn next" id="nextBtn">›</button>
+            </div>
+        </section>
+
+        <!-- ===== 底部 ===== -->
+        <div class="footer">
+            © 2026 PRECIOUS MESS · DISPLAY of Depp &nbsp;|&nbsp; <a href="index.html">回到主站</a>
+        </div>
+
+    </div>
+    <!-- end container -->
+
+    <!-- ===== 右下角返回顶部按钮 ===== -->
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+        <svg viewBox="0 0 24 24" stroke="currentColor">
+            <polyline points="18 15 12 9 6 15" />
+        </svg>
+    </button>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        // ===== 0. PRECIOUS MESS 点击刷新 =====
+        document.getElementById('refreshLogo').addEventListener('click', function() {
+            location.reload();
+        });
+
+        // ===== 1. 音乐控制 =====
+        (function() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            let isPlaying = false;
+
+            function tryAutoPlay() {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    btn.textContent = '⏸';
+                    btn.classList.add('playing');
+                }).catch(() => {
+                    isPlaying = false;
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                });
+            }
+
+            window.addEventListener('load', function() {
+                setTimeout(tryAutoPlay, 500);
+            });
+
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (isPlaying) {
+                    audio.pause();
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                    isPlaying = false;
+                } else {
+                    audio.play().then(() => {
+                        btn.textContent = '⏸';
+                        btn.classList.add('playing');
+                        isPlaying = true;
+                    }).catch(() => {
+                        btn.textContent = '▶';
+                        btn.classList.remove('playing');
+                        isPlaying = false;
+                    });
+                }
+            });
+
+            audio.addEventListener('ended', function() {
+                if (!audio.loop) {
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                    isPlaying = false;
+                }
+            });
+        })();
+
+        // ===== 2. 光标发光 =====
+        const cursorGlow = document.getElementById('cursorGlow');
+        document.addEventListener('mousemove', (e) => {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        // ===== 3. 粒子特效 =====
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 4 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = '-10px';
+            document.body.appendChild(particle);
+            let posY = -10;
+            let posX = parseFloat(particle.style.left);
+            const fallSpeed = Math.random() * 0.5 + 0.25;
+            const drift = (Math.random() - 0.5) * 0.3;
+            function animate() {
+                posY += fallSpeed;
+                posX += drift;
+                particle.style.top = posY + '%';
+                particle.style.left = posX + '%';
+                if (posY < 105) {
+                    requestAnimationFrame(animate);
+                } else {
+                    particle.remove();
+                }
+            }
+            animate();
+        }
+        setInterval(createParticle, 150);
+
+        // ===== 4. 凌乱连线（Canvas） =====
+        (function drawLines() {
+            const canvas = document.getElementById('lineCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function getElementCenter(el) {
+                const rect = el.getBoundingClientRect();
+                return {
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + rect.height / 2
+                };
+            }
+
+            function drawRandomLines() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(100, 180, 220, 0.25)';
+                ctx.lineWidth = 1.2;
+
+                const photos = document.querySelectorAll('.photo-item');
+                const notes = document.querySelectorAll('.note');
+
+                if (photos.length === 0 || notes.length === 0) return;
+
+                photos.forEach((photo, idx) => {
+                    const pCenter = getElementCenter(photo);
+                    const numConnections = Math.floor(Math.random() * 2) + 1;
+                    const shuffledNotes = Array.from(notes).sort(() => Math.random() - 0.5);
+                    const targetNotes = shuffledNotes.slice(0, numConnections);
+
+                    targetNotes.forEach(note => {
+                        const nCenter = getElementCenter(note);
+                        const cp1x = pCenter.x + (Math.random() - 0.5) * 200;
+                        const cp1y = pCenter.y + (Math.random() - 0.5) * 200;
+                        const cp2x = nCenter.x + (Math.random() - 0.5) * 200;
+                        const cp2y = nCenter.y + (Math.random() - 0.5) * 200;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pCenter.x, pCenter.y);
+                        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nCenter.x, nCenter.y);
+                        ctx.stroke();
+                    });
+                });
+
+                for (let i = 0; i < 8; i++) {
+                    const startX = Math.random() * canvas.width;
+                    const startY = Math.random() * canvas.height;
+                    const endX = Math.random() * canvas.width;
+                    const endY = Math.random() * canvas.height;
+                    const cp1x = startX + (Math.random() - 0.5) * 300;
+                    const cp1y = startY + (Math.random() - 0.5) * 300;
+                    const cp2x = endX + (Math.random() - 0.5) * 300;
+                    const cp2y = endY + (Math.random() - 0.5) * 300;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
+                    ctx.stroke();
+                }
+            }
+
+            setTimeout(drawRandomLines, 300);
+            window.addEventListener('resize', () => {
+                setTimeout(drawRandomLines, 400);
+            });
+            window.addEventListener('scroll', () => {
+                requestAnimationFrame(drawRandomLines);
+            });
+            setInterval(drawRandomLines, 4000);
+        })();
+
+        // ===== 5. 返回顶部按钮 =====
+        (function() {
+            const backBtn = document.getElementById('backToTop');
+            backBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        })();
+
+        // ===== 6. COURSE 滑动功能（有尽头） =====
+        (function() {
+            const track = document.getElementById('sliderTrack');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const items = track.querySelectorAll('.slider-item');
+            const itemCount = items.length;
+            let currentIndex = 0;
+
+            function getItemWidth() {
+                const firstItem = items[0];
+                const style = window.getComputedStyle(firstItem);
+                const marginLeft = parseFloat(style.marginLeft) || 0;
+                const marginRight = parseFloat(style.marginRight) || 0;
+                return firstItem.offsetWidth + marginLeft + marginRight;
+            }
+
+            function updateSlider() {
+                const itemWidth = getItemWidth();
+                const gap = 30;
+                const offset = currentIndex * (itemWidth + gap);
+                track.style.transform = `translateX(-${offset}px)`;
+
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex >= itemCount - 1;
+            }
+
+            nextBtn.addEventListener('click', function() {
+                if (currentIndex < itemCount - 1) {
+                    currentIndex++;
+                    updateSlider();
+                }
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateSlider();
+                }
+            });
+
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(updateSlider, 100);
+            });
+
+            setTimeout(updateSlider, 300);
+        })();
+
+        // ===== 7. 顶部 COURSE 链接平滑滚动 =====
+        (function() {
+            const courseLink = document.querySelector('a[href="#course"]');
+            if (courseLink) {
+                courseLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.getElementById('course');
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

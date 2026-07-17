@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- ===== Favicon ===== -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>PRECIOUS MESS</title>
     <style>
         /* ===== 全局重置 & 基础 ===== */
@@ -35,6 +37,196 @@
             z-index: 9;
         }
 
+        /* 弹窗遮罩层 - 层级高于一切 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-box {
+            background: linear-gradient(145deg, #0d0d0d 0%, #1a0a0a 100%);
+            border: 1px solid rgba(200, 50, 50, 0.5);
+            border-radius: 4px;
+            padding: 40px 48px 32px 48px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 
+                0 0 30px rgba(180, 0, 0, 0.3),
+                inset 0 0 30px rgba(180, 0, 0, 0.08);
+            position: relative;
+            text-align: center;
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.active .modal-box {
+            transform: scale(1) translateY(0);
+        }
+        .modal-box::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 20%;
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff4d4d, transparent);
+            box-shadow: 0 0 12px #ff4d4d;
+        }
+        .modal-box::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: 20%;
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff4d4d, transparent);
+            box-shadow: 0 0 12px #ff4d4d;
+        }
+        .modal-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: block;
+            filter: drop-shadow(0 0 12px rgba(255, 50, 50, 0.4));
+        }
+        .modal-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 28px;
+            letter-spacing: 4px;
+            color: #f1f1f1;
+            text-shadow: 0 0 12px rgba(200, 0, 0, 0.5);
+            margin-bottom: 16px;
+        }
+        .modal-message {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.9;
+            color: #bbbbbb;
+            letter-spacing: 0.5px;
+            margin-bottom: 28px;
+            padding: 0 4px;
+        }
+        .modal-message span {
+            color: #ff4d4d;
+            text-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
+        }
+        .modal-btn {
+            background: rgba(200, 50, 50, 0.2);
+            border: 1px solid rgba(200, 50, 50, 0.4);
+            color: #ff4d4d;
+            font-family: 'Space Mono', monospace;
+            font-size: 16px;
+            letter-spacing: 3px;
+            padding: 12px 48px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+            text-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
+            box-shadow: 0 0 20px rgba(200, 0, 0, 0.08);
+        }
+        .modal-btn:hover {
+            background: rgba(200, 50, 50, 0.4);
+            border-color: #ff4d4d;
+            box-shadow: 0 0 30px rgba(200, 0, 0, 0.25);
+            transform: scale(1.02);
+        }
+        .modal-btn:active {
+            transform: scale(0.96);
+        }
+        .modal-checkbox-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .modal-checkbox-wrap label {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 1px;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+        .modal-checkbox-wrap label:hover {
+            color: #999;
+        }
+        .modal-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .modal-checkbox:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .modal-checkbox:checked {
+            background: rgba(200, 50, 50, 0.3);
+            border-color: #ff4d4d;
+        }
+        .modal-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff4d4d;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 50, 50, 0.5);
+        }
+        @media (max-width: 600px) {
+            .modal-box {
+                padding: 28px 20px 24px 20px;
+            }
+            .modal-title {
+                font-size: 22px;
+            }
+            .modal-message {
+                font-size: 12px;
+            }
+            .modal-btn {
+                font-size: 14px;
+                padding: 10px 32px;
+            }
+            .modal-checkbox-wrap label {
+                font-size: 10px;
+            }
+            .modal-checkbox {
+                width: 14px;
+                height: 14px;
+            }
+            .modal-checkbox:checked::after {
+                font-size: 10px;
+            }
+        }
+
         /* ===== 标题与图标布局 ===== */
         .main-title {
             display: flex;
@@ -63,7 +255,6 @@
             text-align: center;
         }
 
-        /* ===== 菱形雕花图标（刷新键）- 半透明 ===== */
         .diamond-icon {
             display: inline-flex;
             align-items: center;
@@ -103,7 +294,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ===== 动画定义 ===== */
         @keyframes flicker {
             0% { opacity: 0.85; }
             50% { opacity: 1; }
@@ -421,8 +611,9 @@
         /* ===== 头像与昵称（进度条正下方，带头像框叠加） ===== */
         .player-avatar {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
             margin-top: 10px;
             flex-shrink: 0;
         }
@@ -443,23 +634,66 @@
             display: inline-block;
             width: 76px;
             height: 76px;
+            border-radius: 4px;
+            border: 2px solid rgba(200, 200, 200, 0.5);
+            box-shadow: 0 0 10px rgba(200, 200, 200, 0.15);
+            animation: glowPulse 4s ease-in-out infinite alternate;
+            background: rgba(20, 20, 20, 0.3);
+            padding: 2px;
+            flex-shrink: 0;
         }
         .avatar-wrapper .avatar-img {
             display: block;
             width: 100%;
             height: 100%;
-            border-radius: 4px;
+            border-radius: 2px;
             object-fit: cover;
         }
-        .avatar-wrapper .avatar-frame {
+
+        @keyframes glowPulse {
+            0% {
+                border-color: rgba(180, 180, 180, 0.4);
+                box-shadow: 0 0 8px rgba(200, 200, 200, 0.1), 0 0 16px rgba(200, 200, 200, 0.05);
+            }
+            100% {
+                border-color: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(255, 255, 255, 0.15);
+            }
+        }
+
+        /* ===== 对话框 ===== */
+        .dialog-box {
+            background: rgba(50, 50, 50, 0.5);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(150, 150, 150, 0.25);
+            border-radius: 12px;
+            padding: 12px 20px;
+            max-width: 240px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #cccccc;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 6px rgba(200, 200, 200, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            position: relative;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+        .dialog-box::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            display: block;
-            border-radius: 4px;
+            left: -8px;
+            top: 20px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid rgba(50, 50, 50, 0.5);
+        }
+        .dialog-box .heart {
+            color: #ff4d4d;
+            text-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
         }
 
         /* ===== 右下角返回顶部 - 半透明 ===== */
@@ -551,6 +785,42 @@
             background: rgba(255, 255, 255, 1);
         }
 
+        /* ===== 🎵 音乐按钮 - 菜单下方 ===== */
+        .music-btn {
+            position: fixed;
+            top: 78px;
+            left: 24px;
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            outline: none;
+            user-select: none;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 1);
+        }
+        .music-btn:active {
+            transform: scale(0.92);
+        }
+        .music-btn.playing {
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.25), 0 0 40px rgba(255, 77, 77, 0.08);
+            border-color: rgba(255, 77, 77, 0.25);
+        }
+
         /* ===== 变暗遮罩 ===== */
         .overlay {
             position: fixed;
@@ -575,7 +845,7 @@
         /* ===== 菜单弹出面板 ===== */
         .menu-panel {
             position: fixed;
-            top: 78px;
+            top: 132px;
             left: 24px;
             width: 210px;
             background: rgba(18, 18, 18, 0.92);
@@ -674,8 +944,15 @@
                 width: 20px;
                 height: 2px;
             }
-            .menu-panel {
+            .music-btn {
                 top: 64px;
+                left: 16px;
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
+            }
+            .menu-panel {
+                top: 112px;
                 left: 16px;
                 width: 180px;
             }
@@ -692,6 +969,15 @@
             .player-avatar .avatar-name {
                 font-size: 13px;
             }
+            .dialog-box {
+                max-width: 160px;
+                font-size: 11px;
+                padding: 10px 14px;
+                margin-top: 4px;
+            }
+            .dialog-box::before {
+                top: 16px;
+            }
         }
     </style>
 </head>
@@ -700,20 +986,46 @@
     <div class="scanline"></div>
     <div class="cursor-glow" id="cursorGlow"></div>
 
+    <!-- ===== 弹窗遮罩 ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <span class="modal-icon">✦</span>
+            <div class="modal-title">PRECIOUS MESS</div>
+            <div class="modal-message">
+                为保障阅读效果，建议使用<span>电脑</span>访问
+            </div>
+            <button class="modal-btn" id="modalBtn">好 的</button>
+            <div class="modal-checkbox-wrap">
+                <input type="checkbox" class="modal-checkbox" id="dontShowAgain" />
+                <label for="dontShowAgain">不再弹出此询问</label>
+            </div>
+        </div>
+    </div>
+
     <!-- 变暗遮罩 -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- 左上角汉堡菜单（半透明） -->
+    <!-- 左上角汉堡菜单 -->
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="菜单">
         <span></span>
         <span></span>
         <span></span>
     </button>
 
-    <!-- ===== 菜单弹出面板 ===== -->
+    <!-- ===== 🎵 音乐按钮（菜单下方） ===== -->
+    <button class="music-btn" id="musicBtn" aria-label="播放/暂停音乐">▶</button>
+
+    <!-- ===== 🎵 隐藏的音频播放器 ===== -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="I Don't Know.mp3" type="audio/mpeg">
+        你的浏览器不支持音频播放。
+    </audio>
+
+    <!-- ===== 汉堡菜单弹出面板（已添加 DISPLAY-Depp） ===== -->
     <nav class="menu-panel" id="menuPanel" role="navigation">
         <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank">我最爱的论坛-6chan</a>
         <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank">我最爱的漫画</a>
+        <a href="display.html" class="menu-item">DISPLAY-Depp</a>   <!-- 新增 -->
     </nav>
 
     <!-- 右下角返回顶部（半透明） -->
@@ -763,6 +1075,8 @@
         <div class="marquee-box">
             <div class="marquee-text">PRECIOUS MESS website —— 珍贵的混乱网站</div>
         </div>
+
+        <!-- ===== 顶部导航栏（恢复原样，不包含 DISPLAY-Depp） ===== -->
         <nav>
             <a href="#about">ABOUT</a>
             <a href="#thoughts">THOUGHTS</a>
@@ -794,7 +1108,7 @@
             </section>
         </div>
 
-        <!-- ===== 播放器（头像带头像框叠加） ===== -->
+        <!-- ===== 播放器 ===== -->
         <div class="player-container">
             <div class="player-head">
                 <div style="display:flex;align-items:center;gap:10px;">
@@ -831,12 +1145,16 @@
                     <span>05:48</span>
                 </div>
 
-                <!-- ===== 头像与昵称（带头像框叠加） ===== -->
+                <!-- ===== 头像与昵称 ===== -->
                 <div class="player-avatar">
-                    <span class="avatar-name">Virel09</span>
-                    <div class="avatar-wrapper">
-                        <img class="avatar-img" src="图片/头像1.png" alt="Virel09" />
-                        <img class="avatar-frame" src="图片/头像框.gif" alt="头像框" />
+                    <div style="display:flex;flex-direction:column;align-items:flex-start;">
+                        <span class="avatar-name">Virel09</span>
+                        <div class="avatar-wrapper">
+                            <img class="avatar-img" src="https://c-ssl.duitang.com/uploads/item/201605/27/20160527212648_sRMTt.jpeg" alt="Virel09" />
+                        </div>
+                    </div>
+                    <div class="dialog-box">
+                        I'll see you down the road,<br />till then stay well, stay well. <span class="heart">&lt;/3</span>
                     </div>
                 </div>
             </div>
@@ -862,14 +1180,109 @@
 
     <!-- ===== JavaScript ===== -->
     <script>
-        // 1. 光标发光跟随
+        // ===== 0. 弹窗逻辑 =====
+        (function() {
+            const overlay = document.getElementById('modalOverlay');
+            const btn = document.getElementById('modalBtn');
+            const checkbox = document.getElementById('dontShowAgain');
+            const STORAGE_KEY = 'preciousmess_dont_show_modal';
+
+            const shouldHide = localStorage.getItem(STORAGE_KEY) === 'true';
+            if (shouldHide) {
+                return;
+            }
+
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }, 300);
+            });
+
+            btn.addEventListener('click', function() {
+                closeModal();
+            });
+
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            function closeModal() {
+                if (checkbox.checked) {
+                    localStorage.setItem(STORAGE_KEY, 'true');
+                }
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        })();
+
+        // ===== 1. 音乐控制 =====
+        (function() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            let isPlaying = false;
+
+            function tryAutoPlay() {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    btn.textContent = '⏸';
+                    btn.classList.add('playing');
+                }).catch(() => {
+                    isPlaying = false;
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                });
+            }
+
+            window.addEventListener('load', function() {
+                setTimeout(tryAutoPlay, 500);
+            });
+
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (isPlaying) {
+                    audio.pause();
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                    isPlaying = false;
+                } else {
+                    audio.play().then(() => {
+                        btn.textContent = '⏸';
+                        btn.classList.add('playing');
+                        isPlaying = true;
+                    }).catch(() => {
+                        btn.textContent = '▶';
+                        btn.classList.remove('playing');
+                        isPlaying = false;
+                    });
+                }
+            });
+
+            audio.addEventListener('ended', function() {
+                if (!audio.loop) {
+                    btn.textContent = '▶';
+                    btn.classList.remove('playing');
+                    isPlaying = false;
+                }
+            });
+        })();
+
+        // ===== 2. 光标发光跟随 =====
         const cursorGlow = document.getElementById('cursorGlow');
         window.addEventListener('mousemove', (e) => {
             cursorGlow.style.left = e.clientX + 'px';
             cursorGlow.style.top = e.clientY + 'px';
         });
 
-        // ===== 2. 粒子特效 =====
+        // ===== 3. 粒子特效 =====
         const header = document.querySelector('header');
 
         function createParticle() {
@@ -911,7 +1324,7 @@
 
         setInterval(createParticle, 80);
 
-        // ===== 3. 汉堡菜单交互 =====
+        // ===== 4. 汉堡菜单交互 =====
         (function() {
             const hamburger = document.getElementById('hamburgerBtn');
             const overlay = document.getElementById('overlay');
@@ -961,7 +1374,7 @@
             });
         })();
 
-        // ===== 4. 菱形返回顶部按钮 =====
+        // ===== 5. 菱形返回顶部按钮 =====
         (function() {
             const backBtn = document.getElementById('backToTop');
             backBtn.addEventListener('click', () => {
@@ -972,7 +1385,7 @@
             });
         })();
 
-        // ===== 5. 刷新键：点击后旋转并刷新 =====
+        // ===== 6. 刷新键：点击后旋转并刷新 =====
         (function() {
             const diamond = document.getElementById('diamondIcon');
             diamond.addEventListener('click', function(e) {
