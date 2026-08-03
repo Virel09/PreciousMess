@@ -6,7 +6,6 @@
     <title>DISPLAY of Depp</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet" />
     <style>
-        /* ===== 全局重置 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -35,8 +34,6 @@
             );
             z-index: 9;
         }
-
-        /* ===== 光标发光 ===== */
         .cursor-glow {
             position: fixed;
             width: 50px;
@@ -48,8 +45,6 @@
             transform: translate(-50%, -50%);
             filter: blur(12px);
         }
-
-        /* ===== 粒子特效 ===== */
         .particle {
             position: fixed;
             border-radius: 50%;
@@ -60,8 +55,6 @@
             background: rgba(100, 180, 220, 0.35);
             box-shadow: 0 0 12px rgba(70, 150, 200, 0.15);
         }
-
-        /* ===== 主容器 ===== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -69,8 +62,6 @@
             position: relative;
             z-index: 2;
         }
-
-        /* ===== 导航栏 ===== */
         .top-nav {
             display: flex;
             justify-content: space-between;
@@ -119,8 +110,6 @@
             color: #7ab7d4;
             border-bottom: 1px solid #7ab7d4;
         }
-
-        /* ===== 左上角音乐按钮 ===== */
         .music-btn {
             position: fixed;
             top: 20px;
@@ -154,11 +143,9 @@
             border-color: rgba(100, 180, 220, 0.4);
             box-shadow: 0 0 24px rgba(100, 180, 220, 0.15);
         }
-
-        /* ===== 标题区（间距加大） ===== */
         .hero {
             text-align: center;
-            margin-bottom: 70px;  /* 从 50px 改为 70px，标题下移 */
+            margin-bottom: 70px;
         }
         .hero h1 {
             font-family: "Cormorant Garamond", serif;
@@ -179,8 +166,6 @@
             display: inline-block;
             padding-top: 8px;
         }
-
-        /* ===== 双栏布局 ===== */
         .main-grid {
             display: grid;
             grid-template-columns: 0.8fr 1fr;
@@ -189,14 +174,6 @@
             align-items: start;
             position: relative;
         }
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-                gap: 50px;
-            }
-        }
-
-        /* ===== 左栏：照片墙 ===== */
         .photo-wall {
             display: flex;
             flex-direction: column;
@@ -232,7 +209,6 @@
         .photo-item:hover img {
             filter: brightness(1.05) contrast(1.05);
         }
-
         .photo-item:nth-child(odd) {
             transform: rotate(-0.8deg) translateX(-3px);
         }
@@ -251,8 +227,6 @@
         .photo-item:hover {
             transform: scale(1.03) translateY(-4px) rotate(0deg) !important;
         }
-
-        /* ===== 胶带效果 ===== */
         .photo-item .tape {
             position: absolute;
             top: -8px;
@@ -298,7 +272,6 @@
             transform: rotate(25deg);
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
-
         .photo-item:nth-child(1) .tape { --rot: -2deg; }
         .photo-item:nth-child(2) .tape { --rot: 4deg; }
         .photo-item:nth-child(3) .tape { --rot: -5deg; }
@@ -307,15 +280,12 @@
         .photo-item:nth-child(6) .tape { --rot: 6deg; }
         .photo-item:nth-child(7) .tape { --rot: -3deg; }
         .photo-item:nth-child(8) .tape { --rot: 2deg; }
-
-        /* ===== 右栏：便签墙 ===== */
         .note-wall {
             display: flex;
             flex-direction: column;
             gap: 40px;
             padding-left: 6px;
         }
-
         .note {
             background: rgba(10, 20, 35, 0.6);
             backdrop-filter: blur(4px);
@@ -343,7 +313,6 @@
             color: #4a7d9c;
             opacity: 0.4;
         }
-
         .note p {
             font-family: 'Courier New', Courier, monospace;
             font-size: 16px;
@@ -355,7 +324,6 @@
         .note p:last-child {
             margin-bottom: 0;
         }
-
         .note:nth-child(odd) {
             transform: rotate(-0.5deg) translateX(-2px);
         }
@@ -371,21 +339,15 @@
         .note:hover {
             transform: translateY(-2px) rotate(0deg) !important;
         }
-
         .note .hl {
             color: #7ab7d4;
             text-shadow: 0 0 12px rgba(70, 150, 200, 0.12);
         }
-
-        /* ========================================================== */
-        /* ===== 🎥 COURSE 区域（整体下移，间距加大） ===== */
-        /* ========================================================== */
         .course-section {
-            margin-top: 140px;  /* 从 100px 改为 140px，整体下移 */
+            margin-top: 140px;
             padding-top: 40px;
             position: relative;
         }
-
         .divider {
             position: relative;
             height: 2px;
@@ -406,7 +368,6 @@
             letter-spacing: 8px;
             text-shadow: 0 0 20px rgba(100, 180, 220, 0.3);
         }
-
         .course-title {
             font-family: "Cormorant Garamond", serif;
             font-weight: 600;
@@ -417,21 +378,17 @@
             margin-bottom: 40px;
             text-shadow: 0 0 20px rgba(70, 150, 200, 0.2);
         }
-
-        /* ===== 滑动容器 ===== */
         .slider-wrapper {
             position: relative;
             overflow: visible;
             padding: 40px 0 30px;
         }
-
         .slider-track-wrapper {
             position: relative;
             overflow: visible;
             mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
             -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
         }
-
         .rope {
             position: relative;
             width: 100%;
@@ -460,7 +417,6 @@
         .rope::after {
             right: 10px;
         }
-
         .slider-track {
             display: flex;
             gap: 30px;
@@ -469,7 +425,6 @@
             padding-top: 8px;
             position: relative;
         }
-
         .slider-item {
             flex: 0 0 calc(100% / 2.8);
             min-width: 240px;
@@ -488,7 +443,6 @@
             transform: translateY(-4px);
             box-shadow: 0 8px 30px rgba(70, 150, 200, 0.15);
         }
-
         .slider-item::before {
             content: '';
             position: absolute;
@@ -511,7 +465,6 @@
             color: rgba(150, 180, 200, 0.3);
             text-shadow: 0 0 8px rgba(100, 180, 220, 0.05);
         }
-
         .slider-item img {
             width: 80%;
             aspect-ratio: 1 / 1;
@@ -521,7 +474,6 @@
             border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         .slider-item .caption {
             padding: 22px 20px 26px;
             font-family: 'Courier New', Courier, monospace;
@@ -530,7 +482,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .slider-item .caption .year {
             display: inline-block;
             color: #7ab7d4;
@@ -564,8 +515,6 @@
             margin-top: 4px;
             flex: 1;
         }
-
-        /* ===== 滑动按钮 ===== */
         .slider-btn {
             position: absolute;
             top: 50%;
@@ -606,128 +555,12 @@
             box-shadow: none;
             background: rgba(20, 30, 45, 0.3);
         }
-
         .slider-btn.prev {
             left: -68px;
         }
         .slider-btn.next {
             right: -68px;
         }
-
-        /* ===== 响应式 ===== */
-        @media (max-width: 1024px) {
-            .slider-btn.prev {
-                left: -32px;
-            }
-            .slider-btn.next {
-                right: -32px;
-            }
-            .slider-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 26px;
-            }
-        }
-        @media (max-width: 900px) {
-            .slider-item {
-                flex: 0 0 calc(100% / 1.8);
-                min-width: 200px;
-            }
-            .slider-btn.prev {
-                left: -16px;
-            }
-            .slider-btn.next {
-                right: -16px;
-            }
-            .slider-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 22px;
-            }
-            .slider-item .caption .movie {
-                font-size: 22px;
-            }
-            .slider-item .caption .desc {
-                font-size: 14px;
-            }
-            .slider-item .caption .year {
-                font-size: 16px;
-            }
-        }
-        @media (max-width: 600px) {
-            .slider-item {
-                flex: 0 0 calc(100% / 1.2);
-                min-width: 160px;
-            }
-            .slider-item .caption .movie {
-                font-size: 20px;
-            }
-            .slider-item .caption .desc {
-                font-size: 13px;
-            }
-            .slider-item .caption .year {
-                font-size: 14px;
-            }
-            .slider-item .caption .movie .sub-en {
-                font-size: 13px;
-            }
-            .slider-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 18px;
-            }
-            .slider-btn.prev {
-                left: 2px;
-            }
-            .slider-btn.next {
-                right: 2px;
-            }
-            .course-title {
-                font-size: 2.2rem;
-                letter-spacing: 8px;
-            }
-            .divider::before {
-                font-size: 11px;
-                letter-spacing: 4px;
-                padding: 0 14px;
-            }
-            .slider-item img {
-                width: 85%;
-                margin: 8px auto 0;
-            }
-            .slider-item .caption {
-                padding: 14px 14px 18px;
-            }
-            .rope {
-                margin-bottom: 20px;
-            }
-            .slider-item::before {
-                height: 14px;
-                top: -14px;
-            }
-            .slider-item::after {
-                top: -18px;
-            }
-            .slider-track-wrapper {
-                mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
-                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
-            }
-        }
-        @media (max-width: 400px) {
-            .slider-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 15px;
-            }
-            .slider-btn.prev {
-                left: 0px;
-            }
-            .slider-btn.next {
-                right: 0px;
-            }
-        }
-
-        /* ===== 底部 ===== */
         .footer {
             margin-top: 80px;
             padding-top: 24px;
@@ -744,8 +577,6 @@
         .footer a:hover {
             color: #7ab7d4;
         }
-
-        /* ===== 右下角返回顶部 ===== */
         .back-to-top {
             position: fixed;
             bottom: 36px;
@@ -788,8 +619,6 @@
         .back-to-top:hover svg {
             stroke: rgba(255, 255, 255, 1);
         }
-
-        /* ===== Canvas 连线层 ===== */
         #lineCanvas {
             position: fixed;
             top: 0;
@@ -803,27 +632,14 @@
     </style>
 </head>
 <body>
-    <!-- 扫描线 -->
     <div class="scanline"></div>
-    <!-- 光标发光 -->
     <div class="cursor-glow" id="cursorGlow"></div>
-
-    <!-- ===== 左上角音乐按钮 ===== -->
     <button class="music-btn" id="musicBtn" aria-label="播放/暂停音乐">▶</button>
-
-    <!-- ===== 音频播放器 ===== -->
     <audio id="bgMusic" loop preload="auto">
         <source src="too late,i already died.mp3" type="audio/mpeg">
-        你的浏览器不支持音频播放
     </audio>
-
-    <!-- ===== Canvas 连线层 ===== -->
     <canvas id="lineCanvas"></canvas>
-
-    <!-- ===== 主容器 ===== -->
     <div class="container">
-
-        <!-- ===== 导航 ===== -->
         <nav class="top-nav">
             <div class="logo" id="refreshLogo">✦ <span>PRECIOUS</span> MESS</div>
             <div class="nav-links">
@@ -832,60 +648,21 @@
                 <a href="#course">COURSE</a>
             </div>
         </nav>
-
-        <!-- ===== 标题（间距已加大） ===== -->
         <div class="hero">
             <h1>DISPLAY of Depp</h1>
             <div class="sub">✦ 愚蠢的真挚的情感 ✦</div>
         </div>
-
-        <!-- ===== 主体（照片墙 + 便签） ===== -->
         <div class="main-grid" id="mainGrid">
-            <!-- 左栏：照片墙 -->
             <div class="photo-wall" id="photoWall">
-                <div class="photo-item" data-idx="0">
-                    <div class="tape"></div>
-                    <div class="tape-2"></div>
-                    <img src="depp1.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="1">
-                    <div class="tape"></div>
-                    <div class="tape-3"></div>
-                    <img src="depp2.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="2">
-                    <div class="tape"></div>
-                    <div class="tape-2"></div>
-                    <img src="depp3.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="3">
-                    <div class="tape"></div>
-                    <div class="tape-3"></div>
-                    <img src="depp4.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="4">
-                    <div class="tape"></div>
-                    <div class="tape-2"></div>
-                    <img src="depp5.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="5">
-                    <div class="tape"></div>
-                    <div class="tape-3"></div>
-                    <img src="depp6.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="6">
-                    <div class="tape"></div>
-                    <div class="tape-2"></div>
-                    <img src="depp7.jpg" alt="Johnny Depp" />
-                </div>
-                <div class="photo-item" data-idx="7">
-                    <div class="tape"></div>
-                    <div class="tape-3"></div>
-                    <img src="depp8.jpg" alt="Johnny Depp" />
-                </div>
+                <div class="photo-item" data-idx="0"><div class="tape"></div><div class="tape-2"></div><img src="depp1.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="1"><div class="tape"></div><div class="tape-3"></div><img src="depp2.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="2"><div class="tape"></div><div class="tape-2"></div><img src="depp3.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="3"><div class="tape"></div><div class="tape-3"></div><img src="depp4.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="4"><div class="tape"></div><div class="tape-2"></div><img src="depp5.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="5"><div class="tape"></div><div class="tape-3"></div><img src="depp6.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="6"><div class="tape"></div><div class="tape-2"></div><img src="depp7.jpg" alt="Johnny Depp" /></div>
+                <div class="photo-item" data-idx="7"><div class="tape"></div><div class="tape-3"></div><img src="depp8.jpg" alt="Johnny Depp" /></div>
             </div>
-
-            <!-- 右栏：便签墙 -->
             <div class="note-wall" id="noteWall">
                 <div class="note"><p>我爱的你：</p></div>
                 <div class="note"><p>我常常会对着空气发呆。<br />有时候，或许很多时候，我觉得空气也并不是空的。它里面有灰尘，有光的碎屑，还有一些叫不出名字的东西。它们飘着，转着，然后就慢慢汇成了你的样子。</p></div>
@@ -903,119 +680,44 @@
                 <div class="note"><p style="text-align:right; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:18px; color:#7ab7d4;">BY Virel</p></div>
             </div>
         </div>
-
-        <!-- ========================================================== -->
-        <!-- ===== 🎥 COURSE 区域（整体下移） ===== -->
-        <!-- ========================================================== -->
         <section class="course-section" id="course">
             <div class="divider"></div>
             <h2 class="course-title">COURSE</h2>
-
             <div class="slider-wrapper">
                 <div class="slider-track-wrapper">
                     <div class="rope"></div>
                     <div class="slider-track" id="sliderTrack">
-                        <div class="slider-item">
-                            <img src="course1.jpg" alt="猛鬼街" />
-                            <div class="caption">
-                                <span class="year">1984</span>
-                                <span class="movie">《猛鬼街》<br /><span class="sub-en">（A Nightmare on Elm Street）</span></span>
-                                <div class="desc">Depp银幕首秀饰阳光男友格伦，被拖入床底吞噬的死亡场景血腥震撼，20岁的他青涩稚嫩却已展露独特银幕魅力。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course2.jpg" alt="剪刀手爱德华" />
-                            <div class="caption">
-                                <span class="year">1990</span>
-                                <span class="movie">《剪刀手爱德华》<br /><span class="sub-en">（Edward Scissorhands）</span></span>
-                                <div class="desc">Depp成名作饰孤独机器人，仅凭眼神与肢体传递渴望融入人类的悲伤，苍白造型成流行符号，奠定怪诞深情戏路。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course3.jpg" alt="断头谷" />
-                            <div class="caption">
-                                <span class="year">1999</span>
-                                <span class="movie">《断头谷》<br /><span class="sub-en">（Sleepy Hollow）</span></span>
-                                <div class="desc">Depp饰胆小警探克瑞恩，遇事就晕却智破无头骑士案，神经质与可爱拿捏精准，贡献大量笑点，与伯顿首次合作成功。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course4.jpg" alt="加勒比海盗" />
-                            <div class="caption">
-                                <span class="year">2003</span>
-                                <span class="movie">《加勒比海盗》<br /><span class="sub-en">（Pirates of the Caribbean）</span></span>
-                                <div class="desc">Depp饰杰克船长，兰花指烟熏妆醉步疯癫，亦正亦邪即兴表演获奥斯卡提名，盘活整个系列，成其最耀目标签。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course5.jpg" alt="查理和巧克力工厂" />
-                            <div class="caption">
-                                <span class="year">2005</span>
-                                <span class="movie">《查理和巧克力工厂》<br /><span class="sub-en">（Charlie and the Chocolate Factory）</span></span>
-                                <div class="desc">Depp饰威利·旺卡，尖细嗓音神经质笑声，童真与刻薄并存，紫红天鹅绒造型诠释童年创伤的古怪天才。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course6.jpg" alt="理发师陶德" />
-                            <div class="caption">
-                                <span class="year">2007</span>
-                                <span class="movie">《理发师陶德》<br /><span class="sub-en">（Sweeney Todd）</span></span>
-                                <div class="desc">Depp饰复仇理发师，苍白眼神空洞，剃刀下爆发惊人戾气，亲自献唱低沉悲愤，凭此片获金球奖影帝，展暗黑歌剧实力。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course7.jpg" alt="爱丽丝梦游仙境" />
-                            <div class="caption">
-                                <span class="year">2010</span>
-                                <span class="movie">《爱丽丝梦游仙境》<br /><span class="sub-en">（Alice in Wonderland）</span></span>
-                                <div class="desc">Depp饰疯帽子，红发烟熏癫狂下藏破碎之心，时而疯笑时而泪崩，天真忠诚如孩子，成仙境中最温暖盟友。</div>
-                            </div>
-                        </div>
-                        <div class="slider-item">
-                            <img src="course8.jpg" alt="神奇动物在哪里" />
-                            <div class="caption">
-                                <span class="year">2016</span>
-                                <span class="movie">《神奇动物在哪里》<br /><span class="sub-en">（Fantastic Beasts and Where to Find Them）</span></span>
-                                <div class="desc">Depp饰黑巫师格林德沃，苍白银发异色瞳优雅蛊惑，煽动演讲尽显反派魅力，虽戏份少却为续作埋下巨大悬念。</div>
-                            </div>
-                        </div>
+                        <div class="slider-item"><img src="course1.jpg" alt="猛鬼街" /><div class="caption"><span class="year">1984</span><span class="movie">《猛鬼街》<br /><span class="sub-en">（A Nightmare on Elm Street）</span></span><div class="desc">Depp银幕首秀饰阳光男友格伦，被拖入床底吞噬的死亡场景血腥震撼，20岁的他青涩稚嫩却已展露独特银幕魅力。</div></div></div>
+                        <div class="slider-item"><img src="course2.jpg" alt="剪刀手爱德华" /><div class="caption"><span class="year">1990</span><span class="movie">《剪刀手爱德华》<br /><span class="sub-en">（Edward Scissorhands）</span></span><div class="desc">Depp成名作饰孤独机器人，仅凭眼神与肢体传递渴望融入人类的悲伤，苍白造型成流行符号，奠定怪诞深情戏路。</div></div></div>
+                        <div class="slider-item"><img src="course3.jpg" alt="断头谷" /><div class="caption"><span class="year">1999</span><span class="movie">《断头谷》<br /><span class="sub-en">（Sleepy Hollow）</span></span><div class="desc">Depp饰胆小警探克瑞恩，遇事就晕却智破无头骑士案，神经质与可爱拿捏精准，贡献大量笑点，与伯顿首次合作成功。</div></div></div>
+                        <div class="slider-item"><img src="course4.jpg" alt="加勒比海盗" /><div class="caption"><span class="year">2003</span><span class="movie">《加勒比海盗》<br /><span class="sub-en">（Pirates of the Caribbean）</span></span><div class="desc">Depp饰杰克船长，兰花指烟熏妆醉步疯癫，亦正亦邪即兴表演获奥斯卡提名，盘活整个系列，成其最耀目标签。</div></div></div>
+                        <div class="slider-item"><img src="course5.jpg" alt="查理和巧克力工厂" /><div class="caption"><span class="year">2005</span><span class="movie">《查理和巧克力工厂》<br /><span class="sub-en">（Charlie and the Chocolate Factory）</span></span><div class="desc">Depp饰威利·旺卡，尖细嗓音神经质笑声，童真与刻薄并存，紫红天鹅绒造型诠释童年创伤的古怪天才。</div></div></div>
+                        <div class="slider-item"><img src="course6.jpg" alt="理发师陶德" /><div class="caption"><span class="year">2007</span><span class="movie">《理发师陶德》<br /><span class="sub-en">（Sweeney Todd）</span></span><div class="desc">Depp饰复仇理发师，苍白眼神空洞，剃刀下爆发惊人戾气，亲自献唱低沉悲愤，凭此片获金球奖影帝，展暗黑歌剧实力。</div></div></div>
+                        <div class="slider-item"><img src="course7.jpg" alt="爱丽丝梦游仙境" /><div class="caption"><span class="year">2010</span><span class="movie">《爱丽丝梦游仙境》<br /><span class="sub-en">（Alice in Wonderland）</span></span><div class="desc">Depp饰疯帽子，红发烟熏癫狂下藏破碎之心，时而疯笑时而泪崩，天真忠诚如孩子，成仙境中最温暖盟友。</div></div></div>
+                        <div class="slider-item"><img src="course8.jpg" alt="神奇动物在哪里" /><div class="caption"><span class="year">2016</span><span class="movie">《神奇动物在哪里》<br /><span class="sub-en">（Fantastic Beasts and Where to Find Them）</span></span><div class="desc">Depp饰黑巫师格林德沃，苍白银发异色瞳优雅蛊惑，煽动演讲尽显反派魅力，虽戏份少却为续作埋下巨大悬念。</div></div></div>
                     </div>
                 </div>
-
-                <!-- 左右滑动键 -->
                 <button class="slider-btn prev" id="prevBtn" disabled>‹</button>
                 <button class="slider-btn next" id="nextBtn">›</button>
             </div>
         </section>
-
-        <!-- ===== 底部 ===== -->
         <div class="footer">
             © 2026 PRECIOUS MESS · DISPLAY of Depp &nbsp;|&nbsp; <a href="index.html">回到主站</a>
         </div>
-
     </div>
-    <!-- end container -->
-
-    <!-- ===== 右下角返回顶部按钮 ===== -->
     <button class="back-to-top" id="backToTop" aria-label="回到顶部">
         <svg viewBox="0 0 24 24" stroke="currentColor">
             <polyline points="18 15 12 9 6 15" />
         </svg>
     </button>
-
-    <!-- ===== JavaScript ===== -->
     <script>
-        // ===== 0. PRECIOUS MESS 点击刷新 =====
         document.getElementById('refreshLogo').addEventListener('click', function() {
             location.reload();
         });
-
-        // ===== 1. 音乐控制 =====
         (function() {
             const audio = document.getElementById('bgMusic');
             const btn = document.getElementById('musicBtn');
             let isPlaying = false;
-
             function tryAutoPlay() {
                 audio.play().then(() => {
                     isPlaying = true;
@@ -1027,11 +729,9 @@
                     btn.classList.remove('playing');
                 });
             }
-
             window.addEventListener('load', function() {
                 setTimeout(tryAutoPlay, 500);
             });
-
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (isPlaying) {
@@ -1051,7 +751,6 @@
                     });
                 }
             });
-
             audio.addEventListener('ended', function() {
                 if (!audio.loop) {
                     btn.textContent = '▶';
@@ -1060,15 +759,11 @@
                 }
             });
         })();
-
-        // ===== 2. 光标发光 =====
         const cursorGlow = document.getElementById('cursorGlow');
         document.addEventListener('mousemove', (e) => {
             cursorGlow.style.left = e.clientX + 'px';
             cursorGlow.style.top = e.clientY + 'px';
         });
-
-        // ===== 3. 粒子特效 =====
         function createParticle() {
             const particle = document.createElement('div');
             particle.classList.add('particle');
@@ -1096,57 +791,43 @@
             animate();
         }
         setInterval(createParticle, 150);
-
-        // ===== 4. 凌乱连线（Canvas） =====
         (function drawLines() {
             const canvas = document.getElementById('lineCanvas');
             const ctx = canvas.getContext('2d');
-
             function resizeCanvas() {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             }
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
-
             function getElementCenter(el) {
                 const rect = el.getBoundingClientRect();
-                return {
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + rect.height / 2
-                };
+                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
             }
-
             function drawRandomLines() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.strokeStyle = 'rgba(100, 180, 220, 0.25)';
                 ctx.lineWidth = 1.2;
-
                 const photos = document.querySelectorAll('.photo-item');
                 const notes = document.querySelectorAll('.note');
-
                 if (photos.length === 0 || notes.length === 0) return;
-
-                photos.forEach((photo, idx) => {
+                photos.forEach((photo) => {
                     const pCenter = getElementCenter(photo);
                     const numConnections = Math.floor(Math.random() * 2) + 1;
                     const shuffledNotes = Array.from(notes).sort(() => Math.random() - 0.5);
                     const targetNotes = shuffledNotes.slice(0, numConnections);
-
                     targetNotes.forEach(note => {
                         const nCenter = getElementCenter(note);
                         const cp1x = pCenter.x + (Math.random() - 0.5) * 200;
                         const cp1y = pCenter.y + (Math.random() - 0.5) * 200;
                         const cp2x = nCenter.x + (Math.random() - 0.5) * 200;
                         const cp2y = nCenter.y + (Math.random() - 0.5) * 200;
-
                         ctx.beginPath();
                         ctx.moveTo(pCenter.x, pCenter.y);
                         ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nCenter.x, nCenter.y);
                         ctx.stroke();
                     });
                 });
-
                 for (let i = 0; i < 8; i++) {
                     const startX = Math.random() * canvas.width;
                     const startY = Math.random() * canvas.height;
@@ -1156,14 +837,12 @@
                     const cp1y = startY + (Math.random() - 0.5) * 300;
                     const cp2x = endX + (Math.random() - 0.5) * 300;
                     const cp2y = endY + (Math.random() - 0.5) * 300;
-
                     ctx.beginPath();
                     ctx.moveTo(startX, startY);
                     ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
                     ctx.stroke();
                 }
             }
-
             setTimeout(drawRandomLines, 300);
             window.addEventListener('resize', () => {
                 setTimeout(drawRandomLines, 400);
@@ -1173,19 +852,12 @@
             });
             setInterval(drawRandomLines, 4000);
         })();
-
-        // ===== 5. 返回顶部按钮 =====
         (function() {
             const backBtn = document.getElementById('backToTop');
             backBtn.addEventListener('click', () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         })();
-
-        // ===== 6. COURSE 滑动功能（有尽头） =====
         (function() {
             const track = document.getElementById('sliderTrack');
             const prevBtn = document.getElementById('prevBtn');
@@ -1193,7 +865,6 @@
             const items = track.querySelectorAll('.slider-item');
             const itemCount = items.length;
             let currentIndex = 0;
-
             function getItemWidth() {
                 const firstItem = items[0];
                 const style = window.getComputedStyle(firstItem);
@@ -1201,41 +872,33 @@
                 const marginRight = parseFloat(style.marginRight) || 0;
                 return firstItem.offsetWidth + marginLeft + marginRight;
             }
-
             function updateSlider() {
                 const itemWidth = getItemWidth();
                 const gap = 30;
                 const offset = currentIndex * (itemWidth + gap);
                 track.style.transform = `translateX(-${offset}px)`;
-
                 prevBtn.disabled = currentIndex === 0;
                 nextBtn.disabled = currentIndex >= itemCount - 1;
             }
-
             nextBtn.addEventListener('click', function() {
                 if (currentIndex < itemCount - 1) {
                     currentIndex++;
                     updateSlider();
                 }
             });
-
             prevBtn.addEventListener('click', function() {
                 if (currentIndex > 0) {
                     currentIndex--;
                     updateSlider();
                 }
             });
-
             let resizeTimer;
             window.addEventListener('resize', function() {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(updateSlider, 100);
             });
-
             setTimeout(updateSlider, 300);
         })();
-
-        // ===== 7. 顶部 COURSE 链接平滑滚动 =====
         (function() {
             const courseLink = document.querySelector('a[href="#course"]');
             if (courseLink) {
