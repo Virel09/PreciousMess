@@ -57,13 +57,17 @@ export async function onRequest(context) {
       const id = Date.now().toString();
       const now = new Date();
       const pad = (n) => n.toString().padStart(2, '0');
-      const timeStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      
+      // 【核心修改】：改为 2026-08-02 / 18 : 20 格式
+      const dateStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+      const timeStr = `${pad(now.getHours())} : ${pad(now.getMinutes())}`;
+      const finalTime = `${dateStr} / ${timeStr}`;
 
       const entry = {
         id,
         name: name || '匿名',
         content: content,
-        time: timeStr
+        time: finalTime
       };
 
       await env.GUESTBOOK_KV.put(id, JSON.stringify(entry));
