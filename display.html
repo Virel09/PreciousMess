@@ -2,8 +2,8 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8" />
-    <!-- 关键修改1：添加 viewport 适配手机 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <!-- 改动：强制电脑显示，完全关闭手机自适应 -->
+    <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>DISPLAY of Depp</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet" />
     <style>
@@ -630,114 +630,6 @@
             z-index: 0;
             opacity: 0.5;
         }
-
-        /* ========================= */
-        /* 关键修改2：Depp页手机端自适应 */
-        /* ========================= */
-        @media screen and (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            .photo-wall {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                padding-right: 0;
-            }
-            .photo-item {
-                width: 160px;
-                aspect-ratio: 1 / 1;
-            }
-            .photo-item:nth-child(odd),
-            .photo-item:nth-child(even),
-            .photo-item:nth-child(3n),
-            .photo-item:nth-child(5n),
-            .photo-item:nth-child(7n) {
-                transform: none !important;
-            }
-            .photo-item:hover {
-                transform: scale(1.03) translateY(-4px) !important;
-            }
-            .note-wall {
-                padding-left: 0;
-                align-items: center;
-            }
-            .note {
-                max-width: 100%;
-                margin-right: 0;
-            }
-            .note:nth-child(odd),
-            .note:nth-child(even),
-            .note:nth-child(3n),
-            .note:nth-child(5n) {
-                transform: none !important;
-            }
-            .note:hover {
-                transform: translateY(-2px) !important;
-            }
-            .slider-item {
-                flex: 0 0 calc(100% / 2.2);
-                min-width: 200px;
-            }
-        }
-
-        @media screen and (max-width: 600px) {
-            .hero h1 {
-                font-size: 2.4rem;
-                letter-spacing: 6px;
-            }
-            .course-title {
-                font-size: 2rem;
-                letter-spacing: 10px;
-            }
-            .container {
-                padding: 20px 12px 40px;
-            }
-            .top-nav {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            .top-nav .nav-links {
-                width: 100%;
-                justify-content: flex-start;
-                gap: 14px;
-                font-size: 11px;
-            }
-            .music-btn {
-                top: 12px;
-                left: 12px;
-                width: 38px;
-                height: 38px;
-                font-size: 16px;
-            }
-            .photo-item {
-                width: 130px;
-            }
-            .slider-item {
-                flex: 0 0 70%;
-                min-width: 160px;
-            }
-            .slider-btn {
-                width: 42px;
-                height: 42px;
-                font-size: 24px;
-            }
-            .slider-btn.prev {
-                left: -8px;
-            }
-            .slider-btn.next {
-                right: -8px;
-            }
-            .note p {
-                font-size: 14px;
-                line-height: 1.8;
-            }
-            .note {
-                padding: 16px 18px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -753,7 +645,6 @@
             <div class="logo" id="refreshLogo">✦ <span>PRECIOUS</span> MESS</div>
             <div class="nav-links">
                 <a href="index.html">HOME</a>
-                <!-- 关键修改3：修复拼写错误，dispaly -> display -->
                 <a href="display.html" class="active">DISPLAY</a>
                 <a href="#course">COURSE</a>
             </div>
