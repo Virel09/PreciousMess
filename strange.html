@@ -204,7 +204,7 @@
         .info-fill { width: 55%; height: 100%; background: #b00; box-shadow: 0 0 6px rgba(180, 0, 0, 0.3); }
 
         /* ========================= */
-        /* 右侧直播间框 */
+        /* 右侧互动直播间框 */
         /* ========================= */
         .live-box {
             background: #181818;
@@ -223,6 +223,14 @@
             align-items: center;
             border-bottom: 1px solid #600;
             flex-shrink: 0;
+        }
+        /* Steamer 标识（只保留在顶部） */
+        .steamer-tag {
+            color: #ff4d4d;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 6px #900;
         }
         .live-tag {
             display: flex;
@@ -289,6 +297,7 @@
             font-weight: bold;
         }
 
+        /* 系统通告 */
         .system-announcement {
             background: #120404;
             border-bottom: 1px solid #600;
@@ -327,26 +336,57 @@
             0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .chat-msg span {
+        
+        /* 专属名字外框 */
+        .chat-msg span.name {
             color: #b00;
             font-weight: bold;
         }
+        .chat-msg span.name-steamer {
+            border: 1px solid #b00;
+            border-radius: 2px;
+            padding: 0 6px;
+            margin: 0 2px 0 0;
+            background: rgba(180, 0, 0, 0.08);
+        }
+        .chat-msg span.content-red {
+            color: #ff4d4d;
+        }
 
-        /* 弹幕输入区 */
+        /* ========================= */
+        /* 输入栏防重叠、防折断优化 */
+        /* ========================= */
         .live-input-area {
             background: #151515;
             padding: 14px 24px;
             border-top: 1px solid #2a2a2a;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
             flex-shrink: 0;
         }
         .live-input-row {
             display: flex;
+            flex-wrap: nowrap; /* 禁止换行，防止重叠 */
             gap: 10px;
+            align-items: center;
+            width: 100%;
         }
-        .live-input-row input {
+        /* 名字固定 80px 宽，去掉拖拽功能 */
+        #nameInput {
+            flex: 0 0 80px;
+            background: #0a0a0a;
+            border: 1px solid #262626;
+            padding: 8px 14px;
+            color: #d0d0d0;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            border-radius: 2px;
+            min-width: 50px;
+        }
+        #nameInput::placeholder { color: #3a3a3a; }
+
+        #messageInput {
+            flex: 1;
+            min-width: 50px; /* 防止过窄 */
             background: #0a0a0a;
             border: 1px solid #262626;
             padding: 8px 14px;
@@ -356,16 +396,10 @@
             outline: none;
             border-radius: 2px;
         }
-        .live-input-row input::placeholder { color: #3a3a3a; }
-        #nameInput {
-            flex: 0 0 60px;
-            font-size: 12px;
-            min-width: 50px;
-        }
-        #messageInput {
-            flex: 1;
-        }
+        #messageInput::placeholder { color: #3a3a3a; }
+        
         #sendBtn {
+            flex: 0 0 auto;
             background: transparent;
             border: 1px solid #b00;
             color: #b00;
@@ -375,6 +409,7 @@
             font-size: 13px;
             cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap; /* 按钮文字强制不换行 */
         }
         #sendBtn:hover {
             background: #b00;
@@ -444,8 +479,11 @@
                 <div class="live-box">
                     <!-- 头部 -->
                     <div class="live-header">
-                        <span class="live-tag">LIVE</span>
-                        <span class="live-title">RED ROOM</span>
+                        <div class="steamer-tag">Steamer: Virel09</div>
+                        <div style="display:flex;align-items:center;gap:16px;">
+                            <span class="live-tag">LIVE</span>
+                            <span class="live-title">RED ROOM</span>
+                        </div>
                     </div>
 
                     <!-- 互动按钮栏 -->
@@ -465,10 +503,10 @@
                     <!-- 聊天区 -->
                     <div class="live-chat" id="liveChat"></div>
 
-                    <!-- 输入区 -->
+                    <!-- 输入区（名字固定80px，防重叠防折断） -->
                     <div class="live-input-area">
                         <div class="live-input-row">
-                            <input type="text" id="nameInput" placeholder="名字" value="访客" />
+                            <input type="text" id="nameInput" placeholder="名字" />
                             <input type="text" id="messageInput" placeholder="输入弹幕..." />
                             <button id="sendBtn">发送</button>
                         </div>
@@ -518,16 +556,19 @@
                 const data = await res.json();
                 
                 if (data.success) {
-                    // 更新点赞数
                     likeDisplay.textContent = data.likes || 0;
-                    
-                    // 清空聊天区并渲染云端弹幕
                     chatContainer.innerHTML = '';
                     if (data.chats && data.chats.length > 0) {
                         data.chats.forEach(msg => {
                             const el = document.createElement('div');
                             el.className = 'chat-msg';
-                            el.innerHTML = `<span>${escapeHtml(msg.name)}</span>：${escapeHtml(msg.content)}`;
+                            
+                            // 检查是否为 Steamer (Virel09)
+                            const isSteamer = msg.name === 'Virel09';
+                            const contentClass = isSteamer ? 'content-red' : '';
+                            const nameClass = isSteamer ? 'name name-steamer' : 'name';
+                            
+                            el.innerHTML = `<span class="${nameClass}">${escapeHtml(msg.name)}</span>：<span class="${contentClass}">${escapeHtml(msg.content)}</span>`;
                             chatContainer.appendChild(el);
                         });
                         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -538,10 +579,9 @@
             }
         }
 
-        // 页面加载后拉取一次
         loadRedRoomData();
 
-        // 2. 点赞逻辑（写入云端）
+        // 2. 点赞逻辑
         likeBtn.addEventListener('click', async function() {
             try {
                 const res = await fetch(API_REDROOM, {
@@ -566,7 +606,7 @@
             alert('🎁 感谢你的打赏！在这里，一切心意都会被记住。');
         });
 
-        // 4. 在线人数随机浮动（模拟直播效果）
+        // 4. 在线人数
         setInterval(() => {
             onlineNum += Math.floor(Math.random() * 6) - 3;
             if (onlineNum < 80) onlineNum = 80;
@@ -605,7 +645,6 @@
                 });
 
                 if (res.ok) {
-                    // 发送成功后，重新拉取所有数据刷新列表
                     msgInput.value = '';
                     await loadRedRoomData();
                 } else {
