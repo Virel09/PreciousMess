@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>RED ROOM — PRECIOUS MESS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+        body {
+            background-color: #101010;
+            color: #c9c9c9;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 6px solid #3d0a0a;
+            box-shadow: 
+                inset 0 0 40px rgba(180, 0, 0, 0.35),
+                0 0 30px rgba(180, 0, 0, 0.15);
+            padding: 10px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            color: #3a3a3a;
+            text-decoration: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            z-index: 20;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #b00;
+        }
+
+        .music-btn {
+            position: fixed;
+            top: 78px;
+            left: 24px;
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            outline: none;
+            user-select: none;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
+        }
+        .music-btn:active { transform: scale(0.92); }
+        .music-btn.playing {
+            box-shadow: 0 0 20px rgba(180, 0, 0, 0.25), 0 0 40px rgba(180, 0, 0, 0.08);
+            border-color: rgba(180, 0, 0, 0.25);
+        }
+
+        .page-container {
+            position: relative;
+            z-index: 2;
+            width: 92%;
+            max-width: 1200px;
+            padding: 100px 20px 40px;
+        }
+
+        .title-row {
+            text-align: center;
+            margin-bottom: 80px; 
+        }
+        .main-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 4.5rem;
+            letter-spacing: 10px;
+            color: #e0e0e0;
+            text-shadow: 0 0 10px rgba(180, 0, 0, 0.2);
+            line-height: 1;
+        }
+        .divider {
+            width: 55%;
+            height: 1px;
+            margin: 20px auto 0;
+            border: none;
+            background: linear-gradient(90deg, transparent, rgba(150, 20, 20, 0.4), transparent);
+            opacity: 0.7;
+        }
+        .watching-text {
+            font-size: 14px;
+            color: #5a5a5a;
+            text-align: center;
+            letter-spacing: 4px;
+            margin-top: 16px;
+            font-style: italic;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .layout-row {
+            display: flex;
+            gap: 60px; 
+            align-items: flex-start; 
+        }
+
+        .left-col {
+            flex: 2; 
+            min-width: 0;
+        }
+
+        .right-col {
+            flex: 1; 
+            min-width: 320px; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 左侧播放器 */
+        .player-container {
+            background: #181818;
+            border: 1px solid #262626;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 950px;
+        }
+        .player-head {
+            background: #202020;
+            color: #fff;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .player-head .player-title {
+            color: #b00;
+            font-weight: bold;
+            text-shadow: 0 0 6px rgba(180, 0, 0, 0.3);
+        }
+        .player-lights {
+            display: flex;
+            gap: 8px;
+            margin-right: 10px;
+        }
+        .led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2a2a2a;
+            box-shadow: inset 0 0 4px #000;
+        }
+        .led.red { background: #900; box-shadow: 0 0 6px #900; }
+        .led.orange { background: #660; box-shadow: 0 0 6px #660; }
+
+        .player-content {
+            background: #0a0a0a;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .player-bottom {
+            background: #151515;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 30px;
+            color: #aaa;
+            border-top: 1px solid #2a2a2a;
+            flex-shrink: 0;
+        }
+        .player-bottom .controls { display: flex; gap: 16px; font-size: 20px; }
+        .player-bottom .controls span { cursor: default; transition: 0.2s; }
+        .player-bottom .controls span:hover { color: #b00; }
+        .player-bottom .info {
+            display: flex; align-items: center; gap: 12px; font-size: 13px; color: #666;
+        }
+        .info-bar { width: 120px; height: 4px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
+        .info-fill { width: 55%; height: 100%; background: #b00; box-shadow: 0 0 6px rgba(180, 0, 0, 0.3); }
+
+        /* ========================= */
+        /* 右侧直播间框 */
+        /* ========================= */
+        .live-box {
+            background: #181818;
+            border: 1px solid #262626;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 950px; 
+        }
+        .live-header {
+            background: #1a0a0a;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #600;
+            flex-shrink: 0;
+        }
+        .live-tag {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #ff4d4d;
+            font-weight: bold;
+            text-shadow: 0 0 8px #900;
+        }
+        .live-tag::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff2222;
+            box-shadow: 0 0 12px #ff2222;
+            animation: breathe 1.2s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .live-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-size: 18px;
+            color: #b0b0b0;
+        }
+
+        /* 互动操作栏 */
+        .live-interact-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: #101010;
+            border-bottom: 1px solid #262626;
+            flex-shrink: 0;
+        }
+        .interact-btn {
+            background: transparent;
+            border: 1px solid #262626;
+            color: #7a7a7a;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Space Mono', monospace;
+            transition: all 0.2s ease;
+        }
+        .interact-btn:hover {
+            border-color: #b00;
+            color: #b00;
+            background: rgba(180, 0, 0, 0.05);
+        }
+        .online-count {
+            font-size: 13px;
+            color: #5a5a5a;
+        }
+        .online-count span {
+            color: #b00;
+            font-weight: bold;
+        }
+
+        .system-announcement {
+            background: #120404;
+            border-bottom: 1px solid #600;
+            padding: 10px 24px;
+            color: #ff4d4d;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 0 0 6px rgba(180, 0, 0, 0.3);
+            flex-shrink: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .live-chat {
+            flex: 1;
+            padding: 20px 24px;
+            background: #0a0a0a;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 300px;
+        }
+        .live-chat::-webkit-scrollbar { width: 4px; }
+        .live-chat::-webkit-scrollbar-track { background: transparent; }
+        .live-chat::-webkit-scrollbar-thumb { background: rgba(180, 0, 0, 0.3); border-radius: 2px; }
+
+        .chat-msg {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #888;
+            animation: fadeUp 0.3s ease-out;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg span {
+            color: #b00;
+            font-weight: bold;
+        }
+
+        /* 弹幕输入区 */
+        .live-input-area {
+            background: #151515;
+            padding: 14px 24px;
+            border-top: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .live-input-row {
+            display: flex;
+            gap: 10px;
+        }
+        .live-input-row input {
+            background: #0a0a0a;
+            border: 1px solid #262626;
+            padding: 8px 14px;
+            color: #d0d0d0;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            border-radius: 2px;
+        }
+        .live-input-row input::placeholder { color: #3a3a3a; }
+        #nameInput {
+            flex: 0 0 60px;
+            font-size: 12px;
+            min-width: 50px;
+        }
+        #messageInput {
+            flex: 1;
+        }
+        #sendBtn {
+            background: transparent;
+            border: 1px solid #b00;
+            color: #b00;
+            padding: 8px 16px;
+            border-radius: 2px;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #sendBtn:hover {
+            background: #b00;
+            color: #fff;
+        }
+
+        @media screen and (max-width: 900px) {
+            .layout-row { flex-direction: column; align-items: stretch; }
+            .right-col { flex: 0 0 auto; width: 100%; }
+            .player-container { height: auto; min-height: 500px; }
+            .live-box { height: auto; min-height: 600px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← BACK</a>
+
+    <button class="music-btn" id="musicBtn" aria-label="播放/暂停音乐">▶</button>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="Be Alive.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="page-container">
+        <div class="title-row">
+            <h1 class="main-title">RED ROOM</h1>
+            <div class="divider"></div>
+            <p class="watching-text">I'm watching you , don't run</p>
+        </div>
+
+        <div class="layout-row">
+            <!-- 左侧播放器 -->
+            <div class="left-col">
+                <div class="player-container">
+                    <div class="player-head">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="player-lights">
+                                <span class="led red"></span>
+                                <span class="led orange"></span>
+                            </div>
+                            <span class="player-title">RED ROOM</span>
+                        </div>
+                        <div class="player-menu"></div>
+                    </div>
+                    <div class="player-content">
+                        <!-- 预留空间 -->
+                    </div>
+                    <div class="player-bottom">
+                        <div class="controls">
+                            <span>◀◀</span>
+                            <span>▶</span>
+                            <span>▶▶</span>
+                        </div>
+                        <div class="info">
+                            <span>TRACK 00</span>
+                            <div class="info-bar">
+                                <div class="info-fill"></div>
+                            </div>
+                            <span>00:00 / 00:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧直播间弹幕区 -->
+            <div class="right-col">
+                <div class="live-box">
+                    <!-- 头部 -->
+                    <div class="live-header">
+                        <span class="live-tag">LIVE</span>
+                        <span class="live-title">RED ROOM</span>
+                    </div>
+
+                    <!-- 互动按钮栏 -->
+                    <div class="live-interact-bar">
+                        <div class="online-count">👁 在线 <span id="onlineCount">128</span></div>
+                        <div>
+                            <button class="interact-btn" id="likeBtn">❤️ <span id="likeCount">0</span></button>
+                            <button class="interact-btn" id="donateBtn">🎁 打赏</button>
+                        </div>
+                    </div>
+
+                    <!-- 系统通告 -->
+                    <div class="system-announcement">
+                        ⚠️ 不要试图截屏/录屏，实时监控中，我将会找到你，否则后果自负
+                    </div>
+
+                    <!-- 聊天区 -->
+                    <div class="live-chat" id="liveChat"></div>
+
+                    <!-- 输入区 -->
+                    <div class="live-input-area">
+                        <div class="live-input-row">
+                            <input type="text" id="nameInput" placeholder="名字" value="访客" />
+                            <input type="text" id="messageInput" placeholder="输入弹幕..." />
+                            <button id="sendBtn">发送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            let isPlaying = false;
+
+            function upd() { btn.textContent = isPlaying ? '⏸' : '▶'; btn.classList.toggle('playing', isPlaying); }
+            function play() { audio.play().then(() => { isPlaying = true; upd(); }).catch(() => { isPlaying = false; upd(); }); }
+            function pause() { audio.pause(); isPlaying = false; upd(); }
+
+            window.addEventListener('load', () => setTimeout(play, 600));
+            document.addEventListener('click', () => { if (!isPlaying) play(); }, { once: true });
+            btn.addEventListener('click', (e) => { e.stopPropagation(); isPlaying ? pause() : play(); });
+            audio.addEventListener('play', () => { isPlaying = true; upd(); });
+            audio.addEventListener('pause', () => { isPlaying = false; upd(); });
+        })();
+
+        // =========================
+        // 云端互动逻辑 (数据存在 CF KV 里)
+        // =========================
+        const API_REDROOM = 'https://preciousmess.top/api/redroom'; 
+
+        const chatContainer = document.getElementById('liveChat');
+        const nameInput = document.getElementById('nameInput');
+        const msgInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const likeBtn = document.getElementById('likeBtn');
+        const likeDisplay = document.getElementById('likeCount');
+        const onlineDisplay = document.getElementById('onlineCount');
+
+        let onlineNum = 128;
+
+        // 1. 获取云端数据
+        async function loadRedRoomData() {
+            try {
+                const res = await fetch(API_REDROOM, { mode: 'cors' });
+                if (!res.ok) throw new Error('加载失败');
+                const data = await res.json();
+                
+                if (data.success) {
+                    // 更新点赞数
+                    likeDisplay.textContent = data.likes || 0;
+                    
+                    // 清空聊天区并渲染云端弹幕
+                    chatContainer.innerHTML = '';
+                    if (data.chats && data.chats.length > 0) {
+                        data.chats.forEach(msg => {
+                            const el = document.createElement('div');
+                            el.className = 'chat-msg';
+                            el.innerHTML = `<span>${escapeHtml(msg.name)}</span>：${escapeHtml(msg.content)}`;
+                            chatContainer.appendChild(el);
+                        });
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }
+                }
+            } catch (e) {
+                console.error('RED ROOM 数据加载失败:', e);
+            }
+        }
+
+        // 页面加载后拉取一次
+        loadRedRoomData();
+
+        // 2. 点赞逻辑（写入云端）
+        likeBtn.addEventListener('click', async function() {
+            try {
+                const res = await fetch(API_REDROOM, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'like' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    likeDisplay.textContent = data.likes;
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => { this.style.transform = 'scale(1)'; }, 150);
+                }
+            } catch (e) {
+                console.error('点赞失败', e);
+            }
+        });
+
+        // 3. 打赏逻辑
+        document.getElementById('donateBtn').addEventListener('click', function() {
+            alert('🎁 感谢你的打赏！在这里，一切心意都会被记住。');
+        });
+
+        // 4. 在线人数随机浮动（模拟直播效果）
+        setInterval(() => {
+            onlineNum += Math.floor(Math.random() * 6) - 3;
+            if (onlineNum < 80) onlineNum = 80;
+            if (onlineNum > 200) onlineNum = 200;
+            onlineDisplay.textContent = onlineNum;
+        }, 5000);
+
+        // =========================
+        // 5. 云端弹幕发送
+        // =========================
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        async function sendMessage() {
+            const name = nameInput.value.trim() || '匿名';
+            const msg = msgInput.value.trim();
+            
+            if (!msg) {
+                alert('弹幕内容不能为空！');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_REDROOM, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'chat', 
+                        name: name, 
+                        content: msg 
+                    })
+                });
+
+                if (res.ok) {
+                    // 发送成功后，重新拉取所有数据刷新列表
+                    msgInput.value = '';
+                    await loadRedRoomData();
+                } else {
+                    alert('发送失败，请稍后重试');
+                }
+            } catch (e) {
+                console.error('弹幕发送错误', e);
+                alert('网络错误，请检查网络');
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        msgInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
