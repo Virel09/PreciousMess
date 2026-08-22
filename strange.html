@@ -203,9 +203,7 @@
         .info-bar { width: 120px; height: 4px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
         .info-fill { width: 55%; height: 100%; background: #b00; box-shadow: 0 0 6px rgba(180, 0, 0, 0.3); }
 
-        /* ========================= */
         /* 右侧互动直播间框 */
-        /* ========================= */
         .live-box {
             background: #181818;
             border: 1px solid #262626;
@@ -224,7 +222,6 @@
             border-bottom: 1px solid #600;
             flex-shrink: 0;
         }
-        /* Steamer 标识（只保留在顶部） */
         .steamer-tag {
             color: #ff4d4d;
             font-weight: bold;
@@ -262,7 +259,6 @@
             color: #b0b0b0;
         }
 
-        /* 互动操作栏 */
         .live-interact-bar {
             display: flex;
             align-items: center;
@@ -297,7 +293,6 @@
             font-weight: bold;
         }
 
-        /* 系统通告 */
         .system-announcement {
             background: #120404;
             border-bottom: 1px solid #600;
@@ -336,8 +331,6 @@
             0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        
-        /* 专属名字外框 */
         .chat-msg span.name {
             color: #b00;
             font-weight: bold;
@@ -353,9 +346,6 @@
             color: #ff4d4d;
         }
 
-        /* ========================= */
-        /* 输入栏防重叠、防折断优化 */
-        /* ========================= */
         .live-input-area {
             background: #151515;
             padding: 14px 24px;
@@ -364,12 +354,11 @@
         }
         .live-input-row {
             display: flex;
-            flex-wrap: nowrap; /* 禁止换行，防止重叠 */
+            flex-wrap: nowrap;
             gap: 10px;
             align-items: center;
             width: 100%;
         }
-        /* 名字固定 80px 宽，去掉拖拽功能 */
         #nameInput {
             flex: 0 0 80px;
             background: #0a0a0a;
@@ -383,10 +372,9 @@
             min-width: 50px;
         }
         #nameInput::placeholder { color: #3a3a3a; }
-
         #messageInput {
             flex: 1;
-            min-width: 50px; /* 防止过窄 */
+            min-width: 50px;
             background: #0a0a0a;
             border: 1px solid #262626;
             padding: 8px 14px;
@@ -397,7 +385,6 @@
             border-radius: 2px;
         }
         #messageInput::placeholder { color: #3a3a3a; }
-        
         #sendBtn {
             flex: 0 0 auto;
             background: transparent;
@@ -409,11 +396,138 @@
             font-size: 13px;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap; /* 按钮文字强制不换行 */
+            white-space: nowrap;
         }
         #sendBtn:hover {
             background: #b00;
             color: #fff;
+        }
+
+        /* ========================= */
+        /* More Content 区域 */
+        /* ========================= */
+        
+        /* surprise链接（横排两列，加大尺寸，框宽） */
+        .surprise-grid {
+            display: flex;
+            flex-wrap: wrap; /* 允许换行成两排 */
+            gap: 40px 30px; /* 行间距40px（变大），列间距30px */
+            justify-content: flex-start; /* 靠左排列 */
+            align-items: center;
+            padding-right: 40px;
+        }
+        
+        .surprise-link {
+            display: block;
+            background: transparent;
+            border: 1px solid rgba(180, 0, 0, 0.2); /* 淡边框增加存在感 */
+            padding: 18px 50px; /* 框变宽 */
+            text-align: left;
+            font-family: 'Space Mono', monospace;
+            font-size: 20px; /* 字体大幅加大 */
+            letter-spacing: 0;
+            color: #b00;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .surprise-link:hover {
+            color: #fff;
+            border-color: #b00;
+            background: rgba(180, 0, 0, 0.1);
+        }
+
+        .more-content-section {
+            margin-top: 120px;
+            padding-top: 50px;
+            border-top: 1px solid #880000;
+        }
+        .more-title {
+            text-align: center;
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 3.2rem;
+            letter-spacing: 12px;
+            color: #e0e0e0;
+            text-shadow: 0 0 10px rgba(180, 0, 0, 0.2);
+            margin-bottom: 90px; /* 增大下边距，让链接区域整体下移 */
+        }
+        
+        .more-grid {
+            display: flex;
+            justify-content: center; /* 区域居中 */
+            gap: 0;
+            align-items: flex-start;
+            padding: 0 20px;
+        }
+        
+        /* 左区域：横排两列后的横向空间更大 */
+        .more-col-left {
+            flex: 0 0 520px; /* 加宽以容纳两列 */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-top: 30px; /* surprise靠下点 */
+            padding-right: 60px;
+            border-right: 1px solid #880000;
+        }
+        
+        /* 右侧上下区域 */
+        .more-col-right {
+            flex: 0 0 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+            padding-top: 6px;
+            padding-left: 60px;
+        }
+
+        /* 右上：汉堡菜单链接（左对齐） */
+        .menu-list-top {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 0;
+            margin: 0;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #880000;
+            width: 100%;
+        }
+        .menu-list-top li a {
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: #7a7a7a;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .menu-list-top li a:hover {
+            color: #b00;
+            text-decoration: underline;
+        }
+        .menu-list-top li a.disabled {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* 右下：Video / live 链接（左对齐） */
+        .video-live-btn {
+            font-family: 'Space Mono', monospace;
+            font-size: 22px;
+            letter-spacing: 2px;
+            color: #7a7a7a;
+            text-decoration: none;
+            align-self: flex-start;
+            padding-top: 40px;
+            transition: color 0.2s ease;
+        }
+        .video-live-btn:hover {
+            color: #b00;
+            text-decoration: underline;
         }
 
         @media screen and (max-width: 900px) {
@@ -421,6 +535,17 @@
             .right-col { flex: 0 0 auto; width: 100%; }
             .player-container { height: auto; min-height: 500px; }
             .live-box { height: auto; min-height: 600px; }
+            
+            .more-grid { flex-direction: column; align-items: center; gap: 0; }
+            .more-col-left { 
+                flex: 0 0 auto; width: 100%; max-width: 540px; 
+                padding-right: 0; border-right: none; 
+                border-bottom: 1px solid #880000; 
+                padding-bottom: 30px; margin-bottom: 40px; 
+            }
+            .more-col-right { 
+                flex: 0 0 auto; width: 100%; max-width: 400px; padding-left: 0; 
+            }
         }
     </style>
 </head>
@@ -441,7 +566,6 @@
         </div>
 
         <div class="layout-row">
-            <!-- 左侧播放器 -->
             <div class="left-col">
                 <div class="player-container">
                     <div class="player-head">
@@ -474,10 +598,8 @@
                 </div>
             </div>
 
-            <!-- 右侧直播间弹幕区 -->
             <div class="right-col">
                 <div class="live-box">
-                    <!-- 头部 -->
                     <div class="live-header">
                         <div class="steamer-tag">Steamer: Virel09</div>
                         <div style="display:flex;align-items:center;gap:16px;">
@@ -486,7 +608,6 @@
                         </div>
                     </div>
 
-                    <!-- 互动按钮栏 -->
                     <div class="live-interact-bar">
                         <div class="online-count">👁 在线 <span id="onlineCount">128</span></div>
                         <div>
@@ -495,15 +616,12 @@
                         </div>
                     </div>
 
-                    <!-- 系统通告 -->
                     <div class="system-announcement">
                         ⚠️ 不要试图截屏/录屏，实时监控中，我将会找到你，否则后果自负
                     </div>
 
-                    <!-- 聊天区 -->
                     <div class="live-chat" id="liveChat"></div>
 
-                    <!-- 输入区（名字固定80px，防重叠防折断） -->
                     <div class="live-input-area">
                         <div class="live-input-row">
                             <input type="text" id="nameInput" placeholder="名字" />
@@ -514,6 +632,42 @@
                 </div>
             </div>
         </div>
+
+        <!-- More Content 区域 -->
+        <section class="more-content-section">
+            <h2 class="more-title">More Content</h2>
+            <div class="more-grid">
+                <!-- 左侧：surprise 横排两列，间隔加大，框变宽 -->
+                <div class="more-col-left">
+                    <div class="surprise-grid">
+                        <a href="https://um6bit.kikirara.jp" target="_blank" class="surprise-link">surprise</a>
+                        <a href="https://www.thisman.org" target="_blank" class="surprise-link">surprise</a>
+                        <a href="https://lomando.fandom.com/wiki/Lomando_Wiki" target="_blank" class="surprise-link">surprise</a>
+                        <a href="http://batheinmymilk.com/" target="_blank" class="surprise-link">surprise</a>
+                        <a href="https://blackangeltapes.net/" target="_blank" class="surprise-link">surprise</a>
+                        <a href="http://www.universe-people.com/english/default_en.htm" target="_blank" class="surprise-link">surprise</a>
+                        <a href="https://postvitam.technology/?x=9&y=4&direction=North" target="_blank" class="surprise-link">surprise</a>
+                        <a href="https://websitesfromhell.net/view/yyyyyyy.info-1069/" target="_blank" class="surprise-link">surprise</a>
+                        <a href="https://sans-simulator.github.io/c2-sans-fight/" target="_blank" class="surprise-link">surprise</a>
+                    </div>
+                </div>
+                
+                <!-- 右侧（分上下） -->
+                <div class="more-col-right">
+                    <!-- 右上：完整的导航菜单（去掉了占位符） -->
+                    <ul class="menu-list-top">
+                        <li><a href="https://message.preciousmess.top" target="_blank">留言板</a></li>
+                        <li><a href="display.html">DISPLAY-Depp</a></li>
+                        <li><a href="strange.html">RED ROOM</a></li>
+                        <li><a href="https://www.baolywang666.com/6chan/" target="_blank">6chan-baolywang</a></li>
+                        <li><a href="https://www.baolywang666.com/more-and-more/" target="_blank">Feelings is so Fancy</a></li>
+                    </ul>
+                    <!-- 右下：Video / live 指向了 video.html -->
+                    <a href="video.html" class="video-live-btn">Video / live</a>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <script>
@@ -533,9 +687,6 @@
             audio.addEventListener('pause', () => { isPlaying = false; upd(); });
         })();
 
-        // =========================
-        // 云端互动逻辑 (数据存在 CF KV 里)
-        // =========================
         const API_REDROOM = 'https://preciousmess.top/api/redroom'; 
 
         const chatContainer = document.getElementById('liveChat');
@@ -548,7 +699,6 @@
 
         let onlineNum = 128;
 
-        // 1. 获取云端数据
         async function loadRedRoomData() {
             try {
                 const res = await fetch(API_REDROOM, { mode: 'cors' });
@@ -562,12 +712,9 @@
                         data.chats.forEach(msg => {
                             const el = document.createElement('div');
                             el.className = 'chat-msg';
-                            
-                            // 检查是否为 Steamer (Virel09)
                             const isSteamer = msg.name === 'Virel09';
                             const contentClass = isSteamer ? 'content-red' : '';
                             const nameClass = isSteamer ? 'name name-steamer' : 'name';
-                            
                             el.innerHTML = `<span class="${nameClass}">${escapeHtml(msg.name)}</span>：<span class="${contentClass}">${escapeHtml(msg.content)}</span>`;
                             chatContainer.appendChild(el);
                         });
@@ -581,7 +728,6 @@
 
         loadRedRoomData();
 
-        // 2. 点赞逻辑
         likeBtn.addEventListener('click', async function() {
             try {
                 const res = await fetch(API_REDROOM, {
@@ -601,12 +747,10 @@
             }
         });
 
-        // 3. 打赏逻辑
         document.getElementById('donateBtn').addEventListener('click', function() {
             alert('🎁 感谢你的打赏！在这里，一切心意都会被记住。');
         });
 
-        // 4. 在线人数
         setInterval(() => {
             onlineNum += Math.floor(Math.random() * 6) - 3;
             if (onlineNum < 80) onlineNum = 80;
@@ -614,9 +758,6 @@
             onlineDisplay.textContent = onlineNum;
         }, 5000);
 
-        // =========================
-        // 5. 云端弹幕发送
-        // =========================
         function escapeHtml(text) {
             if (!text) return '';
             const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
@@ -626,24 +767,17 @@
         async function sendMessage() {
             const name = nameInput.value.trim() || '匿名';
             const msg = msgInput.value.trim();
-            
             if (!msg) {
                 alert('弹幕内容不能为空！');
                 return;
             }
-
             try {
                 const res = await fetch(API_REDROOM, {
                     method: 'POST',
                     mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        action: 'chat', 
-                        name: name, 
-                        content: msg 
-                    })
+                    body: JSON.stringify({ action: 'chat', name: name, content: msg })
                 });
-
                 if (res.ok) {
                     msgInput.value = '';
                     await loadRedRoomData();
