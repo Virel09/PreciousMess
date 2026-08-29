@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>SHARE — PRECIOUS MESS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+        body {
+            background-color: #1a1a1a;
+            color: #d0d0d0;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            color: #777;
+            text-decoration: none;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            z-index: 20;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #aaa;
+        }
+
+        .page-container {
+            width: 90%;
+            max-width: 1100px;
+            padding: 80px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .main-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 4.5rem;
+            letter-spacing: 10px;
+            color: #e0e0e0;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        .subtitle {
+            color: #888;
+            text-align: center;
+            font-size: 22px;
+            letter-spacing: 2px;
+            margin-bottom: 80px;
+            font-style: italic;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .thanks-box {
+            width: 100%;
+            max-width: 900px;
+            background: #242424;
+            border: 1px solid #454545;
+            border-radius: 6px;
+            padding: 40px;
+            margin-bottom: 120px;
+            text-align: center;
+            line-height: 2;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .thanks-box p {
+            margin-bottom: 16px;
+            font-size: 20px;
+            color: #b0b0b0;
+        }
+
+        .thanks-box a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .thanks-box a:hover {
+            color: #ddd;
+        }
+
+        .category-section {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 80px;
+            border-top: 1px solid #333;
+            padding-top: 40px;
+            text-align: center; /* 关键：让 inline-block 的标题居中 */
+        }
+
+        /* Surprise 分类标题发红光 */
+        .category-title.surprise-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ff6666;
+            text-shadow: 0 0 10px rgba(255, 50, 50, 0.8), 0 0 25px rgba(255, 50, 50, 0.5), 0 0 40px rgba(255, 50, 50, 0.3);
+            animation: redPulse 2s infinite alternate;
+        }
+
+        @keyframes redPulse {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 50, 50, 0.6), 0 0 20px rgba(255, 50, 50, 0.3);
+                opacity: 0.85;
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(255, 50, 50, 1), 0 0 30px rgba(255, 50, 50, 0.6), 0 0 60px rgba(255, 50, 50, 0.3);
+                opacity: 1;
+            }
+        }
+
+        /* 其他分类标题 */
+        .category-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
+            color: #bbb;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* ??? 分类：基础样式 + 极速方块闪烁 */
+        .category-title.glitch-title {
+            font-family: "Cormorant Garamond", serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            color: #d0d0d0;
+            position: relative;
+            display: inline-block; /* 保持方块只包围周围 */
+            animation: titleFlicker 2s infinite;
+        }
+
+        /* 标题本身随机闪烁 */
+        @keyframes titleFlicker {
+            0% { opacity: 0.7; transform: translate(0, 0); }
+            5% { opacity: 1; transform: translate(2px, -2px); }
+            10% { opacity: 0.5; transform: translate(-2px, 1px); }
+            15% { opacity: 1; transform: translate(0, 0); }
+            50% { opacity: 0.8; }
+            51% { opacity: 1; transform: translate(-1px, 2px); }
+            52% { opacity: 0.9; transform: translate(1px, -2px); }
+            60% { opacity: 1; transform: translate(0, 0); }
+            100% { opacity: 0.9; }
+        }
+
+        /* 方块遮罩层（只包裹标题周围） */
+        .glitch-block-overlay {
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            right: -20px;
+            bottom: -10px;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        /* 核心：极速闪烁的无符号发光方块 */
+        .glitch-block {
+            position: absolute;
+            opacity: 0;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.5);
+        }
+
+        /* 随机颜色极速闪烁 */
+        .glitch-block-white {
+            background: #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.4);
+        }
+
+        .glitch-block-red {
+            background: #ff3b3b;
+            box-shadow: 0 0 20px rgba(255,59,59,0.8), 0 0 40px rgba(255,59,59,0.4);
+        }
+
+        .glitch-block-green {
+            background: #00ff41;
+            box-shadow: 0 0 20px rgba(0,255,65,0.8), 0 0 40px rgba(0,255,65,0.4);
+        }
+
+        .glitch-block-black {
+            background: #000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.4);
+        }
+
+        .link-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .link-item {
+            background: #252525;
+            border: 1px solid #333;
+            padding: 15px 30px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 16px;
+            color: #aaa;
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .link-item:hover {
+            border-color: #fff;
+            color: #fff;
+            background: #2e2e2e;
+            transform: translateY(-2px);
+        }
+
+        .placeholder-hint {
+            color: #555;
+            font-size: 14px;
+            font-style: italic;
+            padding: 10px 0;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .footer-message {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            color: #777;
+            font-size: 20px;
+            margin-top: 120px;
+            line-height: 1.8;
+            border-top: 1px solid #333;
+            padding-top: 40px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .footer-message a {
+            color: #ccc;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+            font-family: inherit;
+        }
+
+        .footer-message a:hover {
+            color: #fff;
+        }
+
+        .site-footer {
+            margin-top: 60px;
+            padding: 30px 20px;
+            width: 100%;
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            letter-spacing: 2px;
+            border-top: 1px solid #2a2a2a;
+            font-family: 'Space Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← BACK</a>
+
+    <div class="page-container">
+        <h1 class="main-title">SHARE</h1>
+        <p class="subtitle">无法打开的链接请使用VPN后尝试</p>
+
+        <div class="thanks-box">
+            <p>特别感谢暴力王老师，这位是我很崇拜的创作者。<br />
+            我非常喜欢她的画和网站，并且我制作网站也向<a href="https://www.baolywang666.com/" target="_blank">such a prico</a>吸取了很多灵感，我对这个网站的喜爱也是我也想制作自己网站的原因。<br />
+            大家请多多支持。</p>
+        </div>
+
+        <section class="category-section">
+            <h2 class="category-title surprise-title">Surprise</h2>
+            <div class="link-grid">
+                <a href="https://um6bit.kikirara.jp" target="_blank" class="link-item">kikirara</a>
+                <a href="https://www.thisman.org" target="_blank" class="link-item">thisman</a>
+                <a href="https://lomando.fandom.com/wiki/Lomando_Wiki" target="_blank" class="link-item">lomando</a>
+                <a href="http://batheinmymilk.com/" target="_blank" class="link-item">batheinmymilk</a>
+                <a href="https://blackangeltapes.net/" target="_blank" class="link-item">blackangeltapes</a>
+                <a href="http://www.universe-people.com/english/default_en.htm" target="_blank" class="link-item">universe-people</a>
+                <a href="https://postvitam.technology/?x=9&y=4&direction=North" target="_blank" class="link-item">postvitam</a>
+                <a href="https://websitesfromhell.net/view/yyyyyyy.info-1069/" target="_blank" class="link-item">websitesfromhell</a>
+                <a href="https://sans-simulator.github.io/c2-sans-fight/" target="_blank" class="link-item">sans-simulator</a>
+                <a href="http://www.acolumbinesite.com/" target="_blank" class="link-item">acolumbinesite</a>
+                <a href="https://creativesociety.com/zh" target="_blank" class="link-item">creativesociety</a>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <h2 class="category-title">资源分享</h2>
+            <div class="link-grid">
+                <a href="https://archiveofourown.org/" target="_blank" class="link-item">ao3</a>
+                <a href="https://www.feiwenge.com/" target="_blank" class="link-item">废文网</a>
+                <a href="https://www.hifast.cn" target="_blank" class="link-item">快导航网</a>
+                <a href="https://mtslash.me" target="_blank" class="link-item">随缘居</a>
+                <a href="https://cn.baozimhcn.com" target="_blank" class="link-item">包子漫画</a>
+                <a href="http://fufuba.cn/forum.php?mod=guide&view=new&mobile=2" target="_blank" class="link-item">腐吧资源网</a>
+                <a href="https://www.htlvbooks.com/?act=showpaper&paperid=6522648" target="_blank" class="link-item">海棠文化</a>
+                <a href="http://www.johnwatsonblog.co.uk" target="_blank" class="link-item">约翰华生的blog</a>
+                <a href="https://caigle.zcos.net/" target="_blank" class="link-item">废才工具箱</a>
+                <a href="http://110.42.237.125:60401/" target="_blank" class="link-item">网盘搜索</a>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <h2 class="category-title">论坛类</h2>
+            <div class="link-grid">
+                <a href="https://www.dismall.com/" target="_blank" class="link-item">Discuz!</a>
+                <a href="https://bbs.itzmx.com/" target="_blank" class="link-item">itzmx</a>
+                <a href="https://4chan.org" target="_blank" class="link-item">4chan</a>
+                <a href="https://watchpeoplelive.tv/" target="_blank" class="link-item">WPL</a>
+                <a href="https://www.tianya.net/index.html" target="_blank" class="link-item">天涯论坛</a>
+                <a href="https://www.csdn.net/" target="_blank" class="link-item">CSDN</a>
+            </div>
+        </section>
+
+        <!-- ??? 分类：只包围标题的极速无符号发光方块，数量减少且居中 -->
+        <section class="category-section">
+            <h2 class="category-title glitch-title" id="glitchTitle">
+                ???
+                <div class="glitch-block-overlay" id="glitchOverlay"></div>
+            </h2>
+            <div class="link-grid">
+                <a href="https://www.youtube666.com" target="_blank" class="link-item">youtube666</a>
+                <a href="https://goresee.com/videos/browse" target="_blank" class="link-item">goresee</a>
+                <a href="https://watchpeopledie.tv/home" target="_blank" class="link-item">WPD</a>
+                <a href="https://bestgore.fun/videos/browse" target="_blank" class="link-item">bestgore</a>
+                <a href="https://xgore.net/category/bestgore/gore-video/" target="_blank" class="link-item">xgore</a>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <h2 class="category-title">小游戏</h2>
+            <div class="link-grid">
+                <a href="https://slowroads.io" target="_blank" class="link-item">slowroads</a>
+                <a href="https://aidn.jp/mikutap/" target="_blank" class="link-item">mikutap</a>
+                <a href="https://www.4399.com/" target="_blank" class="link-item">4399</a>
+            </div>
+        </section>
+
+        <div class="footer-message">
+            欢迎向我投稿更多有趣的网站，我经过筛选后，会把它加在更多内容里，<br />
+            失效的网页我会实时更换！<br />
+            投稿方式请在<a href="https://message.preciousmess.top" target="_blank">留言板</a>内查看！
+        </div>
+    </div>
+
+    <div class="site-footer">
+        © 2026 PRECIOUS MESS · SHARE
+    </div>
+
+    <script>
+        // 让 ??? 标题上的无符号发光方块极速随机闪烁
+        const glitchOverlay = document.getElementById('glitchOverlay');
+
+        // 生成随机发光方块
+        function createGlitchBlock() {
+            const block = document.createElement('div');
+            block.className = 'glitch-block';
+            
+            // 随机方块宽度、高度和位置
+            const width = Math.floor(Math.random() * 40) + 15;
+            const height = Math.floor(Math.random() * 15) + 8;
+            const left = Math.floor(Math.random() * 100);
+            const top = Math.floor(Math.random() * 100);
+            
+            // 随机颜色（反色）
+            const colors = ['glitch-block-white', 'glitch-block-red', 'glitch-block-green', 'glitch-block-black'];
+            const colorClass = colors[Math.floor(Math.random() * colors.length)];
+            
+            block.style.width = width + 'px';
+            block.style.height = height + 'px';
+            block.style.left = left + '%';
+            block.style.top = top + '%';
+            block.classList.add(colorClass);
+            
+            // 极速随机闪烁动画
+            block.style.animation = `blockPulse ${Math.floor(Math.random() * 200) + 100}ms infinite`;
+            
+            return block;
+        }
+
+        // 极速生成并移除随机方块（数量减少到 4 个）
+        setInterval(() => {
+            // 清掉旧方块
+            glitchOverlay.innerHTML = '';
+            
+            // 生成 4 个随机方块
+            for (let i = 0; i < 4; i++) {
+                const block = createGlitchBlock();
+                glitchOverlay.appendChild(block);
+            }
+        }, 150); // 150毫秒刷新一次，极速闪烁
+
+        // 方块闪烁动画
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes blockPulse {
+                0% { opacity: 0; }
+                50% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+</body>
+</html>

@@ -20,8 +20,8 @@
             overflow-x: hidden;
             min-height: 100vh;
             display: flex;
+            flex-direction: column; /* 修改为纵向排列以容纳底部站脚 */
             align-items: center;
-            justify-content: center;
             border: 6px solid #3d0a0a;
             box-shadow: 
                 inset 0 0 40px rgba(180, 0, 0, 0.35),
@@ -83,6 +83,7 @@
             width: 92%;
             max-width: 1200px;
             padding: 100px 20px 40px;
+            flex: 1; /* 撑开高度，让站脚沉底 */
         }
 
         .title-row {
@@ -407,35 +408,6 @@
         /* More Content 区域 */
         /* ========================= */
         
-        /* surprise链接（横排两列，加大尺寸，框宽） */
-        .surprise-grid {
-            display: flex;
-            flex-wrap: wrap; /* 允许换行成两排 */
-            gap: 40px 30px; /* 行间距40px（变大），列间距30px */
-            justify-content: flex-start; /* 靠左排列 */
-            align-items: center;
-            padding-right: 40px;
-        }
-        
-        .surprise-link {
-            display: block;
-            background: transparent;
-            border: 1px solid rgba(180, 0, 0, 0.2); /* 淡边框增加存在感 */
-            padding: 18px 50px; /* 框变宽 */
-            text-align: left;
-            font-family: 'Space Mono', monospace;
-            font-size: 20px; /* 字体大幅加大 */
-            letter-spacing: 0;
-            color: #b00;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .surprise-link:hover {
-            color: #fff;
-            border-color: #b00;
-            background: rgba(180, 0, 0, 0.1);
-        }
-
         .more-content-section {
             margin-top: 120px;
             padding-top: 50px;
@@ -450,84 +422,91 @@
             letter-spacing: 12px;
             color: #e0e0e0;
             text-shadow: 0 0 10px rgba(180, 0, 0, 0.2);
-            margin-bottom: 90px; /* 增大下边距，让链接区域整体下移 */
+            margin-bottom: 90px;
         }
         
         .more-grid {
             display: flex;
-            justify-content: center; /* 区域居中 */
+            justify-content: center;
             gap: 0;
-            align-items: flex-start;
-            padding: 0 20px;
+            align-items: stretch;
+            padding: 0 40px;
         }
         
-        /* 左区域：横排两列后的横向空间更大 */
         .more-col-left {
-            flex: 0 0 520px; /* 加宽以容纳两列 */
+            flex: 0 0 50%;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding-top: 30px; /* surprise靠下点 */
+            justify-content: flex-start;
             padding-right: 60px;
             border-right: 1px solid #880000;
         }
         
-        /* 右侧上下区域 */
         .more-col-right {
-            flex: 0 0 400px;
+            flex: 0 0 50%;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 0;
-            padding-top: 6px;
+            justify-content: flex-start;
             padding-left: 60px;
         }
 
-        /* 右上：汉堡菜单链接（左对齐） */
-        .menu-list-top {
+        /* 左侧导航链接 */
+        .menu-list-side {
             list-style: none;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 18px;
-            padding: 0;
-            margin: 0;
-            padding-bottom: 40px;
-            border-bottom: 1px solid #880000;
-            width: 100%;
+            gap: 24px;
         }
-        .menu-list-top li a {
+        .menu-list-side li a {
             font-family: 'Space Mono', monospace;
-            font-size: 18px;
+            font-size: 20px;
             letter-spacing: 2px;
             color: #7a7a7a;
             text-decoration: none;
             transition: color 0.2s ease;
         }
-        .menu-list-top li a:hover {
+        .menu-list-side li a:hover {
             color: #b00;
             text-decoration: underline;
         }
-        .menu-list-top li a.disabled {
+        .menu-list-side li a.disabled {
             opacity: 0.3;
             cursor: default;
             pointer-events: none;
         }
 
-        /* 右下：Video / live 链接（左对齐） */
-        .video-live-btn {
+        /* 右侧大链接（已去掉边框） */
+        .video-live-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: transparent;
+            border: none;
+            padding: 0;
             font-family: 'Space Mono', monospace;
-            font-size: 22px;
-            letter-spacing: 2px;
-            color: #7a7a7a;
-            text-decoration: none;
-            align-self: flex-start;
-            padding-top: 40px;
-            transition: color 0.2s ease;
-        }
-        .video-live-btn:hover {
+            font-size: 28px;
+            letter-spacing: 4px;
             color: #b00;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            margin-top: 6px;
+        }
+        .video-live-link:hover {
+            color: #fff;
             text-decoration: underline;
+        }
+
+        /* 底部站脚 */
+        .site-footer {
+            margin-top: 80px;
+            padding: 30px 20px;
+            width: 100%;
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            letter-spacing: 2px;
+            border-top: 1px solid #2a2a2a;
+            font-family: 'Space Mono', monospace;
         }
 
         @media screen and (max-width: 900px) {
@@ -536,15 +515,15 @@
             .player-container { height: auto; min-height: 500px; }
             .live-box { height: auto; min-height: 600px; }
             
-            .more-grid { flex-direction: column; align-items: center; gap: 0; }
+            .more-grid { flex-direction: column; align-items: center; gap: 40px; }
             .more-col-left { 
-                flex: 0 0 auto; width: 100%; max-width: 540px; 
+                flex: 0 0 auto; width: 100%; 
                 padding-right: 0; border-right: none; 
                 border-bottom: 1px solid #880000; 
-                padding-bottom: 30px; margin-bottom: 40px; 
+                padding-bottom: 40px;
             }
             .more-col-right { 
-                flex: 0 0 auto; width: 100%; max-width: 400px; padding-left: 0; 
+                flex: 0 0 auto; width: 100%; padding-left: 0; 
             }
         }
     </style>
@@ -562,7 +541,7 @@
         <div class="title-row">
             <h1 class="main-title">RED ROOM</h1>
             <div class="divider"></div>
-            <p class="watching-text">I'm watching you , don't run</p>
+            <p class="watching-text">No capture or recording</p>
         </div>
 
         <div class="layout-row">
@@ -637,37 +616,30 @@
         <section class="more-content-section">
             <h2 class="more-title">More Content</h2>
             <div class="more-grid">
-                <!-- 左侧：surprise 横排两列，间隔加大，框变宽 -->
+                <!-- 左侧：导航列表 -->
                 <div class="more-col-left">
-                    <div class="surprise-grid">
-                        <a href="https://um6bit.kikirara.jp" target="_blank" class="surprise-link">surprise</a>
-                        <a href="https://www.thisman.org" target="_blank" class="surprise-link">surprise</a>
-                        <a href="https://lomando.fandom.com/wiki/Lomando_Wiki" target="_blank" class="surprise-link">surprise</a>
-                        <a href="http://batheinmymilk.com/" target="_blank" class="surprise-link">surprise</a>
-                        <a href="https://blackangeltapes.net/" target="_blank" class="surprise-link">surprise</a>
-                        <a href="http://www.universe-people.com/english/default_en.htm" target="_blank" class="surprise-link">surprise</a>
-                        <a href="https://postvitam.technology/?x=9&y=4&direction=North" target="_blank" class="surprise-link">surprise</a>
-                        <a href="https://websitesfromhell.net/view/yyyyyyy.info-1069/" target="_blank" class="surprise-link">surprise</a>
-                        <a href="https://sans-simulator.github.io/c2-sans-fight/" target="_blank" class="surprise-link">surprise</a>
-                    </div>
-                </div>
-                
-                <!-- 右侧（分上下） -->
-                <div class="more-col-right">
-                    <!-- 右上：完整的导航菜单（去掉了占位符） -->
-                    <ul class="menu-list-top">
+                    <ul class="menu-list-side">
                         <li><a href="https://message.preciousmess.top" target="_blank">留言板</a></li>
+                        <li><a href="share.html">SHARE</a></li>
                         <li><a href="display.html">DISPLAY-Depp</a></li>
                         <li><a href="strange.html">RED ROOM</a></li>
                         <li><a href="https://www.baolywang666.com/6chan/" target="_blank">6chan-baolywang</a></li>
                         <li><a href="https://www.baolywang666.com/more-and-more/" target="_blank">Feelings is so Fancy</a></li>
                     </ul>
-                    <!-- 右下：Video / live 指向了 video.html -->
-                    <a href="video.html" class="video-live-btn">Video / live</a>
+                </div>
+                
+                <!-- 右侧：Video / live（纯文字，无框） -->
+                <div class="more-col-right">
+                    <a href="video.html" class="video-live-link">Video / live</a>
                 </div>
             </div>
         </section>
 
+    </div>
+
+    <!-- 新增：底部站脚 -->
+    <div class="site-footer">
+        © 2026 PRECIOUS MESS · RED ROOM
     </div>
 
     <script>

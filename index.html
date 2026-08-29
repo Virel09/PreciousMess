@@ -2,16 +2,11 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8" />
-    <!-- 强制电脑显示，取消手机自适应 -->
     <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>PRECIOUS MESS</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
         body {
             background-color: #050505;
@@ -51,10 +46,7 @@
             visibility: hidden;
             transition: opacity 0.6s ease, visibility 0.6s ease;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
         .modal-box {
             background: linear-gradient(145deg, #0d0d0d 0%, #1a0a0a 100%);
             border: 1px solid rgba(200, 50, 50, 0.5);
@@ -62,17 +54,13 @@
             padding: 40px 48px 32px 48px;
             max-width: 480px;
             width: 90%;
-            box-shadow: 
-                0 0 30px rgba(180, 0, 0, 0.3),
-                inset 0 0 30px rgba(180, 0, 0, 0.08);
+            box-shadow: 0 0 30px rgba(180, 0, 0, 0.3), inset 0 0 30px rgba(180, 0, 0, 0.08);
             position: relative;
             text-align: center;
             transform: scale(0.95) translateY(20px);
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .modal-box {
-            transform: scale(1) translateY(0);
-        }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
         .modal-box::before {
             content: '';
             position: absolute;
@@ -117,10 +105,7 @@
             margin-bottom: 28px;
             padding: 0 4px;
         }
-        .modal-message span {
-            color: #ff4d4d;
-            text-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
-        }
+        .modal-message span { color: #ff4d4d; text-shadow: 0 0 8px rgba(255, 50, 50, 0.3); }
         .modal-btn {
             background: rgba(200, 50, 50, 0.2);
             border: 1px solid rgba(200, 50, 50, 0.4);
@@ -141,9 +126,7 @@
             box-shadow: 0 0 30px rgba(200, 0, 0, 0.25);
             transform: scale(1.02);
         }
-        .modal-btn:active {
-            transform: scale(0.96);
-        }
+        .modal-btn:active { transform: scale(0.96); }
         .modal-checkbox-wrap {
             display: flex;
             align-items: center;
@@ -162,9 +145,7 @@
             user-select: none;
             transition: color 0.3s ease;
         }
-        .modal-checkbox-wrap label:hover {
-            color: #999;
-        }
+        .modal-checkbox-wrap label:hover { color: #999; }
         .modal-checkbox {
             appearance: none;
             -webkit-appearance: none;
@@ -243,21 +224,10 @@
             filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.25));
             opacity: 1;
         }
-        .diamond-icon:active {
-            transform: scale(0.92);
-        }
-        .diamond-icon svg {
-            display: block;
-            width: 100px;
-            height: 100px;
-            opacity: 0.8;
-        }
-        .diamond-icon:hover svg {
-            opacity: 1;
-        }
-        .diamond-icon.spin {
-            animation: spin 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .diamond-icon:active { transform: scale(0.92); }
+        .diamond-icon svg { display: block; width: 100px; height: 100px; opacity: 0.8; }
+        .diamond-icon:hover svg { opacity: 1; }
+        .diamond-icon.spin { animation: spin 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -297,15 +267,8 @@
             background: linear-gradient(90deg, transparent, #ff4d4d, transparent);
             animation: borderRun 2s linear infinite;
         }
-        .marquee-box::before {
-            top: 0;
-            left: -100%;
-        }
-        .marquee-box::after {
-            bottom: 0;
-            right: -100%;
-            animation-delay: 1s;
-        }
+        .marquee-box::before { top: 0; left: -100%; }
+        .marquee-box::after { bottom: 0; right: -100%; animation-delay: 1s; }
         @keyframes borderRun {
             0% { transform: translateX(0); }
             100% { transform: translateX(200%); }
@@ -347,10 +310,7 @@
             width: 80%;
             margin: 0 auto 140px;
         }
-        .text-block {
-            flex: 1;
-            min-width: 320px;
-        }
+        .text-block { flex: 1; min-width: 320px; }
         .section-heading {
             font-family: Cormorant Garamond;
             font-size: 32px;
@@ -442,7 +402,6 @@
             display: flex;
             gap: 12px;
         }
-        /* 两个按钮统一样式 */
         .nowplaying-btn,
         .library-btn {
             cursor: pointer !important;
@@ -876,7 +835,6 @@
             flex-direction: column;
             gap: 24px;
             align-items: center;
-            /* 滚动条样式 */
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 77, 77, 0.3) transparent;
         }
@@ -890,12 +848,9 @@
             background-color: rgba(255, 77, 77, 0.3);
             border-radius: 2px;
         }
-
-        /* 修复：Library 面板隐藏时强制不显示 */
         #libraryPanel.hidden {
             display: none !important;
         }
-
         .surprise-link {
             display: inline-block;
             background: transparent;
@@ -966,11 +921,11 @@
         <source src="I Don't Know.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- 👇 修改：去掉了原占位符 2 的链接 👇 -->
     <nav class="menu-panel" id="menuPanel" role="navigation">
         <a href="https://message.preciousmess.top" class="menu-item" target="_blank">留言板</a>
         <a href="display.html" class="menu-item">DISPLAY-Depp</a>
         <a href="strange.html" class="menu-item">RED ROOM</a>
+        <a href="share.html" class="menu-item">share-something fun</a>
         <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank">6chan-baolywang</a>
         <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank">Feelings is so Fancy</a>
     </nav>
@@ -1203,38 +1158,6 @@
             cursorGlow.style.left = e.clientX + 'px';
             cursorGlow.style.top = e.clientY + 'px';
         });
-        const header = document.querySelector('header');
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            const size = Math.random() * 2 + 1;
-            const colors = ['#ff4d4d', '#ff6666', '#ffffff', '#ff9999', '#cc0000'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.width = size + 'px';
-            particle.style.height = size + 'px';
-            particle.style.background = color;
-            particle.style.boxShadow = `0 0 8px ${color}`;
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = '-5%';
-            header.appendChild(particle);
-            let posY = -5;
-            let posX = parseFloat(particle.style.left);
-            const fallSpeed = Math.random() * 0.8 + 0.4;
-            const drift = (Math.random() - 0.5) * 0.5;
-            function animate() {
-                posY += fallSpeed;
-                posX += drift;
-                particle.style.top = posY + '%';
-                particle.style.left = posX + '%';
-                if (posY < 105) {
-                    requestAnimationFrame(animate);
-                } else {
-                    particle.remove();
-                }
-            }
-            animate();
-        }
-        setInterval(createParticle, 80);
         (function() {
             const hamburger = document.getElementById('hamburgerBtn');
             const overlay = document.getElementById('overlay');
