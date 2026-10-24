@@ -301,6 +301,308 @@
             border-bottom: 1px solid #990000;
             text-shadow: 0 0 8px #990000;
         }
+
+        /* ========================= */
+        /* 庆祝区域（新增箭头与装饰） */
+        /* ========================= */
+        .celebration-section {
+            width: 85%;
+            max-width: 1000px;
+            margin: 60px auto 80px;
+            text-align: center;
+            position: relative;
+            padding: 60px 40px;
+            border: 2px solid rgba(180, 0, 0, 0.4);
+            border-radius: 4px;
+            background: rgba(10, 5, 5, 0.4);
+            box-shadow: 0 0 30px rgba(180, 0, 0, 0.1), inset 0 0 20px rgba(180, 0, 0, 0.05);
+        }
+        /* 四角花边 */
+        .celebration-section::before,
+        .celebration-section::after {
+            content: '◆';
+            position: absolute;
+            font-size: 16px;
+            color: #ff4d4d;
+            text-shadow: 0 0 8px rgba(255, 50, 50, 0.6);
+            opacity: 0.8;
+            z-index: 3;
+        }
+        .celebration-section::before { top: -12px; left: -8px; transform: rotate(45deg); }
+        .celebration-section::after { bottom: -12px; right: -8px; transform: rotate(45deg); }
+
+        /* 背景字母 */
+        .celebration-bg-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 7rem;
+            color: rgba(255, 77, 77, 0.03);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: 10px;
+        }
+
+        /* 顶部弯曲大花体字 */
+        .celebration-top-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 2;
+        }
+        /* 两端装饰符号 */
+        .celebration-top-title::before,
+        .celebration-top-title::after {
+            content: '❖';
+            color: #ff4d4d;
+            font-size: 24px;
+            opacity: 0.6;
+            margin: 0 20px;
+            text-shadow: 0 0 10px #ff4d4d;
+        }
+        .celebration-top-title span {
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 3.5rem;
+            color: rgba(255, 77, 77, 0.2); /* 内部半透明 */
+            -webkit-text-stroke: 1.5px #ff4d4d; /* 红色描边 */
+            text-shadow: 0 0 15px rgba(255, 50, 50, 0.5), 0 0 30px rgba(255, 50, 50, 0.2);
+            transition: transform 0.3s ease;
+        }
+        /* 波浪弯曲排列 */
+        .celebration-top-title span:nth-child(1) { transform: translateY(15px); }
+        .celebration-top-title span:nth-child(2) { transform: translateY(8px); }
+        .celebration-top-title span:nth-child(3) { transform: translateY(2px); }
+        .celebration-top-title span:nth-child(4) { transform: translateY(-5px); }
+        .celebration-top-title span:nth-child(5) { transform: translateY(-12px); }
+        .celebration-top-title span:nth-child(6) { transform: translateY(-15px); }
+        .celebration-top-title span:nth-child(7) { transform: translateY(-12px); }
+        .celebration-top-title span:nth-child(8) { transform: translateY(-5px); }
+        .celebration-top-title span:nth-child(9) { transform: translateY(2px); }
+        .celebration-top-title span:nth-child(10) { transform: translateY(8px); }
+        .celebration-top-title span:nth-child(11) { transform: translateY(15px); }
+        .celebration-top-title span:nth-child(12) { transform: translateY(18px); }
+        .celebration-top-title span:nth-child(13) { transform: translateY(15px); }
+        .celebration-top-title span:nth-child(14) { transform: translateY(8px); }
+        .celebration-top-title span:nth-child(15) { transform: translateY(2px); }
+        .celebration-top-title span:nth-child(16) { transform: translateY(-5px); }
+        .celebration-top-title span:nth-child(17) { transform: translateY(-12px); }
+        .celebration-top-title span:nth-child(18) { transform: translateY(-15px); }
+
+        /* 内容排版 */
+        .celebration-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        /* 网站100天庆祝部分 */
+        .celebration-site {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+        /* 箭头指向说明 */
+        .celebration-site::after {
+            content: '▼';
+            color: #ff4d4d;
+            font-size: 14px;
+            opacity: 0.6;
+            text-shadow: 0 0 8px #ff4d4d;
+            margin-top: 10px;
+        }
+        .celebration-site .img-frame {
+            position: relative;
+            padding: 10px;
+            border: 2px dashed rgba(255, 77, 77, 0.5);
+            box-shadow: 0 0 25px rgba(180, 0, 0, 0.2);
+            transition: transform 0.4s ease;
+        }
+        .celebration-site .img-frame:hover {
+            transform: scale(1.02);
+        }
+        .celebration-site .img-frame::before,
+        .celebration-site .img-frame::after {
+            content: '✦';
+            position: absolute;
+            color: #ff4d4d;
+            font-size: 16px;
+            text-shadow: 0 0 10px #ff4d4d;
+        }
+        .celebration-site .img-frame::before { top: -10px; left: -8px; }
+        .celebration-site .img-frame::after { bottom: -10px; right: -8px; }
+
+        .celebration-site img {
+            width: 350px; 
+            height: auto;
+            display: block;
+            border: 1px solid #222;
+        }
+        .celebration-site .title-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 2.8rem;
+            color: #ff4d4d;
+            text-shadow: 0 0 15px rgba(255, 50, 50, 0.4);
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        /* 日期旁加箭头 */
+        .celebration-site .title-text::before {
+            content: '↘';
+            color: #888;
+            font-size: 24px;
+        }
+        .celebration-site .date-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 32px;
+            color: #e0e0e0;
+            letter-spacing: 6px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        /* 生日部分 */
+        .celebration-birth {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        /* 底部箭头 */
+        .celebration-birth::after {
+            content: '▼';
+            color: #ff4d4d;
+            font-size: 14px;
+            opacity: 0.6;
+            text-shadow: 0 0 8px #ff4d4d;
+            margin-top: 10px;
+        }
+        .celebration-birth .img-frame {
+            position: relative;
+            padding: 8px;
+            border: 2px dashed rgba(255, 77, 77, 0.5);
+            box-shadow: 0 0 20px rgba(180, 0, 0, 0.15);
+            transition: transform 0.4s ease;
+        }
+        .celebration-birth .img-frame:hover {
+            transform: scale(1.05);
+        }
+        .celebration-birth .img-frame::before,
+        .celebration-birth .img-frame::after {
+            content: '✦';
+            position: absolute;
+            color: #ff4d4d;
+            font-size: 12px;
+            text-shadow: 0 0 8px #ff4d4d;
+        }
+        .celebration-birth .img-frame::before { top: -8px; left: -6px; }
+        .celebration-birth .img-frame::after { bottom: -8px; right: -6px; }
+        
+        .celebration-birth img {
+            width: 200px;
+            height: auto;
+            display: block;
+            border: 1px solid #333;
+        }
+        .celebration-birth .birth-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.8rem;
+            color: #e0e0e0;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        /* 生日文字旁箭头 */
+        .celebration-birth .birth-text::before {
+            content: '↙';
+            color: #888;
+            font-size: 20px;
+        }
+        .celebration-birth .birth-date {
+            font-family: 'Space Mono', monospace;
+            font-size: 22px;
+            color: #e0e0e0;
+            letter-spacing: 4px;
+        }
+
+        /* 站标与灵感并排 */
+        .logo-inspiration-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px dashed rgba(180, 0, 0, 0.2);
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+        .logo-item, .inspiration-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        /* 曾用 / 现用 favicon 放大到 110px */
+        .logo-item img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain; 
+            border: 1px solid #222;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        .logo-item img:hover {
+            transform: scale(1.1);
+            border-color: #990000;
+        }
+        .logo-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #888;
+        }
+        /* 原版灵感图放大到 150px */
+        .inspiration-item img {
+            width: 150px;
+            height: auto;
+            border: 1px solid #222;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        .inspiration-item img:hover {
+            transform: scale(1.05);
+            border-color: #990000;
+        }
+        .inspiration-text {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+        }
+        .inspiration-text span {
+            color: #ccc;
+            font-weight: bold;
+        }
+
         .container-wrap {
             display: flex;
             justify-content: center;
@@ -341,14 +643,6 @@
             color: #444;
             font-size: 12px;
             letter-spacing: 2px;
-        }
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 8;
-            opacity: 0.6;
-            mix-blend-mode: screen;
         }
         .cursor-glow {
             position: fixed;
@@ -979,6 +1273,56 @@
             <a href="#contact">CONTACT</a>
         </nav>
     </header>
+
+    <!-- 完整花边包围的庆祝区域 -->
+    <section class="celebration-section">
+        <div class="celebration-bg-text">Celebration</div>
+        
+        <!-- 顶部弯曲描边大花体字 -->
+        <div class="celebration-top-title">
+            <span>H</span><span>A</span><span>P</span><span>P</span><span>Y</span><span>&nbsp;</span><span>B</span><span>I</span><span>R</span><span>T</span><span>H</span><span>D</span><span>A</span><span>Y</span><span>&nbsp;</span><span>&</span><span>&nbsp;</span><span>1</span><span>0</span><span>0</span><span>&nbsp;</span><span>D</span><span>A</span><span>Y</span><span>S</span>
+        </div>
+        
+        <div class="celebration-content">
+            <!-- 网站 100 天庆祝部分 -->
+            <div class="celebration-site">
+                <div class="img-frame">
+                    <img src="100day.jpg" alt="100 Days">
+                </div>
+                <div class="title-text">庆祝网站成立第100天</div>
+                <div class="date-text">10.24</div>
+            </div>
+
+            <!-- 生日部分 -->
+            <div class="celebration-birth">
+                <div class="img-frame">
+                    <img src="birth.jpg" alt="Birthday">
+                </div>
+                <div class="birth-text">庆祝我生辰</div>
+                <div class="birth-date">九月十二 - 10.29</div>
+            </div>
+        </div>
+
+        <!-- 站标与灵感并排 -->
+        <div class="logo-inspiration-row">
+            <div class="logo-item">
+                <img src="旧站标.ico" alt="Old Logo">
+                <span class="logo-label">曾用favicon</span>
+            </div>
+            <div class="logo-item">
+                <img src="favicon.ico" alt="New Logo">
+                <span class="logo-label">现用favicon</span>
+            </div>
+            <div class="inspiration-item">
+                <img src="原版.jpg" alt="Original Diary">
+                <div class="inspiration-text">
+                    <p>新站标的灵感来源：</p>
+                    <p>一位 <span>100年前慕尼黑女孩</span> 的日记本。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="container-wrap">
         <div class="text-block">
             <section id="about">
