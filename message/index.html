@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <link rel="icon" type="image/x-icon" href="/favicon-v2.ico" />
+    <title>LEAVE A MESSAGE — PRECIOUS MESS</title>
+    <style>
+        :root {
+            --bg-deep: #060806;
+            --bg-surface: #0a0d0a;
+            --bg-card: #0d140d;
+            --bg-card-sidebar: #080c08;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-mid: rgba(255, 255, 255, 0.1);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            --text-primary: #d4dcd4;
+            --text-secondary: #8a9a8a;
+            --text-muted: #5a705a;
+            --green-core: #00ff41;
+            --green-dim: #009926;
+            --green-glow: rgba(0, 255, 65, 0.3);
+            --red-core: #ff3b3b;
+            --red-glow: rgba(255, 59, 59, 0.3);
+            --font-mono: 'Space Mono', 'Courier New', Courier, monospace;
+            --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --transition-fast: 0.2s ease;
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+        body { cursor: default; }
+        a, button, .diamond-icon, .forum-action-btn, .send-btn, .create-email-link, .music-btn { cursor: pointer; }
+        input, textarea { cursor: text; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            font-size: 17px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            background: repeating-linear-gradient(transparent 0px, rgba(0, 0, 0, 0.04) 1px, transparent 2px);
+            opacity: 0.4;
+        }
+
+        .side-decor {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            writing-mode: vertical-rl;
+            letter-spacing: 8px;
+            font-family: var(--font-serif);
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.06);
+            font-size: 24px;
+            pointer-events: none;
+            user-select: none;
+            transition: opacity 0.5s;
+        }
+        .side-decor.left { left: 28px; border-left: 1px solid rgba(255,255,255,0.03); padding-left: 18px; }
+        .side-decor.right { right: 28px; border-right: 1px solid rgba(255,255,255,0.03); padding-right: 18px; }
+        .side-decor::after { content: '◆'; display: block; margin: 16px auto; opacity: 0.2; font-size: 12px; }
+
+        .page-container {
+            position: relative;
+            z-index: 2;
+            width: 92%;
+            max-width: 1300px;
+            padding: 36px 16px 20px;
+            margin: 28px auto;
+        }
+
+        .online-indicator {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 20;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .online-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: var(--green-core);
+            box-shadow: 0 0 12px var(--green-core), 0 0 24px var(--green-glow);
+            animation: breathe 2.5s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { box-shadow: 0 0 6px var(--green-core), 0 0 12px var(--green-glow); }
+            50% { box-shadow: 0 0 18px var(--green-core), 0 0 36px var(--green-glow), 0 0 50px rgba(0, 255, 65, 0.15); }
+        }
+        .online-text { opacity: 0.7; }
+
+        .title-row {
+            display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 28px;
+        }
+        .main-title {
+            font-family: var(--font-serif); font-style: italic; font-weight: 300;
+            font-size: clamp(3rem, 6.5vw, 5.5rem); letter-spacing: 9px; color: #e6ece6; text-align: center;
+            text-shadow: 0 0 6px rgba(0, 255, 65, 0.25), 0 0 14px rgba(0, 170, 42, 0.15), 0 0 28px rgba(0, 80, 0, 0.08);
+            line-height: 1; transition: text-shadow var(--transition-smooth); animation: subtleGlitch 8s infinite;
+        }
+        .main-title:hover { text-shadow: 0 0 8px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 200, 50, 0.25), 0 0 38px rgba(0, 80, 0, 0.12); }
+        @keyframes subtleGlitch {
+            0%, 99.5% { transform: translateX(0); opacity: 1; }
+            99.6%, 99.8% { transform: translateX(-1.5px); opacity: 0.88; }
+            99.9%, 100% { transform: translateX(0); opacity: 1; }
+        }
+        .diamond-icon {
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+            filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.3)); transition: transform var(--transition-smooth), filter var(--transition-smooth);
+            padding: 4px; border-radius: var(--radius-md); user-select: none;
+        }
+        .diamond-icon:hover { transform: scale(1.08) rotate(12deg); filter: drop-shadow(0 0 18px rgba(0, 255, 65, 0.5)); }
+        .diamond-icon:active { transform: scale(0.9); }
+        .diamond-icon svg { display: block; width: 40px; height: 40px; stroke: #b8c8b8; }
+        
+        .divider {
+            width: 70%; height: 1px; margin: 0 auto 26px; border: none;
+            background: linear-gradient(90deg, transparent, rgba(180, 190, 180, 0.5), rgba(180, 190, 180, 0.7), rgba(180, 190, 180, 0.5), transparent);
+            opacity: 0.45; position: relative;
+        }
+        .divider::after {
+            content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 3px; background: var(--green-core); opacity: 0.35; border-radius: 2px; box-shadow: 0 0 8px var(--green-glow);
+        }
+        .sub-title {
+            text-align: center; font-size: 15px; letter-spacing: 5px; color: var(--text-muted); margin-bottom: 42px; text-transform: uppercase;
+        }
+        .sub-title::before, .sub-title::after {
+            content: '—'; display: inline-block; margin: 0 14px; color: rgba(255, 255, 255, 0.12); font-size: 11px; vertical-align: middle;
+        }
+        
+        .message-block {
+            display: flex; align-items: flex-start; gap: 36px; margin-bottom: 42px; flex-wrap: wrap; justify-content: center;
+        }
+        .avatar-container {
+            flex-shrink: 0; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .avatar-ring-1, .avatar-ring-2 {
+            position: absolute; width: 98px; height: 98px; border-radius: 50%; border: 1px solid transparent; opacity: 0.6;
+        }
+        .avatar-ring-1 { border-top-color: rgba(200, 200, 200, 0.7); border-right-color: rgba(200, 200, 200, 0.3); animation: spinClock 3s linear infinite; }
+        .avatar-ring-2 { border-bottom-color: rgba(200, 200, 200, 0.7); border-left-color: rgba(200, 200, 200, 0.3); animation: spinCounter 3.5s linear infinite; }
+        @keyframes spinClock { to { transform: rotate(360deg); } }
+        @keyframes spinCounter { to { transform: rotate(-360deg); } }
+        .avatar-inner {
+            position: relative; z-index: 1; width: 88px; height: 88px; border-radius: 50%; overflow: hidden; background: #000;
+            border: 2px solid #2a382a; box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+        .avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .bubble {
+            flex: 1; min-width: 320px; background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-left: 2px solid rgba(0, 255, 65, 0.25); border-radius: var(--radius-md); padding: 28px 34px;
+            font-family: var(--font-mono); font-size: 17px; line-height: 2; color: #bccabc; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
+        }
+        .bubble .signature {
+            margin-top: 20px; color: var(--green-core); text-shadow: 0 0 10px rgba(0, 80, 0, 0.5);
+            font-style: italic; text-align: right; font-size: 18px;
+        }
+
+        .guestbook-container {
+            display: flex; gap: 36px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
+            padding: 28px; border-radius: var(--radius-md); min-height: 560px; margin-top: 36px;
+            flex-wrap: wrap; box-shadow: 0 6px 36px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        .left-panel {
+            flex: 0 0 340px; display: flex; flex-direction: column; gap: 20px;
+        }
+        .right-panel {
+            flex: 2; min-width: 0; border-left: 1px solid var(--border-subtle); padding-left: 28px;
+            overflow-y: auto; max-height: 580px; display: flex; flex-direction: column; gap: 16px;
+            scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.06) transparent;
+        }
+        .right-panel::-webkit-scrollbar { width: 4px; }
+        .right-panel::-webkit-scrollbar-track { background: transparent; }
+        .right-panel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.06); border-radius: 4px; }
+
+        .right-panel-title {
+            display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap;
+            font-family: var(--font-serif); font-style: italic; font-weight: 300; font-size: 26px; letter-spacing: 4px;
+            color: #bcc8bc; text-shadow: 0 0 6px rgba(150, 150, 150, 0.2);
+            margin-bottom: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+        }
+        .uptime-timer {
+            font-family: var(--font-mono); font-size: 14px; letter-spacing: 1.5px; color: var(--text-muted);
+            background: rgba(0,0,0,0.2); padding: 4px 12px; border-radius: 4px; border: 1px solid rgba(0,255,65,0.08);
+        }
+        .uptime-timer span { color: var(--green-core); }
+        
+        .message-stats {
+            font-size: 12px; color: var(--text-muted); letter-spacing: 1px;
+            padding-bottom: 6px; border-bottom: 1px dashed rgba(255, 255, 255, 0.04); margin-bottom: 4px;
+        }
+        .message-stats span { color: var(--green-core); font-weight: 700; }
+
+        .input-field {
+            width: 100%; background: rgba(6, 10, 6, 0.9); border: 1px solid var(--border-mid);
+            padding: 16px 20px; color: #d8e8d8; font-family: var(--font-mono); font-size: 16px;
+            outline: none; border-radius: var(--radius-sm); letter-spacing: 0.3px;
+        }
+        .input-field:focus { border-color: rgba(180, 190, 180, 0.6); box-shadow: 0 0 0 1px rgba(0, 255, 65, 0.1); background: rgba(8, 14, 8, 0.95); }
+        .message-textarea { min-height: 140px; resize: vertical; line-height: 1.75; }
+        .shortcut-hint {
+            font-size: 11px; color: var(--text-muted); text-align: right; margin-top: -12px; opacity: 0.5; font-style: italic;
+        }
+
+        .send-btn {
+            background: rgba(0, 24, 0, 0.6); border: 1px solid rgba(0, 255, 65, 0.4); color: var(--green-core);
+            font-family: var(--font-mono); font-size: 16px; letter-spacing: 3px; padding: 16px 32px;
+            border-radius: var(--radius-sm); width: 100%; text-align: center; transition: all 0.3s ease;
+        }
+        .send-btn:hover { background: rgba(0, 255, 65, 0.12); box-shadow: 0 0 24px rgba(0, 255, 65, 0.15); border-color: rgba(255, 255, 255, 0.5); color: #fff; }
+        .send-btn:disabled { opacity: 0.5; pointer-events: none; }
+
+        .email-box {
+            background: rgba(4, 8, 4, 0.8); border: 1px solid var(--border-subtle); padding: 20px 24px;
+            border-radius: var(--radius-sm); margin-top: 4px;
+        }
+        .email-box .email-label {
+            font-size: 13px; letter-spacing: 2px; color: var(--red-core);
+            text-shadow: 0 0 8px rgba(170, 20, 20, 0.4); margin-bottom: 6px; font-weight: 700;
+        }
+        .email-box .email-address {
+            font-family: var(--font-mono); font-size: 15px; color: #d0e0d0; word-break: break-all;
+        }
+        .create-email-link {
+            display: inline-block; margin-top: 8px; color: var(--green-core); text-decoration: none; font-size: 14px;
+            border: 1px solid rgba(0, 255, 65, 0.3); padding: 8px 20px; border-radius: var(--radius-sm);
+            letter-spacing: 1px; background: rgba(0, 255, 65, 0.04);
+        }
+        .create-email-link:hover { background: rgba(0, 255, 65, 0.12); border-color: rgba(180, 190, 180, 0.6); color: #fff; }
+
+        /* =============================== */
+        /* 帖子结构：方框只包内容 */
+        /* =============================== */
+        .forum-post {
+            display: flex; gap: 16px; align-items: flex-start; 
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .forum-post:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        /* 左侧头像、名字、楼号 */
+        .forum-post-sidebar {
+            flex: 0 0 80px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+        }
+        .forum-avatar-wrap {
+            width: 64px; height: 64px; border-radius: 50%; background: #111d11; border: 2px solid #2a382a; position: relative;
+        }
+        .forum-avatar-wrap::before {
+            content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+            width: 16px; height: 16px; background: #5a6a5a; border-radius: 50%; z-index: 1;
+        }
+        .forum-avatar-wrap::after {
+            content: ''; position: absolute; top: 27px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 22px; background: #5a6a5a; border-radius: 50% 50% 0 0; z-index: 1;
+        }
+        .forum-avatar-wrap.master-avatar::before,
+        .forum-avatar-wrap.master-avatar::after {
+            display: none !important;
+        }
+        .forum-avatar-wrap.master-avatar {
+            background: transparent !important;
+            overflow: hidden;
+        }
+
+        .forum-sidebar-name {
+            font-size: 14px; color: var(--red-core); text-shadow: 0 0 8px rgba(170, 20, 20, 0.3); font-weight: 700; text-align: center;
+        }
+        .forum-sidebar-floor {
+            font-size: 12px; color: var(--green-core); background: rgba(0, 255, 65, 0.06);
+            padding: 2px 10px; border-radius: 10px; border: 1px solid rgba(0, 255, 65, 0.1); text-align: center; margin-top: 4px;
+            transition: all 0.2s ease;
+        }
+
+        /* 右侧内容区 */
+        .forum-content-area {
+            flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+        }
+        
+        .forum-text-box {
+            background: rgba(8, 12, 8, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-left: 2px solid rgba(0, 255, 65, 0.25);
+            border-radius: var(--radius-md);
+            padding: 16px 22px;
+            width: fit-content;
+            max-width: 100%;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .forum-post:hover .forum-text-box {
+            border-color: rgba(0, 255, 65, 0.4);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 255, 65, 0.05);
+        }
+        .forum-text {
+            font-size: 16px; color: #cad4ca; line-height: 1.8; word-break: break-word;
+        }
+
+        /* 底部工具条 */
+        .forum-bottom-bar {
+            display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;
+        }
+        .forum-time {
+            font-size: 12px; color: #3d5a3d; letter-spacing: 1px;
+        }
+        .forum-actions { display: flex; gap: 10px; }
+        .forum-action-btn {
+            background: transparent; border: 1px solid rgba(255, 255, 255, 0.06); color: #7a8a7a;
+            padding: 4px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 12px; font-family: var(--font-mono);
+            transition: all 0.2s ease;
+        }
+        .forum-action-btn:hover { border-color: rgba(0, 255, 65, 0.5); color: var(--green-core); }
+        .forum-action-btn.danger { border-color: rgba(255, 59, 59, 0.15); color: var(--red-core); }
+        .forum-action-btn.danger:hover { border-color: var(--red-core); background: rgba(255, 59, 59, 0.08); }
+
+        /* 外置方形返回按钮 */
+        .msg-scroll-top {
+            position: absolute;
+            right: -50px;
+            bottom: 0px;
+            width: 40px;
+            height: 40px;
+            background: rgba(8, 12, 8, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            font-family: var(--font-mono);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            z-index: 5;
+        }
+        .msg-scroll-top:hover {
+            color: var(--green-core);
+            border-color: rgba(0, 255, 65, 0.4);
+            background: rgba(0, 255, 65, 0.08);
+        }
+
+        .footer-signature {
+            text-align: center; margin-top: 36px; padding: 20px 0 10px; border-top: 1px solid rgba(255, 255, 255, 0.04);
+            font-family: var(--font-serif); font-style: italic; font-size: 16px; color: var(--text-muted); opacity: 0.6;
+        }
+        .footer-copyright {
+            text-align: center; font-size: 10px; color: rgba(255, 255, 255, 0.15); margin-top: 6px; font-family: var(--font-mono);
+        }
+        
+        .particle { position: fixed; border-radius: 50%; pointer-events: none; z-index: 1; opacity: 0.3; mix-blend-mode: screen; }
+        
+        .back-link {
+            position: fixed; top: 24px; left: 24px; color: #4a6a4a; text-decoration: none;
+            font-family: var(--font-mono); font-size: 14px; letter-spacing: 2px; z-index: 20; text-transform: uppercase;
+        }
+        .back-link:hover { color: #b0c0b0; }
+        .music-btn {
+            position: fixed; top: 62px; left: 24px; width: 42px; height: 42px; background: rgba(8, 12, 8, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 1001; font-size: 18px; color: rgba(255, 255, 255, 0.5); font-family: var(--font-mono);
+        }
+        .music-btn:hover { border-color: rgba(0, 255, 65, 0.5); color: var(--green-core); }
+        .music-btn.playing { border-color: rgba(0, 255, 65, 0.5); box-shadow: 0 0 20px rgba(0, 255, 65, 0.15); color: var(--green-core); }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div class="side-decor left">P R E C I O U S</div>
+    <div class="side-decor right">M E S S</div>
+
+    <div class="online-indicator">
+        <div class="online-dot"></div>
+        <span class="online-text">在线</span>
+    </div>
+
+    <a href="https://preciousmess.top" class="back-link">← BACK</a>
+    <button class="music-btn" id="musicBtn" aria-label="播放/暂停音乐">▶</button>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="WTF.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="page-container">
+        <div class="title-row">
+            <span class="diamond-icon" id="refreshDiamond" title="点击刷新页面">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50,5 95,50 50,95 5,50" fill="none" stroke-width="2"/>
+                    <polygon points="50,15 85,50 50,85 15,50" fill="none" stroke-width="1"/>
+                </svg>
+            </span>
+            <h1 class="main-title">Leave a Message</h1>
+        </div>
+        <hr class="divider" />
+        <p class="sub-title">试着留下你存在过的痕迹</p>
+
+        <div class="message-block">
+            <div class="avatar-container">
+                <div class="avatar-ring-1"></div>
+                <div class="avatar-ring-2"></div>
+                <div class="avatar-inner"><img src="touxiang1.jpg" alt="Virel09" /></div>
+            </div>
+            <div class="bubble">
+                在这里，留下你的发言。它们可以是任何东西，输入你的内容，它们会被发送至下方的留言板。另外，你也可以向我的邮箱发送图片或视频，我会记录它们，并放到下面进行展示。你可以向我发送任何，只要你想，就可以将它们展示到这里。向我投稿吧！<br />
+                <span class="signature">—— Virel09</span>
+            </div>
+        </div>
+
+        <div class="guestbook-container">
+            <div class="left-panel">
+                <input type="text" class="input-field" id="nameInput" placeholder="输入你的名字 (可选)" />
+                <textarea class="input-field message-textarea" id="messageInput" placeholder="点击输入你想说的内容..."></textarea>
+                <span class="shortcut-hint">Ctrl + Enter 快速发送</span>
+                <button class="send-btn" id="sendBtn">发 送</button>
+                <div class="email-box">
+                    <div class="email-label">投稿至我的邮箱 · 境内</div>
+                    <div class="email-address">viyoster@88.com</div>
+                    <div class="email-label" style="margin-top:14px;">投稿至我的邮箱 · 境外</div>
+                    <div class="email-address">29viyoster@gmail.com</div>
+                </div>
+                <a class="create-email-link" href="https://www.88.com/#/" target="_blank">创建邮箱</a>
+            </div>
+            <div class="right-panel">
+                <div class="right-panel-title">
+                    <span>留言板</span>
+                    <div class="uptime-timer">UP: <span id="uptimeDisplay">00:00:00</span></div>
+                </div>
+                <div class="message-stats" id="messageStats">共 <span>0</span> 条留言</div>
+                <div id="messageListContainer"></div>
+            </div>
+            
+            <div id="msgScrollTop" class="msg-scroll-top" title="回到留言板顶部">↑</div>
+        </div>
+        <div class="footer-signature">✦ crafted by virel09 ✦</div>
+        <div class="footer-copyright">© 2024 PRECIOUS MESS. ALL RIGHTS RESERVED.</div>
+    </div>
+
+    <script>
+        (function() {
+            const startDate = new Date("2026-08-03T09:00:00"); 
+            const timerDisplay = document.getElementById('uptimeDisplay');
+
+            function updateTimer() {
+                const now = new Date();
+                const diff = Math.floor((now - startDate) / 1000);
+
+                if (diff > 0) {
+                    const days = Math.floor(diff / 86400);
+                    const hours = Math.floor((diff % 86400) / 3600);
+                    const minutes = Math.floor((diff % 3600) / 60);
+                    const seconds = diff % 60;
+                    const pad = (n) => n.toString().padStart(2, '0');
+                    if(days > 0) {
+                        timerDisplay.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                    } else {
+                        timerDisplay.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                    }
+                }
+            }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        })();
+
+        (function() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            let isPlaying = false;
+
+            function upd() { btn.textContent = isPlaying ? '⏸' : '▶'; btn.classList.toggle('playing', isPlaying); }
+            function play() { audio.play().then(() => { isPlaying = true; upd(); }).catch(() => { isPlaying = false; upd(); }); }
+            function pause() { audio.pause(); isPlaying = false; upd(); }
+
+            window.addEventListener('load', () => setTimeout(play, 600));
+            document.addEventListener('click', () => { if (!isPlaying) play(); }, { once: true });
+            btn.addEventListener('click', (e) => { e.stopPropagation(); isPlaying ? pause() : play(); });
+            audio.addEventListener('play', () => { isPlaying = true; upd(); });
+            audio.addEventListener('pause', () => { isPlaying = false; upd(); });
+        })();
+
+        function createParticle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const s = Math.random() * 2 + 1;
+            const c = ['#00ff41','#00aa2a','#006600','#33ff77','#aaa','#ddd'][Math.floor(Math.random()*6)];
+            p.style.cssText = `width:${s}px;height:${s}px;background:${c};box-shadow:0 0 6px ${c};left:${Math.random()*100}%;top:-5%`;
+            document.body.appendChild(p);
+            let y = -5, x = parseFloat(p.style.left);
+            const fs = Math.random()*0.6+0.3, dr = (Math.random()-0.5)*0.4;
+            function anim() {
+                y+=fs; x+=dr;
+                p.style.top = y+'%'; p.style.left = x+'%';
+                if(y<105) requestAnimationFrame(anim); else p.remove();
+            }
+            anim();
+        }
+        setInterval(createParticle, 120);
+
+        document.getElementById('refreshDiamond').addEventListener('click', function() {
+            this.style.transition = 'transform 0.4s ease';
+            this.style.transform = 'rotate(360deg)';
+            setTimeout(() => location.reload(), 400);
+        });
+
+        document.getElementById('msgScrollTop').addEventListener('click', function() {
+            const panel = document.querySelector('.right-panel');
+            if (panel) {
+                panel.scrollTop = 0;
+            }
+        });
+
+        const API = 'https://preciousmess.top';
+        const ni = document.getElementById('nameInput'), ta = document.getElementById('messageInput'),
+              sb = document.getElementById('sendBtn'), mc = document.getElementById('messageListContainer'),
+              ms = document.getElementById('messageStats');
+
+        async function del(id) {
+            try {
+                const r = await fetch(`${API}/api/messages`, { method:'DELETE', mode:'cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id}) });
+                if(r.ok) { alert('删除成功！'); await load(); } else alert('删除失败');
+            } catch(e) { alert('网络错误'); }
+        }
+        function us(c) { if(ms) ms.innerHTML = `共 <span>${c}</span> 条留言`; }
+
+        async function load() {
+            try {
+                const r = await fetch(`${API}/api/messages`, { mode:'cors' });
+                if(!r.ok) throw new Error('');
+                const j = await r.json(); let m = j.data;
+                mc.innerHTML = '';
+                
+                const pd = document.createElement('div'); pd.className = 'forum-post';
+                pd.innerHTML = `
+                    <div class="forum-post-sidebar">
+                        <div class="forum-avatar-wrap" style="background:#2a0a0a;border-color:#4a1515"></div>
+                        <div class="forum-sidebar-name" style="color:#ff4d4d;">系统公告</div>
+                        <div class="forum-sidebar-floor" style="background:rgba(255,77,77,0.15);color:#ff4d4d;border-color:rgba(255,77,77,0.2)">📌 置顶</div>
+                    </div>
+                    <div class="forum-content-area">
+                        <div class="forum-text-box" style="border-left-color:rgba(255,77,77,0.3);">
+                            <div class="forum-text" style="color:#d0d0d0;">这里是由 Virel09 搭建的留言板。留下你的痕迹吧。</div>
+                        </div>
+                    </div>
+                `;
+                mc.appendChild(pd);
+
+                if(m.length===0) { us(0); const ed = document.createElement('div'); ed.className = 'forum-post'; ed.style.opacity='0.6'; ed.innerHTML = `<div class="forum-post-sidebar"><div class="forum-avatar-wrap"></div></div><div class="forum-content-area"><div class="forum-text-box" style="border-color:transparent;background:transparent;box-shadow:none;"><div class="forum-text" style="color:#4a604a;font-style:italic">还没有人留言，快来成为第一个留下痕迹的人吧！</div></div></div>`; mc.appendChild(ed); }
+                else { us(m.length); m.sort((a,b)=>new Date(a.time)-new Date(b.time));
+                    m.forEach((msg,i)=>{
+                        const fn = i+1, un = msg.name&&msg.name.trim()?msg.name:'匿名用户';
+                        let pt = '刚刚'; if(msg.time){ if(msg.time.includes('T')&&msg.time.includes('Z')){ const d=new Date(msg.time); pt=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; } else pt=msg.time; }
+
+                        let isMaster = (msg.name === 'Virel09');
+                        let borderColor = isMaster ? 'var(--red-core)' : 'rgba(0, 255, 65, 0.25)';
+                        let floorColor = isMaster ? 'var(--red-core)' : 'var(--green-core)';
+                        let floorBg = isMaster ? 'rgba(255, 59, 59, 0.15)' : 'rgba(0, 255, 65, 0.06)';
+                        let floorBorder = isMaster ? 'var(--red-core)' : 'rgba(0, 255, 65, 0.1)';
+
+                        let avatarClass = isMaster ? 'forum-avatar-wrap master-avatar' : 'forum-avatar-wrap';
+                        let avatarContent = `<div class="${avatarClass}"></div>`;
+                        if (isMaster) {
+                            avatarContent = `<div class="${avatarClass}" style="border-color: var(--red-core);"><img src="touxiang1.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;position:relative;z-index:2;" /></div>`;
+                        }
+
+                        const dv = document.createElement('div'); dv.className = 'forum-post';
+                        let h = `
+                            <div class="forum-post-sidebar">
+                                ${avatarContent}
+                                <div class="forum-sidebar-name">${eh(un)}</div>
+                                <div class="forum-sidebar-floor" style="color: ${floorColor}; background: ${floorBg}; border-color: ${floorBorder};">${fn}楼</div>
+                            </div>
+                            <div class="forum-content-area">
+                                <div class="forum-text-box" style="border-left-color: ${borderColor};">
+                                    <div class="forum-text">${eh(msg.content)}</div>
+                                </div>
+                                <div class="forum-bottom-bar">
+                                    <span class="forum-time">${pt}</span>
+                                    <div class="forum-actions">
+                                        <button class="forum-action-btn reply-btn" data-username="${eh(un)}">回复</button>
+                        `;
+                        //
+                        h += `</div></div></div>`;
+                        dv.innerHTML = h; mc.appendChild(dv);
+                    });
+                    document.querySelectorAll('.reply-btn').forEach(b=>b.addEventListener('click', function(){ ta.value = `@${this.dataset.username} `; ta.focus(); ta.scrollIntoView({behavior:'smooth',block:'center'}); }));
+                    //
+                }
+            } catch(e) { mc.innerHTML = `<div class="forum-post"><div class="forum-content-area"><div class="forum-text-box" style="border-left-color:var(--red-core);border-color:rgba(255,59,59,0.2);"><div class="forum-text" style="color:#ff4d4d">⚠️ 加载失败，请检查网络连接</div></div></div></div>`; us(0); }
+        }
+        function eh(t){ if(!t) return ''; const m={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}; return t.replace(/[&<>"']/g,x=>m[x]); }
+
+        async function send() {
+            const n=ni.value.trim(), msg=ta.value.trim();
+            if(!msg){ alert("请至少输入你想说的话！"); return; }
+            sb.textContent='发送中...'; sb.disabled=true;
+            try {
+                const r=await fetch(`${API}/api/messages`,{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n||'匿名用户',content:msg})});
+                if(r.ok){ ni.value=''; ta.value=''; await load(); } else alert('发送失败');
+            } catch(e){ alert('网络错误'); }
+            sb.textContent='发 送'; sb.disabled=false;
+        }
+        sb.addEventListener('click', send);
+        ta.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); send(); } });
+        load();
+    </script>
+</body>
+</html>

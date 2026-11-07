@@ -1,197 +1,1124 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN" data-theme="dark" data-size="md">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <link rel="icon" type="image/x-icon" href="/favicon-v2.ico" />
-    <title>VIDEO</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0b">
+<title>VIDEO — PRECIOUS MESS</title>
+<link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --fs-base:15px;
+  --fs-0:var(--fs-base);
+  --fs-1:calc(var(--fs-base) - 1px);
+  --fs-2:calc(var(--fs-base) - 2px);
+  --fs-3:calc(var(--fs-base) - 3px);
+  --fs-4:calc(var(--fs-base) - 4px);
+  --fs-5:calc(var(--fs-base) - 5px);
+  --fs-card-title:21px;
+  --fs-brand:20px;
 
-        body {
-            background-color: #0a0a0a;
-            color: #c9c9c9;
-            font-family: 'Space Mono', monospace;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+  --bg:#0a0a0b;
+  --grid-line:#131316;
+  --surface:#121214;
+  --surface-2:#18181b;
+  --surface-3:#1f1f24;
+  --surface-hover:#202026;
 
-        .page-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 100px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
+  --line:#2a2a31;
+  --line-soft:#1e1e23;
 
-        .category-item {
-            width: 100%;
-            margin-bottom: 80px; /* 增大 ABCD 之间的间隔 */
-            text-align: center;
-        }
+  --text:#c8c8d0;
+  --text-bright:#eeeeF4;
+  --text-dim:#90909b;
+  --text-weak:#65656f;
 
-        .category-header {
-            cursor: pointer;
-            padding: 10px;
-            user-select: none;
-            display: inline-block;
-            font-family: 'Space Mono', monospace;
-            font-size: 24px;
-            letter-spacing: 2px;
-            color: #888;
-            transition: color 0.2s ease;
-        }
+  --accent:#8b1a1a;
+  --accent-bright:#c23434;
+  --accent-soft:rgba(139,26,26,.14);
 
-        .category-header:hover {
-            color: #b00;
-        }
+  --topbar-bg:rgba(10,10,11,.88);
+  --shadow:0 16px 48px rgba(0,0,0,.65);
+  --card-shadow:none;
 
-        .category-arrow {
-            display: inline-block;
-            margin-left: 8px;
-            font-size: 16px;
-            color: #555;
-            transition: transform 0.3s ease;
-            vertical-align: middle;
-        }
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --font-mono:'Space Mono','SFMono-Regular',Consolas,'Courier New',monospace;
+  --font-serif:'Cormorant Garamond',Georgia,'Songti SC',serif;
 
-        .category-item.open .category-arrow {
-            transform: rotate(90deg);
-            color: #b00;
-        }
+  --radius-sm:6px;
+  --radius:10px;
+  --radius-lg:14px;
 
-        .category-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            width: 100%;
-        }
+  --topbar-h:56px;
+  --sidebar-w:264px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
 
-        .category-item.open .category-content {
-            max-height: 2000px; /* 展开空间变大以适应大视频 */
-        }
+html[data-size="lg"]{ --fs-base:16.5px; --fs-card-title:23px; --fs-brand:22px; }
+html[data-size="xl"]{ --fs-base:18px; --fs-card-title:26px; --fs-brand:24px; }
 
-        .video-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* 单列竖排 */
-            gap: 20px;
-            padding: 20px 0;
-        }
+html[data-theme="light"]{
+  --bg:#f5f5f7;
+  --grid-line:#eaeaee;
+  --surface:#ffffff;
+  --surface-2:#fafafb;
+  --surface-3:#f0f0f3;
+  --surface-hover:#f4f4f7;
+  --line:#dedee3;
+  --line-soft:#ececef;
+  --text:#3a3a44;
+  --text-bright:#141418;
+  --text-dim:#5c5c68;
+  --text-weak:#8b8b96;
+  --accent:#8b1a1a;
+  --accent-bright:#a82424;
+  --accent-soft:rgba(139,26,26,.07);
+  --topbar-bg:rgba(255,255,255,.9);
+  --shadow:0 16px 48px rgba(0,0,0,.14);
+  --card-shadow:0 1px 2px rgba(20,20,24,.05);
+}
 
-        .video-placeholder {
-            height: 400px; /* 占位视频变大 */
-            background: #0e0e0e;
-            border: 1px dashed #2a2a2a;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #444;
-            font-family: 'Space Mono', monospace;
-            font-size: 18px;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
-        }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
-        .video-placeholder:hover {
-            border-color: #b00;
-            color: #888;
-            background: #111;
-        }
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--topbar-h) + 20px);
+  -webkit-text-size-adjust:100%;
+}
 
-        @media screen and (max-width: 600px) {
-            .page-container {
-                padding: 60px 15px;
-            }
-            .video-placeholder {
-                height: 250px; /* 手机端稍微小一点 */
-            }
-            .category-item {
-                margin-bottom: 60px;
-            }
-        }
-    </style>
+body{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:80px 80px;
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:var(--fs-0);
+  line-height:1.7;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  transition:background-color .25s var(--ease),color .25s var(--ease);
+}
+body.no-scroll{overflow:hidden;}
+
+a{color:inherit;text-decoration:none;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+img{display:block;max-width:100%;}
+::selection{background:var(--accent);color:#fff;}
+
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border:2px solid var(--bg);border-radius:6px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+:focus-visible{outline:2px solid var(--accent-bright);outline-offset:2px;}
+
+.scanline{
+  position:fixed;inset:0;z-index:200;pointer-events:none;
+  background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
+}
+html[data-theme="light"] .scanline{display:none;}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--topbar-bg);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+  transition:border-color .2s var(--ease),background .25s var(--ease);
+}
+.topbar.scrolled{border-bottom-color:var(--line);}
+
+.topbar-inner{
+  height:var(--topbar-h);
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.hamburger{
+  width:34px;height:34px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.hamburger:hover{border-color:var(--accent);background:var(--surface-2);}
+.hamburger span{width:16px;height:1.5px;background:var(--text-dim);transition:background .2s var(--ease);}
+.hamburger:hover span{background:var(--accent-bright);}
+
+.topbar-brand{
+  font-family:var(--font-ui);
+  font-weight:500;
+  font-size:var(--fs-2);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:color .2s var(--ease);
+}
+.topbar-brand:hover{color:var(--accent-bright);}
+
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+.tool-btn{
+  height:32px;
+  min-width:32px;
+  padding:0 9px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.06em;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.tool-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.tool-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+.font-group{
+  display:flex;
+  align-items:center;
+  gap:1px;
+  padding:2px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+}
+.font-group .tool-btn{border:none;height:26px;min-width:28px;padding:0 6px;border-radius:4px;}
+.font-level{
+  padding:0 7px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.06em;
+  color:var(--text-weak);
+  white-space:nowrap;
+  user-select:none;
+}
+
+.music-btn{
+  height:32px;
+  padding:0 14px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.music-btn:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.music-btn.playing{color:var(--accent-bright);border-color:var(--accent);background:var(--accent-soft);}
+.music-btn .eq{display:inline-flex;align-items:flex-end;gap:2px;height:10px;}
+.music-btn .eq i{display:block;width:2px;height:3px;background:currentColor;border-radius:1px;}
+.music-btn.playing .eq i{animation:eqBounce .9s infinite ease-in-out;}
+.music-btn.playing .eq i:nth-child(2){animation-delay:.15s;}
+.music-btn.playing .eq i:nth-child(3){animation-delay:.3s;}
+@keyframes eqBounce{0%,100%{height:3px;}50%{height:10px;}}
+
+.diamond-btn{
+  width:32px;height:32px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:50%;
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover{border-color:var(--accent);background:var(--surface-2);}
+.diamond-btn::before{
+  content:'';
+  width:7px;height:7px;
+  background:var(--accent);
+  transform:rotate(45deg);
+  transition:transform .55s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover::before{transform:rotate(225deg);background:var(--accent-bright);}
+.diamond-btn.spin::before{transform:rotate(405deg);}
+
+.read-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent;pointer-events:none;}
+.read-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));transition:width .1s linear;}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout{
+  max-width:1560px;
+  margin:0 auto;
+  padding:24px;
+  display:grid;
+  grid-template-columns:var(--sidebar-w) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+}
+
+/* ---------- 左栏 ---------- */
+.sidebar{
+  position:sticky;
+  top:calc(var(--topbar-h) + 24px);
+  height:calc(100vh - var(--topbar-h) - 48px);
+  min-height:460px;
+  display:flex;
+  flex-direction:column;
+  padding:24px 18px 18px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--card-shadow);
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+}
+.sidebar-scroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--accent) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar{width:6px;}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:3px;}
+
+.brand{
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:var(--fs-brand);
+  line-height:1.3;
+  letter-spacing:.02em;
+  color:var(--text-bright);
+}
+.brand span{
+  display:block;
+  margin-top:8px;
+  font-family:var(--font-mono);
+  font-weight:400;
+  font-size:var(--fs-5);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+.brand-rule{height:1px;margin:18px 0;background:var(--line);position:relative;}
+.brand-rule::before{
+  content:'';
+  position:absolute;left:0;top:-2px;
+  width:5px;height:5px;
+  background:var(--accent);
+  transform:rotate(45deg);
+}
+
+.side-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.side-nav a{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;
+  border-radius:var(--radius-sm);
+  font-size:var(--fs-2);
+  color:var(--text-dim);
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.side-nav a::before{
+  content:'';
+  width:4px;height:4px;
+  background:var(--text-weak);
+  transform:rotate(45deg);
+  flex-shrink:0;
+  transition:background .18s var(--ease);
+}
+.side-nav a:hover,
+.side-nav a.current{background:var(--surface-2);color:var(--text-bright);}
+.side-nav a:hover::before,
+.side-nav a.current::before{background:var(--accent-bright);}
+
+.side-foot{
+  flex-shrink:0;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.08em;
+  line-height:1.9;
+  color:var(--text-weak);
+}
+.side-foot .np{color:var(--accent-bright);}
+.side-foot .np::before{content:'♪ ';}
+
+/* ---------- 主内容 ---------- */
+.main{
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+  min-width:0;
+  padding-bottom:60px;
+}
+
+/* ============================================================
+   HERO (VIDEO)
+   ============================================================ */
+.hero{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:48px 20px 40px;
+  text-align:center;
+}
+
+.hero-mark{
+  width:42px;height:42px;
+  margin-bottom:22px;
+  border:1px solid var(--line);
+  display:grid;place-items:center;
+  transform:rotate(45deg);
+  transition:border-color .3s var(--ease);
+  cursor:pointer;
+}
+.hero-mark::before{
+  content:'';
+  width:9px;height:9px;
+  background:var(--accent);
+  transition:transform .5s var(--ease),background .3s var(--ease);
+}
+.hero:hover .hero-mark{border-color:var(--accent);}
+.hero:hover .hero-mark::before{transform:rotate(180deg);background:var(--accent-bright);}
+
+.hero-title{
+  font-family:var(--font-ui);
+  font-weight:300;
+  font-size:clamp(2.1rem,4.6vw,3.6rem);
+  line-height:1.1;
+  letter-spacing:.16em;
+  padding-left:.16em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  position:relative;
+}
+.hero-title::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-16px;
+  transform:translateX(-50%);
+  width:min(70%,280px);
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+
+.marquee-box{
+  margin-top:38px;
+  padding:9px 22px;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+}
+.marquee-text{
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+/* ============================================================
+   VIDEO CATEGORIES
+   ============================================================ */
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.category-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color .2s var(--ease);
+}
+
+.category-item:hover {
+  border-color: var(--surface-hover);
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--surface);
+  transition: background .2s var(--ease);
+}
+
+.category-header:hover {
+  background: var(--surface-2);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-left .letter {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2);
+  color: var(--accent-bright);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 10px;
+  background: var(--accent-soft);
+}
+
+.header-left .title {
+  font-family: var(--font-ui);
+  font-size: var(--fs-card-title);
+  font-weight: 500;
+  color: var(--text-bright);
+}
+
+.category-arrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-weak);
+  transition: transform 0.3s var(--ease), color 0.3s;
+}
+
+.category-item.open .category-arrow {
+  transform: rotate(90deg);
+  color: var(--accent-bright);
+}
+
+.category-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--surface-2);
+}
+
+.category-item.open .category-content {
+  max-height: 3000px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 24px;
+}
+
+/* 视频占位框 */
+.video-placeholder {
+  aspect-ratio: 16 / 9;
+  background: var(--bg);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+
+.video-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.video-placeholder:hover {
+  border-color: var(--accent);
+  border-style: solid;
+  background: var(--surface);
+}
+
+.video-placeholder:hover::before {
+  opacity: 0.8;
+}
+
+.video-placeholder .play-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  display: grid;
+  place-items: center;
+  color: var(--accent-bright);
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s;
+}
+
+.video-placeholder:hover .play-icon {
+  transform: scale(1.1);
+  background: var(--accent);
+  color: #fff;
+}
+
+.video-placeholder span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-4);
+  color: var(--text-dim);
+  letter-spacing: .1em;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   FOOTER & 其他
+   ============================================================ */
+.site-footer{
+  margin-top:32px;
+  padding-top:22px;
+  border-top:1px solid var(--line-soft);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+.site-footer a { transition: color .2s; }
+.site-footer a:hover { color: var(--accent-bright); }
+
+/* ============================================================
+   MENU PANEL / OVERLAY
+   ============================================================ */
+.menu-panel{
+  position:fixed; top:calc(var(--topbar-h) + 10px); left:20px; width:250px;
+  z-index:112; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow); opacity:0; visibility:hidden; transform:translateY(-6px);
+  transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;
+}
+.menu-panel.active{opacity:1;visibility:visible;transform:translateY(0);}
+.menu-panel .menu-item{
+  display:flex;align-items:center;gap:10px; height:44px; padding:0 16px;
+  font-size:var(--fs-2); color:var(--text-dim); border-bottom:1px solid var(--line-soft);
+  transition:background .16s var(--ease),color .16s var(--ease);
+}
+.menu-panel .menu-item:last-child{border-bottom:none;}
+.menu-panel .menu-item::before{
+  content:''; width:4px;height:4px; flex-shrink:0; background:var(--text-weak);
+  transform:rotate(45deg); transition:background .16s var(--ease);
+}
+.menu-panel .menu-item:hover{background:var(--surface-2);color:var(--text-bright);}
+.menu-panel .menu-item:hover::before{background:var(--accent-bright);}
+.overlay{
+  position:fixed;inset:0; z-index:108; background:rgba(0,0,0,.6);
+  opacity:0; visibility:hidden; transition:opacity .28s var(--ease),visibility .28s;
+}
+.overlay.active{opacity:1;visibility:visible;}
+
+/* 回到顶部按钮 */
+.back-to-top {
+  position: fixed;
+  right: 26px; bottom: 26px;
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  z-index: 95;
+  opacity: 0; visibility: hidden;
+  transform: translateY(10px);
+  transition: all .28s var(--ease);
+}
+.back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover { border-color: var(--accent); background: var(--surface-3); }
+.back-to-top svg { width: 18px; height: 18px; fill: none; stroke: var(--text-dim); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.back-to-top:hover svg { stroke: var(--accent-bright); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1280px){
+  .layout{gap:20px;padding:20px;}
+}
+@media (max-width:1024px){
+  .sidebar{
+    position:fixed; top:0;left:0;bottom:0; width:280px; height:100vh; max-height:none;
+    border-radius:0; border:none; border-right:1px solid var(--line);
+    transform:translateX(-100%); transition:transform .3s var(--ease); z-index:110;
+  }
+  .sidebar.open{transform:translateX(0);}
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px;gap:16px;}
+  .menu-panel{display:none;}
+}
+@media (max-width:900px){
+  .font-level{display:none;}
+}
+@media (max-width:760px){
+  .topbar-inner{padding:0 14px;gap:8px;}
+  .hero{padding:36px 16px 30px;}
+  .hero-mark{display:none;}
+  .hero-title{letter-spacing:.1em;padding-left:.1em;}
+  .site-footer{justify-content:center;text-align:center;}
+  .music-btn{padding:0 12px;}
+  .back-to-top{right:16px;bottom:16px;}
+  
+  .category-header { padding: 16px 20px; }
+  .video-grid { padding: 16px; grid-template-columns: 1fr; }
+}
+@media (max-width:560px){
+  .music-btn .label{display:none;}
+  .music-btn{padding:0 11px;}
+  .header-left .title { font-size: var(--fs-1); }
+}
+</style>
 </head>
 <body>
 
-    <div class="page-container">
-        <div class="category-item" id="catA">
-            <div class="category-header" onclick="toggleCategory('A')">
-                <span>A</span><span class="category-arrow">▶</span>
-            </div>
-            <div class="category-content">
-                <div class="video-grid">
-                    <div class="video-placeholder">VIDEO 01</div>
-                    <div class="video-placeholder">VIDEO 02</div>
-                    <div class="video-placeholder">VIDEO 03</div>
-                    <div class="video-placeholder">VIDEO 04</div>
-                </div>
-            </div>
-        </div>
+<div class="scanline" aria-hidden="true"></div>
 
-        <div class="category-item" id="catB">
-            <div class="category-header" onclick="toggleCategory('B')">
-                <span>B</span><span class="category-arrow">▶</span>
-            </div>
-            <div class="category-content">
-                <div class="video-grid">
-                    <div class="video-placeholder">VIDEO 01</div>
-                    <div class="video-placeholder">VIDEO 02</div>
-                    <div class="video-placeholder">VIDEO 03</div>
-                    <div class="video-placeholder">VIDEO 04</div>
-                </div>
-            </div>
-        </div>
+<!-- ============================ TOPBAR ============================ -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
+    
+    <div class="topbar-actions">
+      <div class="font-group" role="group" aria-label="调整字号">
+        <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
+        <span class="font-level" id="fontLevel">标准</span>
+        <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
+      </div>
+      <button class="tool-btn" id="themeBtn" type="button" aria-label="切换亮色 / 暗色主题" title="切换主题">☾</button>
+      <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="label" id="musicLabel">PLAY</span>
+      </button>
+      <button class="diamond-btn" id="diamondIcon" type="button" aria-label="刷新页面" title="刷新页面"></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"><div class="read-progress-fill" id="readProgress"></div></div>
+</header>
 
-        <div class="category-item" id="catC">
-            <div class="category-header" onclick="toggleCategory('C')">
-                <span>C</span><span class="category-arrow">▶</span>
-            </div>
-            <div class="category-content">
-                <div class="video-grid">
-                    <div class="video-placeholder">VIDEO 01</div>
-                    <div class="video-placeholder">VIDEO 02</div>
-                    <div class="video-placeholder">VIDEO 03</div>
-                    <div class="video-placeholder">VIDEO 04</div>
-                </div>
-            </div>
-        </div>
+<!-- ============================ LAYOUT ============================ -->
+<div class="layout">
 
-        <div class="category-item" id="catD">
-            <div class="category-header" onclick="toggleCategory('D')">
-                <span>D</span><span class="category-arrow">▶</span>
-            </div>
-            <div class="category-content">
-                <div class="video-grid">
-                    <div class="video-placeholder">VIDEO 01</div>
-                    <div class="video-placeholder">VIDEO 02</div>
-                    <div class="video-placeholder">VIDEO 03</div>
-                    <div class="video-placeholder">VIDEO 04</div>
-                </div>
-            </div>
+  <!-- ---------- 左栏 ---------- -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-scroll">
+      <div class="brand">PRECIOUS<br>MESS<span>est. 2009 — archive</span></div>
+      <div class="brand-rule"></div>
+      <ul class="side-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="display.html">Display — Depp</a></li>
+        <li><a href="message.html">Message</a></li>
+        <li><a href="strange.html">Red Room</a></li>
+        <li><a href="share.html">Share</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="Video.html" class="current">Video</a></li>
+      </ul>
+    </div>
+    <div class="side-foot">
+      <div class="np">WTF</div>
+      <div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div>
+    </div>
+  </aside>
+
+  <!-- ---------- 主内容 ---------- -->
+  <main class="main">
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
+      <h1 class="hero-title">VIDEO</h1>
+      <div class="marquee-box">
+        <div class="marquee-text">✦ 快捷键 A / B / C / D 可快速折叠展开 ✦</div>
+      </div>
+    </header>
+
+    <!-- 视频分类列表 -->
+    <div class="category-list">
+      
+      <!-- 分类 A -->
+      <div class="category-item" id="catA">
+        <div class="category-header" onclick="toggleCategory('A')">
+          <div class="header-left">
+            <span class="letter">A</span>
+            <span class="title">Category A</span>
+          </div>
+          <span class="category-arrow">▶</span>
         </div>
+        <div class="category-content">
+          <div class="video-grid">
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 01</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 02</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 03</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 04</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类 B -->
+      <div class="category-item" id="catB">
+        <div class="category-header" onclick="toggleCategory('B')">
+          <div class="header-left">
+            <span class="letter">B</span>
+            <span class="title">Category B</span>
+          </div>
+          <span class="category-arrow">▶</span>
+        </div>
+        <div class="category-content">
+          <div class="video-grid">
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 01</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 02</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 03</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 04</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类 C -->
+      <div class="category-item" id="catC">
+        <div class="category-header" onclick="toggleCategory('C')">
+          <div class="header-left">
+            <span class="letter">C</span>
+            <span class="title">Category C</span>
+          </div>
+          <span class="category-arrow">▶</span>
+        </div>
+        <div class="category-content">
+          <div class="video-grid">
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 01</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 02</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 03</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 04</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类 D -->
+      <div class="category-item" id="catD">
+        <div class="category-header" onclick="toggleCategory('D')">
+          <div class="header-left">
+            <span class="letter">D</span>
+            <span class="title">Category D</span>
+          </div>
+          <span class="category-arrow">▶</span>
+        </div>
+        <div class="category-content">
+          <div class="video-grid">
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 01</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 02</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 03</span></div>
+            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 04</span></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <script>
-        function toggleCategory(key) {
-            const item = document.getElementById('cat' + key);
-            item.classList.toggle('open');
-        }
+    <footer class="site-footer">
+      <span>© 2026 PRECIOUS MESS · VIDEO</span>
+      <a href="index.html">← 回到主站</a>
+    </footer>
 
-        document.addEventListener('keydown', function(e) {
-            const key = e.key.toUpperCase();
-            if (['A', 'B', 'C', 'D'].includes(key)) {
-                toggleCategory(key);
-            }
-        });
-    </script>
+  </main>
+</div>
+
+<!-- 快捷菜单 -->
+<nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="message.html" class="menu-item">留言板</a>
+  <a href="display.html" class="menu-item">DISPLAY-Depp</a>
+  <a href="strange.html" class="menu-item">RED ROOM</a>
+  <a href="share.html" class="menu-item">share-something fun</a>
+  <a href="music.html" class="menu-item">Music</a>
+  <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
+  <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- 回到顶部 -->
+<button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- 音乐 -->
+<audio id="bgMusic" loop autoplay preload="auto">
+  <source src="WTF.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){
+  'use strict';
+
+  var $  = function(s, c){ return (c || document).querySelector(s); };
+  var $$ = function(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var root = document.documentElement;
+
+  var store = {
+    get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set: function(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  };
+
+  /* 1. 主题切换 */
+  (function initTheme(){
+    var btn = $('#themeBtn');
+    var KEY = 'pm_theme';
+    function apply(theme){
+      root.setAttribute('data-theme', theme);
+      store.set(KEY, theme);
+      if (btn) {
+        btn.textContent = theme === 'light' ? '☀' : '☾';
+        btn.setAttribute('aria-label', theme === 'light' ? '切换到暗色主题' : '切换到亮色主题');
+      }
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f5f7' : '#0a0a0b');
+    }
+    apply(store.get(KEY) === 'light' ? 'light' : 'dark');
+    if (btn) {
+      btn.addEventListener('click', function(){
+        apply(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+      });
+    }
+  })();
+
+  /* 2. 字号三档 */
+  (function initFontSize(){
+    var down = $('#fontDown');
+    var up   = $('#fontUp');
+    var level = $('#fontLevel');
+    var KEY  = 'pm_font_size';
+    var steps = [
+      { key:'md', label:'标准' },
+      { key:'lg', label:'大' },
+      { key:'xl', label:'特大' }
+    ];
+    function indexOf(key){
+      for (var i = 0; i < steps.length; i++) if (steps[i].key === key) return i;
+      return 0;
+    }
+    var current = indexOf(store.get(KEY) || 'md');
+    function apply(i){
+      current = Math.max(0, Math.min(steps.length - 1, i));
+      root.setAttribute('data-size', steps[current].key);
+      store.set(KEY, steps[current].key);
+      if (level) level.textContent = steps[current].label;
+      if (down) down.disabled = current === 0;
+      if (up) up.disabled = current === steps.length - 1;
+    }
+    apply(current);
+    if (down) down.addEventListener('click', function(){ apply(current - 1); });
+    if (up)   up.addEventListener('click', function(){ apply(current + 1); });
+  })();
+
+  /* 3. 阅读进度 */
+  (function initProgress(){
+    var fill  = $('#readProgress');
+    var ticking = false;
+    function update(){
+      var scrolled = window.scrollY;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = max > 0 ? Math.min(1, Math.max(0, scrolled / max)) : 0;
+      if (fill) fill.style.width = (pct * 100) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive:true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+  /* 4. 顶栏滚动阴影 */
+  (function initTopbar(){
+    var bar = $('#topbar');
+    if (!bar) return;
+    var ticking = false;
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        bar.classList.toggle('scrolled', window.scrollY > 8);
+        ticking = false;
+      });
+    }, { passive:true });
+  })();
+
+  /* 5. 背景音乐 */
+  (function initPlayer(){
+    var audio = $('#bgMusic');
+    if (!audio) return;
+    var musicBtn = $('#musicBtn');
+    var musicLabel = $('#musicLabel');
+    function paint(playing){
+      if (musicBtn) {
+        musicBtn.classList.toggle('playing', playing);
+        musicBtn.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+      }
+      if (musicLabel) musicLabel.textContent = playing ? 'PAUSE' : 'PLAY';
+    }
+    function toggle(){
+      if (audio.paused) {
+        var p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(function(){ paint(false); });
+      } else {
+        audio.pause();
+      }
+    }
+    if (musicBtn) musicBtn.addEventListener('click', toggle);
+    audio.addEventListener('play',  function(){ paint(true); });
+    audio.addEventListener('pause', function(){ paint(false); });
+
+    function startOnVisit(){
+      if (!audio.paused) return;
+      var promise = audio.play();
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(function(){ paint(false); });
+      }
+    }
+    startOnVisit();
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function(type){
+      window.addEventListener(type, function(event){
+        var isMusicControl = event.target && event.target.closest &&
+          event.target.closest('#musicBtn');
+        if (audio.paused && !isMusicControl) startOnVisit();
+      }, { once:true, passive:true });
+    });
+
+    paint(false);
+  })();
+
+  /* 6. 汉堡菜单 */
+  (function initMenu(){
+    var btn     = $('#hamburgerBtn');
+    var panel   = $('#menuPanel');
+    var sidebar = $('#sidebar');
+    var overlay = $('#overlay');
+    if (!btn || !overlay) return;
+    var open = false;
+    function isMobile(){ return window.innerWidth <= 1024; }
+    function setOpen(next){
+      open = next;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+      if (isMobile()) {
+        if (sidebar) sidebar.classList.toggle('open', open);
+      } else if (panel) {
+        panel.classList.toggle('active', open);
+      }
+      overlay.classList.toggle('active', open);
+      document.body.classList.toggle('no-scroll', open);
+    }
+    btn.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!open); });
+    overlay.addEventListener('click', function(){ if (open) setOpen(false); });
+    if (panel) {
+      $$('.menu-item', panel).forEach(function(item){
+        item.addEventListener('click', function(){ if (open) setOpen(false); });
+      });
+    }
+    if (sidebar) {
+      $$('.side-nav a', sidebar).forEach(function(item){
+        item.addEventListener('click', function(){ if (open && isMobile()) setOpen(false); });
+      });
+    }
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+    var timer;
+    window.addEventListener('resize', function(){
+      clearTimeout(timer);
+      timer = setTimeout(function(){ if (open) setOpen(false); }, 160);
+    });
+  })();
+
+  /* 7. 刷新按钮 */
+  (function initRefresh(){
+    var btn = $('#diamondIcon');
+    var centerBtn = $('#refreshDiamond');
+    function doReload(){ location.reload(); }
+    if (btn) {
+      btn.addEventListener('click', function(){
+        btn.classList.add('spin');
+        setTimeout(doReload, 420);
+      });
+    }
+    if (centerBtn) {
+      centerBtn.style.cursor = 'pointer';
+      centerBtn.addEventListener('click', doReload);
+    }
+  })();
+
+  /* 8. 回到顶部 */
+  (function initBackToTop(){
+    var btn = $('#backToTop');
+    if (!btn) return;
+    var ticking = false;
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        btn.classList.toggle('show', window.scrollY > 500);
+        ticking = false;
+      });
+    }, { passive:true });
+    btn.addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+
+  /* 9. 折叠分类业务逻辑 */
+  window.toggleCategory = function(key) {
+    const item = document.getElementById('cat' + key);
+    if (item) item.classList.toggle('open');
+  };
+
+  document.addEventListener('keydown', function(e) {
+    // 如果用户正在输入框中输入，则不触发快捷键
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    const key = e.key.toUpperCase();
+    if (['A', 'B', 'C', 'D'].includes(key)) {
+      window.toggleCategory(key);
+    }
+  });
+
+})();
+</script>
 </body>
 </html>

@@ -1,918 +1,1476 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN" data-theme="dark" data-size="md">
 <head>
-    <meta charset="UTF-8" />
-    <!-- 改动：强制电脑显示，完全关闭手机自适应 -->
-    <meta name="viewport" content="width=1200, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <link rel="icon" type="image/x-icon" href="/favicon-v2.ico" />
-    <title>DISPLAY of Depp</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background-color: #050505;
-            color: #d0d0d0;
-            font-family: 'Space Mono', monospace;
-            overflow-x: hidden;
-            background-image: radial-gradient(#0a1a2a 0.7px, #050505 0.7px);
-            background-size: 14px 14px;
-            min-height: 100vh;
-        }
-        .scanline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                transparent 0px,
-                rgba(20, 40, 60, 0.06) 1px,
-                transparent 2px
-            );
-            z-index: 9;
-        }
-        .cursor-glow {
-            position: fixed;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(80, 180, 220, 0.5), rgba(30, 80, 120, 0.25), transparent 65%);
-            pointer-events: none;
-            z-index: 10;
-            transform: translate(-50%, -50%);
-            filter: blur(12px);
-        }
-        .particle {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.3;
-            mix-blend-mode: screen;
-            background: rgba(100, 180, 220, 0.35);
-            box-shadow: 0 0 12px rgba(70, 150, 200, 0.15);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px 60px;
-            position: relative;
-            z-index: 2;
-        }
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(100, 180, 220, 0.15);
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .top-nav .logo {
-            font-family: "Cormorant Garamond", serif;
-            font-style: italic;
-            font-size: 24px;
-            letter-spacing: 6px;
-            color: #f0f0f0;
-            text-shadow: 0 0 12px rgba(100, 180, 220, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
-        .top-nav .logo:hover {
-            text-shadow: 0 0 24px rgba(100, 180, 220, 0.6), 0 0 48px rgba(100, 180, 220, 0.2);
-            transform: scale(1.02);
-        }
-        .top-nav .logo span {
-            color: #7ab7d4;
-        }
-        .top-nav .nav-links {
-            display: flex;
-            gap: 20px;
-            font-size: 12px;
-            letter-spacing: 2px;
-        }
-        .top-nav .nav-links a {
-            color: #888;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: 0.3s ease;
-        }
-        .top-nav .nav-links a:hover {
-            color: #7ab7d4;
-            border-bottom: 1px solid #4a7d9c;
-        }
-        .top-nav .nav-links a.active {
-            color: #7ab7d4;
-            border-bottom: 1px solid #7ab7d4;
-        }
-        .music-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none;
-            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
-        }
-        .music-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.08);
-            box-shadow: 0 0 24px rgba(100, 180, 220, 0.2);
-        }
-        .music-btn:active {
-            transform: scale(0.92);
-        }
-        .music-btn.playing {
-            border-color: rgba(100, 180, 220, 0.4);
-            box-shadow: 0 0 24px rgba(100, 180, 220, 0.15);
-        }
-        .hero {
-            text-align: center;
-            margin-bottom: 70px;
-        }
-        .hero h1 {
-            font-family: "Cormorant Garamond", serif;
-            font-weight: 600;
-            font-size: 3.8rem;
-            letter-spacing: 12px;
-            color: #f0f0f0;
-            text-shadow: 0 0 20px rgba(70, 150, 200, 0.25), 0 0 60px rgba(40, 100, 150, 0.08);
-            margin-bottom: 6px;
-        }
-        .hero .sub {
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-            color: #667;
-            letter-spacing: 4px;
-            margin-top: 4px;
-            border-top: 1px solid rgba(100, 180, 220, 0.12);
-            display: inline-block;
-            padding-top: 8px;
-        }
-        .main-grid {
-            display: grid;
-            grid-template-columns: 0.8fr 1fr;
-            gap: 80px;
-            margin-top: 10px;
-            align-items: start;
-            position: relative;
-        }
-        .photo-wall {
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-            padding-right: 6px;
-            align-items: center;
-        }
-        .photo-item {
-            border-radius: 4px;
-            overflow: visible;
-            border: 2px solid rgba(70, 150, 200, 0.15);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: #0a0f1a;
-            position: relative;
-            width: 72%;
-            aspect-ratio: 1 / 1;
-        }
-        .photo-item:hover {
-            transform: scale(1.03) translateY(-4px);
-            border-color: #7ab7d4;
-            box-shadow: 0 8px 40px rgba(70, 150, 200, 0.2), 0 0 30px rgba(70, 150, 200, 0.06);
-            z-index: 3;
-        }
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            display: block;
-            border-radius: 3px;
-            transition: filter 0.4s ease;
-            object-fit: cover;
-        }
-        .photo-item:hover img {
-            filter: brightness(1.05) contrast(1.05);
-        }
-        .photo-item:nth-child(odd) {
-            transform: rotate(-0.8deg) translateX(-3px);
-        }
-        .photo-item:nth-child(even) {
-            transform: rotate(1.0deg) translateX(5px);
-        }
-        .photo-item:nth-child(3n) {
-            transform: rotate(-0.5deg) translateX(-6px);
-        }
-        .photo-item:nth-child(5n) {
-            transform: rotate(0.7deg) translateX(3px);
-        }
-        .photo-item:nth-child(7n) {
-            transform: rotate(-1.0deg) translateX(-2px);
-        }
-        .photo-item:hover {
-            transform: scale(1.03) translateY(-4px) rotate(0deg) !important;
-        }
-        .photo-item .tape {
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%) rotate(var(--rot, 0deg));
-            width: 50px;
-            height: 18px;
-            background: rgba(220, 210, 190, 0.35);
-            backdrop-filter: blur(2px);
-            border-radius: 2px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            pointer-events: none;
-            z-index: 2;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .photo-item .tape-2 {
-            position: absolute;
-            bottom: -6px;
-            right: 15%;
-            width: 35px;
-            height: 14px;
-            background: rgba(210, 200, 180, 0.3);
-            backdrop-filter: blur(2px);
-            border-radius: 2px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-            pointer-events: none;
-            z-index: 2;
-            transform: rotate(12deg);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .photo-item .tape-3 {
-            position: absolute;
-            top: 20%;
-            right: -6px;
-            width: 30px;
-            height: 14px;
-            background: rgba(200, 190, 170, 0.25);
-            backdrop-filter: blur(2px);
-            border-radius: 2px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            pointer-events: none;
-            z-index: 2;
-            transform: rotate(25deg);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .photo-item:nth-child(1) .tape { --rot: -2deg; }
-        .photo-item:nth-child(2) .tape { --rot: 4deg; }
-        .photo-item:nth-child(3) .tape { --rot: -5deg; }
-        .photo-item:nth-child(4) .tape { --rot: 3deg; }
-        .photo-item:nth-child(5) .tape { --rot: -1deg; }
-        .photo-item:nth-child(6) .tape { --rot: 6deg; }
-        .photo-item:nth-child(7) .tape { --rot: -3deg; }
-        .photo-item:nth-child(8) .tape { --rot: 2deg; }
-        .note-wall {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            padding-left: 6px;
-        }
-        .note {
-            background: rgba(10, 20, 35, 0.6);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(70, 150, 200, 0.15);
-            border-radius: 6px;
-            padding: 22px 28px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 0 30px rgba(30, 80, 120, 0.03);
-            transition: border-color 0.4s ease, transform 0.3s ease;
-            position: relative;
-            width: 100%;
-            max-width: 390px;
-            margin-left: auto;
-            margin-right: 20px;
-        }
-        .note:hover {
-            border-color: rgba(100, 180, 220, 0.4);
-            transform: translateY(-2px);
-        }
-        .note::before {
-            content: '✦';
-            position: absolute;
-            top: -6px;
-            right: 12px;
-            font-size: 12px;
-            color: #4a7d9c;
-            opacity: 0.4;
-        }
-        .note p {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
-            line-height: 2.0;
-            color: #c8d0d8;
-            letter-spacing: 0.4px;
-            margin-bottom: 0;
-        }
-        .note p:last-child {
-            margin-bottom: 0;
-        }
-        .note:nth-child(odd) {
-            transform: rotate(-0.5deg) translateX(-2px);
-        }
-        .note:nth-child(even) {
-            transform: rotate(0.7deg) translateX(4px);
-        }
-        .note:nth-child(3n) {
-            transform: rotate(-0.3deg) translateX(-5px);
-        }
-        .note:nth-child(5n) {
-            transform: rotate(0.4deg) translateX(2px);
-        }
-        .note:hover {
-            transform: translateY(-2px) rotate(0deg) !important;
-        }
-        .note .hl {
-            color: #7ab7d4;
-            text-shadow: 0 0 12px rgba(70, 150, 200, 0.12);
-        }
-        .course-section {
-            margin-top: 140px;
-            padding-top: 40px;
-            position: relative;
-        }
-        .divider {
-            position: relative;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(100, 180, 220, 0.6), transparent);
-            margin-bottom: 50px;
-            box-shadow: 0 0 20px rgba(100, 180, 220, 0.15);
-        }
-        .divider::before {
-            content: '✦ ✦ ✦';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #050505;
-            padding: 0 24px;
-            color: #7ab7d4;
-            font-size: 14px;
-            letter-spacing: 8px;
-            text-shadow: 0 0 20px rgba(100, 180, 220, 0.3);
-        }
-        .course-title {
-            font-family: "Cormorant Garamond", serif;
-            font-weight: 600;
-            font-size: 3rem;
-            letter-spacing: 16px;
-            color: #f0f0f0;
-            text-align: center;
-            margin-bottom: 40px;
-            text-shadow: 0 0 20px rgba(70, 150, 200, 0.2);
-        }
-        .slider-wrapper {
-            position: relative;
-            overflow: visible;
-            padding: 40px 0 30px;
-        }
-        .slider-track-wrapper {
-            position: relative;
-            overflow: visible;
-            mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-        }
-        .rope {
-            position: relative;
-            width: 100%;
-            height: 2px;
-            background: rgba(150, 180, 200, 0.25);
-            margin-bottom: 28px;
-            box-shadow: 0 0 12px rgba(100, 180, 220, 0.08);
-            mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-        }
-        .rope::before,
-        .rope::after {
-            content: '';
-            position: absolute;
-            top: -6px;
-            width: 8px;
-            height: 14px;
-            background: rgba(150, 180, 200, 0.15);
-            border-radius: 0 0 4px 4px;
-            border: 1px solid rgba(150, 180, 200, 0.1);
-            border-top: none;
-        }
-        .rope::before {
-            left: 10px;
-        }
-        .rope::after {
-            right: 10px;
-        }
-        .slider-track {
-            display: flex;
-            gap: 30px;
-            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            will-change: transform;
-            padding-top: 8px;
-            position: relative;
-        }
-        .slider-item {
-            flex: 0 0 calc(100% / 2.8);
-            min-width: 240px;
-            background: rgba(10, 20, 35, 0.4);
-            border: 1px solid rgba(70, 150, 200, 0.15);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s ease, transform 0.3s ease;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        .slider-item:hover {
-            border-color: #7ab7d4;
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(70, 150, 200, 0.15);
-        }
-        .slider-item::before {
-            content: '';
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 18px;
-            background: rgba(150, 180, 200, 0.2);
-            border-left: 1px solid rgba(150, 180, 200, 0.08);
-            border-right: 1px solid rgba(150, 180, 200, 0.08);
-        }
-        .slider-item::after {
-            content: '⚬';
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 8px;
-            color: rgba(150, 180, 200, 0.3);
-            text-shadow: 0 0 8px rgba(100, 180, 220, 0.05);
-        }
-        .slider-item img {
-            width: 80%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            display: block;
-            margin: 12px auto 0;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .slider-item .caption {
-            padding: 22px 20px 26px;
-            font-family: 'Courier New', Courier, monospace;
-            letter-spacing: 0.3px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .slider-item .caption .year {
-            display: inline-block;
-            color: #7ab7d4;
-            font-weight: bold;
-            font-size: 18px;
-            margin-right: 6px;
-            text-shadow: 0 0 14px rgba(70, 150, 200, 0.15);
-        }
-        .slider-item .caption .movie {
-            display: block;
-            font-family: "Cormorant Garamond", serif;
-            font-style: italic;
-            font-size: 26px;
-            color: #e8eef4;
-            margin: 8px 0 14px;
-            letter-spacing: 2px;
-            border-left: 2px solid #4a7d9c;
-            padding-left: 16px;
-            line-height: 1.3;
-        }
-        .slider-item .caption .movie .sub-en {
-            font-size: 15px;
-            font-style: italic;
-            color: #8899aa;
-            font-family: 'Courier New', Courier, monospace;
-        }
-        .slider-item .caption .desc {
-            font-size: 15px;
-            color: #aab2ba;
-            line-height: 1.9;
-            margin-top: 4px;
-            flex: 1;
-        }
-        .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 58px;
-            height: 58px;
-            background: rgba(20, 30, 45, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 50%;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 34px;
-            cursor: pointer;
-            z-index: 9999;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            box-shadow: 0 0 40px rgba(100, 180, 220, 0.08), 0 4px 20px rgba(0, 0, 0, 0.6);
-            font-family: 'Georgia', serif;
-            line-height: 1;
-            pointer-events: auto;
-        }
-        .slider-btn:hover:not(:disabled) {
-            background: rgba(40, 60, 90, 0.8);
-            color: #ffffff;
-            border-color: rgba(100, 180, 220, 0.4);
-            box-shadow: 0 0 60px rgba(100, 180, 220, 0.3), 0 0 120px rgba(100, 180, 220, 0.08);
-            transform: translateY(-50%) scale(1.06);
-        }
-        .slider-btn:active:not(:disabled) {
-            transform: translateY(-50%) scale(0.92);
-        }
-        .slider-btn:disabled {
-            opacity: 0.15;
-            cursor: not-allowed;
-            box-shadow: none;
-            background: rgba(20, 30, 45, 0.3);
-        }
-        .slider-btn.prev {
-            left: -68px;
-        }
-        .slider-btn.next {
-            right: -68px;
-        }
-        .footer {
-            margin-top: 80px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(70, 150, 200, 0.12);
-            text-align: center;
-            color: #445;
-            font-size: 11px;
-            letter-spacing: 2px;
-        }
-        .footer a {
-            color: #4a7d9c;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            color: #7ab7d4;
-        }
-        .back-to-top {
-            position: fixed;
-            bottom: 36px;
-            right: 36px;
-            width: 58px;
-            height: 58px;
-            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(4px);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 0 60px rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            outline: none;
-            user-select: none;
-        }
-        .back-to-top:hover {
-            background: rgba(255, 255, 255, 0.45);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-            transform: scale(0.94);
-        }
-        .back-to-top:active {
-            transform: scale(0.86);
-        }
-        .back-to-top svg {
-            width: 26px;
-            height: 26px;
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.75);
-            stroke-width: 2.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            pointer-events: none;
-            margin-top: -2px;
-        }
-        .back-to-top:hover svg {
-            stroke: rgba(255, 255, 255, 1);
-        }
-        #lineCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.5;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0b">
+<title>DISPLAY of Depp — PRECIOUS MESS</title>
+<link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS (与主站完全一致)
+   ============================================================ */
+:root{
+  --fs-base:15px;
+  --fs-0:var(--fs-base);
+  --fs-1:calc(var(--fs-base) - 1px);
+  --fs-2:calc(var(--fs-base) - 2px);
+  --fs-3:calc(var(--fs-base) - 3px);
+  --fs-4:calc(var(--fs-base) - 4px);
+  --fs-5:calc(var(--fs-base) - 5px);
+  --fs-card-title:21px;
+  --fs-brand:20px;
+
+  --bg:#0a0a0b;
+  --grid-line:#131316;
+  --surface:#121214;
+  --surface-2:#18181b;
+  --surface-3:#1f1f24;
+  --surface-hover:#202026;
+
+  --line:#2a2a31;
+  --line-soft:#1e1e23;
+
+  --text:#c8c8d0;
+  --text-bright:#eeeeF4;
+  --text-dim:#90909b;
+  --text-weak:#65656f;
+
+  --accent:#8b1a1a;
+  --accent-bright:#c23434;
+  --accent-soft:rgba(139,26,26,.14);
+
+  --topbar-bg:rgba(10,10,11,.88);
+  --shadow:0 16px 48px rgba(0,0,0,.65);
+  --card-shadow:none;
+
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --font-mono:'Space Mono','SFMono-Regular',Consolas,'Courier New',monospace;
+  --font-serif:'Cormorant Garamond',Georgia,'Songti SC',serif;
+
+  --radius-sm:6px;
+  --radius:10px;
+  --radius-lg:14px;
+
+  --topbar-h:56px;
+  --sidebar-w:264px;
+  --rightbar-w:340px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+html[data-size="lg"]{
+  --fs-base:16.5px;
+  --fs-card-title:23px;
+  --fs-brand:22px;
+}
+html[data-size="xl"]{
+  --fs-base:18px;
+  --fs-card-title:26px;
+  --fs-brand:24px;
+}
+
+html[data-theme="light"]{
+  --bg:#f5f5f7;
+  --grid-line:#eaeaee;
+  --surface:#ffffff;
+  --surface-2:#fafafb;
+  --surface-3:#f0f0f3;
+  --surface-hover:#f4f4f7;
+
+  --line:#dedee3;
+  --line-soft:#ececef;
+
+  --text:#3a3a44;
+  --text-bright:#141418;
+  --text-dim:#5c5c68;
+  --text-weak:#8b8b96;
+
+  --accent:#8b1a1a;
+  --accent-bright:#a82424;
+  --accent-soft:rgba(139,26,26,.07);
+
+  --topbar-bg:rgba(255,255,255,.9);
+  --shadow:0 16px 48px rgba(0,0,0,.14);
+  --card-shadow:0 1px 2px rgba(20,20,24,.05);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--topbar-h) + 20px);
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:80px 80px;
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:var(--fs-0);
+  line-height:1.7;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  transition:background-color .25s var(--ease),color .25s var(--ease);
+}
+body.no-scroll{overflow:hidden;}
+
+a{color:inherit;text-decoration:none;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+img{display:block;max-width:100%;}
+::selection{background:var(--accent);color:#fff;}
+
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border:2px solid var(--bg);border-radius:6px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+:focus-visible{outline:2px solid var(--accent-bright);outline-offset:2px;}
+
+.scanline{
+  position:fixed;inset:0;z-index:200;pointer-events:none;
+  background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
+}
+html[data-theme="light"] .scanline{display:none;}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--topbar-bg);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+  transition:border-color .2s var(--ease),background .25s var(--ease);
+}
+.topbar.scrolled{border-bottom-color:var(--line);}
+
+.topbar-inner{
+  height:var(--topbar-h);
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.hamburger{
+  width:34px;height:34px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.hamburger:hover{border-color:var(--accent);background:var(--surface-2);}
+.hamburger span{width:16px;height:1.5px;background:var(--text-dim);transition:background .2s var(--ease);}
+.hamburger:hover span{background:var(--accent-bright);}
+
+.topbar-brand{
+  font-family:var(--font-ui);
+  font-weight:500;
+  font-size:var(--fs-2);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:color .2s var(--ease);
+}
+.topbar-brand:hover{color:var(--accent-bright);}
+
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+.tool-btn{
+  height:32px;
+  min-width:32px;
+  padding:0 9px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.06em;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.tool-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.tool-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+.font-group{
+  display:flex;
+  align-items:center;
+  gap:1px;
+  padding:2px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+}
+.font-group .tool-btn{border:none;height:26px;min-width:28px;padding:0 6px;border-radius:4px;}
+.font-level{
+  padding:0 7px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.06em;
+  color:var(--text-weak);
+  white-space:nowrap;
+  user-select:none;
+}
+
+.music-btn{
+  height:32px;
+  padding:0 14px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.music-btn:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.music-btn.playing{color:var(--accent-bright);border-color:var(--accent);background:var(--accent-soft);}
+.music-btn .eq{display:inline-flex;align-items:flex-end;gap:2px;height:10px;}
+.music-btn .eq i{display:block;width:2px;height:3px;background:currentColor;border-radius:1px;}
+.music-btn.playing .eq i{animation:eqBounce .9s infinite ease-in-out;}
+.music-btn.playing .eq i:nth-child(2){animation-delay:.15s;}
+.music-btn.playing .eq i:nth-child(3){animation-delay:.3s;}
+@keyframes eqBounce{0%,100%{height:3px;}50%{height:10px;}}
+
+.diamond-btn{
+  width:32px;height:32px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:50%;
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover{border-color:var(--accent);background:var(--surface-2);}
+.diamond-btn::before{
+  content:'';
+  width:7px;height:7px;
+  background:var(--accent);
+  transform:rotate(45deg);
+  transition:transform .55s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover::before{transform:rotate(225deg);background:var(--accent-bright);}
+.diamond-btn.spin::before{transform:rotate(405deg);}
+
+.read-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent;pointer-events:none;}
+.read-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));transition:width .1s linear;}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout{
+  max-width:1560px;
+  margin:0 auto;
+  padding:24px;
+  display:grid;
+  grid-template-columns:var(--sidebar-w) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+}
+
+/* ---------- 左栏 ---------- */
+.sidebar{
+  position:sticky;
+  top:calc(var(--topbar-h) + 24px);
+  height:calc(100vh - var(--topbar-h) - 48px);
+  min-height:460px;
+  display:flex;
+  flex-direction:column;
+  padding:24px 18px 18px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--card-shadow);
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+}
+.sidebar-scroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--accent) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar{width:6px;}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:3px;}
+
+.brand{
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:var(--fs-brand);
+  line-height:1.3;
+  letter-spacing:.02em;
+  color:var(--text-bright);
+}
+.brand span{
+  display:block;
+  margin-top:8px;
+  font-family:var(--font-mono);
+  font-weight:400;
+  font-size:var(--fs-5);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+.brand-rule{height:1px;margin:18px 0;background:var(--line);position:relative;}
+.brand-rule::before{
+  content:'';
+  position:absolute;left:0;top:-2px;
+  width:5px;height:5px;
+  background:var(--accent);
+  transform:rotate(45deg);
+}
+
+.side-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.side-nav a{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;
+  border-radius:var(--radius-sm);
+  font-size:var(--fs-2);
+  color:var(--text-dim);
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.side-nav a::before{
+  content:'';
+  width:4px;height:4px;
+  background:var(--text-weak);
+  transform:rotate(45deg);
+  flex-shrink:0;
+  transition:background .18s var(--ease);
+}
+.side-nav a:hover,
+.side-nav a.current{background:var(--surface-2);color:var(--text-bright);}
+.side-nav a:hover::before,
+.side-nav a.current::before{background:var(--accent-bright);}
+
+.side-foot{
+  flex-shrink:0;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.08em;
+  line-height:1.9;
+  color:var(--text-weak);
+}
+.side-foot .np{color:var(--accent-bright);}
+.side-foot .np::before{content:'♪ ';}
+
+/* ---------- 主内容 ---------- */
+.main{
+  width:100%;
+  max-width:1080px;
+  margin:0 auto;
+  min-width:0;
+  padding-bottom:60px;
+}
+
+/* ============================================================
+   HERO (DISPLAY)
+   ============================================================ */
+.hero{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:48px 20px 40px;
+  text-align:center;
+}
+
+.hero-mark{
+  width:42px;height:42px;
+  margin-bottom:22px;
+  border:1px solid var(--line);
+  display:grid;place-items:center;
+  transform:rotate(45deg);
+  transition:border-color .3s var(--ease);
+}
+.hero-mark::before{
+  content:'';
+  width:9px;height:9px;
+  background:var(--accent);
+  transition:transform .5s var(--ease),background .3s var(--ease);
+}
+.hero:hover .hero-mark{border-color:var(--accent);}
+.hero:hover .hero-mark::before{transform:rotate(180deg);background:var(--accent-bright);}
+
+.hero-title{
+  font-family:var(--font-ui);
+  font-weight:300;
+  font-size:clamp(2.1rem,4.6vw,3.6rem);
+  line-height:1.1;
+  letter-spacing:.16em;
+  padding-left:.16em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  position:relative;
+}
+.hero-title::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-16px;
+  transform:translateX(-50%);
+  width:min(70%,280px);
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+
+.marquee-box{
+  margin-top:38px;
+  padding:9px 22px;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+}
+.marquee-text{
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+/* ============================================================
+   MAIN GRID (PHOTO + NOTE)
+   ============================================================ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: 48px;
+  align-items: stretch; /* 让两列高度一致 */
+  margin-top: 20px;
+}
+
+/* 照片墙 */
+.photo-wall {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 让照片均匀分布，撑满整个高度 */
+  align-items: center;
+  padding: 10px 0;
+  height: 100%;
+}
+
+.photo-item {
+  position: relative;
+  width: 72%; /* 稍微缩小照片，适配高度 */
+  aspect-ratio: 1 / 1;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  cursor: zoom-in;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  filter: grayscale(.4) contrast(1.1);
+  transition: filter .4s ease;
+}
+
+.photo-item:hover {
+  transform: scale(1.04) translateY(-5px) rotate(0deg) !important;
+  border-color: var(--accent-bright);
+  box-shadow: 0 12px 40px rgba(139,26,26,.25);
+  z-index: 3;
+}
+.photo-item:hover img {
+  filter: grayscale(0) contrast(1.05);
+}
+
+/* 随机旋转，增加手工感（因为删了一张，重新排布顺序） */
+.photo-item:nth-child(1) { transform: rotate(-1.5deg) translateX(-4px); }
+.photo-item:nth-child(2) { transform: rotate(1.2deg) translateX(5px); }
+.photo-item:nth-child(3) { transform: rotate(-0.8deg) translateX(-6px); }
+.photo-item:nth-child(4) { transform: rotate(1.8deg) translateX(4px); }
+.photo-item:nth-child(5) { transform: rotate(-1.2deg) translateX(-5px); }
+.photo-item:nth-child(6) { transform: rotate(0.9deg) translateX(6px); }
+.photo-item:nth-child(7) { transform: rotate(-1.6deg) translateX(-3px); }
+
+/* 胶带装饰 */
+.photo-item .tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(var(--rot, -2deg));
+  width: 60px;
+  height: 20px;
+  background: rgba(200, 200, 200, 0.15);
+  backdrop-filter: blur(2px);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.photo-item .tape-2 {
+  position: absolute;
+  bottom: 10px;
+  right: -8px;
+  width: 44px;
+  height: 16px;
+  background: rgba(200, 200, 200, 0.12);
+  backdrop-filter: blur(2px);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  z-index: 2;
+  transform: rotate(18deg);
+}
+.photo-item:nth-child(1) .tape { --rot: -3deg; }
+.photo-item:nth-child(2) .tape { --rot: 4deg; }
+.photo-item:nth-child(3) .tape { --rot: -6deg; }
+.photo-item:nth-child(4) .tape { --rot: 2deg; }
+.photo-item:nth-child(5) .tape { --rot: -1deg; }
+.photo-item:nth-child(6) .tape { --rot: 5deg; }
+.photo-item:nth-child(7) .tape { --rot: -4deg; }
+
+/* 信件墙 */
+.note-wall {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.note {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--card-shadow);
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.note::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  border-radius: var(--radius) 0 0 var(--radius);
+  opacity: 0.7;
+}
+.note:hover {
+  border-color: var(--surface-hover);
+  transform: translateY(-2px);
+}
+.note p {
+  font-family: var(--font-serif);
+  font-size: calc(var(--fs-0) + 2px);
+  line-height: 1.9;
+  color: var(--text-dim);
+  letter-spacing: .02em;
+}
+.note p:last-child { margin-bottom: 0; }
+
+/* 签名 */
+.note.signature {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  text-align: right;
+  padding: 0 10px;
+}
+.note.signature::before { display: none; }
+.note.signature p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--accent-bright);
+}
+
+/* ============================================================
+   COURSE SECTION
+   ============================================================ */
+.course-section {
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line-soft);
+  position: relative;
+}
+.course-title {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  letter-spacing: .2em;
+  text-align: center;
+  color: var(--text-bright);
+  margin-bottom: 40px;
+}
+.course-title::before, .course-title::after {
+  content: '✦';
+  font-size: 0.6em;
+  color: var(--accent);
+  margin: 0 16px;
+  vertical-align: middle;
+}
+
+/* 轮播容器 */
+.slider-wrapper {
+  position: relative;
+  padding: 0 24px;
+}
+.slider-track-wrapper {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  padding: 20px 0;
+  mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+}
+.slider-track-wrapper::-webkit-scrollbar { display: none; }
+
+.slider-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+}
+
+/* 卡片 */
+.slider-item {
+  width: 320px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.slider-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+.slider-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+  filter: grayscale(.3);
+  transition: filter .3s;
+}
+.slider-item:hover img { filter: grayscale(0); }
+
+.slider-item .caption {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.slider-item .year {
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--accent-bright);
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+.slider-item .movie {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text-bright);
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.slider-item .movie .sub-en {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  color: var(--text-weak);
+  margin-top: 4px;
+}
+.slider-item .desc {
+  font-size: var(--fs-3);
+  line-height: 1.7;
+  color: var(--text-dim);
+  flex: 1;
+}
+
+/* 按钮 */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  cursor: pointer;
+  z-index: 10;
+  transition: all .2s var(--ease);
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+.slider-btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-bright);
+}
+.slider-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.slider-btn.prev { left: -12px; }
+.slider-btn.next { right: -12px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{
+  margin-top:32px;
+  padding-top:22px;
+  border-top:1px solid var(--line-soft);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+.site-footer a { transition: color .2s; }
+.site-footer a:hover { color: var(--accent-bright); }
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+.back-to-top{
+  position:fixed;
+  right:26px;bottom:26px;
+  width:46px;height:46px;
+  display:grid;place-items:center;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:50%;
+  z-index:95;
+  opacity:0;visibility:hidden;
+  transform:translateY(10px);
+  transition:opacity .28s var(--ease),transform .28s var(--ease),visibility .28s,border-color .2s var(--ease),background .2s var(--ease);
+}
+.back-to-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+.back-to-top:hover{border-color:var(--accent);background:var(--surface-3);}
+.back-to-top .ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.back-to-top .ring circle{fill:none;stroke-width:2;}
+.ring-bg{stroke:var(--line);}
+.ring-fill{stroke:var(--accent-bright);stroke-linecap:round;stroke-dasharray:119.4;stroke-dashoffset:119.4;transition:stroke-dashoffset .1s linear;}
+.back-to-top .arrow{
+  position:relative;
+  width:18px;height:18px;
+  fill:none;
+  stroke:var(--text-dim);
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:stroke .2s var(--ease);
+}
+.back-to-top:hover .arrow{stroke:var(--accent-bright);}
+
+/* ============================================================
+   MENU PANEL / OVERLAY
+   ============================================================ */
+.menu-panel{
+  position:fixed;
+  top:calc(var(--topbar-h) + 10px);
+  left:20px;
+  width:250px;
+  z-index:112;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  opacity:0;visibility:hidden;
+  transform:translateY(-6px);
+  transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;
+}
+.menu-panel.active{opacity:1;visibility:visible;transform:translateY(0);}
+
+.menu-panel .menu-item{
+  display:flex;align-items:center;gap:10px;
+  height:44px;
+  padding:0 16px;
+  font-size:var(--fs-2);
+  color:var(--text-dim);
+  border-bottom:1px solid var(--line-soft);
+  transition:background .16s var(--ease),color .16s var(--ease);
+}
+.menu-panel .menu-item:last-child{border-bottom:none;}
+.menu-panel .menu-item::before{
+  content:'';
+  width:4px;height:4px;
+  flex-shrink:0;
+  background:var(--text-weak);
+  transform:rotate(45deg);
+  transition:background .16s var(--ease);
+}
+.menu-panel .menu-item:hover{background:var(--surface-2);color:var(--text-bright);}
+.menu-panel .menu-item:hover::before{background:var(--accent-bright);}
+
+.overlay{
+  position:fixed;inset:0;
+  z-index:108;
+  background:rgba(0,0,0,.6);
+  opacity:0;visibility:hidden;
+  transition:opacity .28s var(--ease),visibility .28s;
+}
+.overlay.active{opacity:1;visibility:visible;}
+
+/* ============================================================
+   图片灯箱
+   ============================================================ */
+.lightbox{
+  position:fixed;inset:0;
+  z-index:9998;
+  display:flex;align-items:center;justify-content:center;
+  padding:32px;
+  background:rgba(0,0,0,.9);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  opacity:0;visibility:hidden;
+  transition:opacity .3s var(--ease),visibility .3s;
+}
+.lightbox.active{opacity:1;visibility:visible;}
+.lightbox img{
+  max-width:min(92vw,900px);
+  max-height:86vh;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  transform:scale(.96);
+  transition:transform .3s var(--ease);
+}
+.lightbox.active img{transform:scale(1);}
+.lightbox-close{
+  position:absolute;
+  top:22px;right:22px;
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:50%;
+  font-size:16px;
+  color:#ddd;
+  transition:background .2s,border-color .2s;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1280px){
+  .layout{gap:20px;padding:20px;}
+}
+@media (max-width:1024px){
+  .sidebar{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:280px;
+    height:100vh;
+    max-height:none;
+    border-radius:0;
+    border:none;
+    border-right:1px solid var(--line);
+    transform:translateX(-100%);
+    transition:transform .3s var(--ease);
+    z-index:110;
+  }
+  .sidebar.open{transform:translateX(0);}
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px;gap:16px;}
+  .menu-panel{display:none;}
+}
+@media (max-width:900px){
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start; /* 手机端恢复普通排列 */
+  }
+  .photo-wall {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+    gap: 20px;
+  }
+  .photo-item {
+    width: 45%;
+    min-width: 200px;
+  }
+  .font-level{display:none;}
+}
+@media (max-width:760px){
+  .topbar-inner{padding:0 14px;gap:8px;}
+  .hero{padding:36px 16px 30px;}
+  .hero-mark{display:none;}
+  .hero-title{letter-spacing:.1em;padding-left:.1em;}
+  .site-footer{justify-content:center;text-align:center;}
+  .back-to-top{right:16px;bottom:16px;}
+  .music-btn{padding:0 12px;}
+  .slider-item { width: 280px; }
+  .slider-btn { display: none; }
+}
+@media (max-width:560px){
+  .music-btn .label{display:none;}
+  .music-btn{padding:0 11px;}
+  .photo-item { width: 100%; min-width: 0; }
+}
+</style>
 </head>
 <body>
-    <div class="scanline"></div>
-    <div class="cursor-glow" id="cursorGlow"></div>
-    <button class="music-btn" id="musicBtn" aria-label="播放/暂停音乐">▶</button>
-    <audio id="bgMusic" loop preload="auto">
-        <source src="too late,i already died.mp3" type="audio/mpeg">
-    </audio>
-    <canvas id="lineCanvas"></canvas>
-    <div class="container">
-        <nav class="top-nav">
-            <div class="logo" id="refreshLogo">✦ <span>PRECIOUS</span> MESS</div>
-            <div class="nav-links">
-                <a href="index.html">HOME</a>
-                <a href="display.html" class="active">DISPLAY</a>
-                <a href="#course">COURSE</a>
-            </div>
-        </nav>
-        <div class="hero">
-            <h1>DISPLAY of Depp</h1>
-            <div class="sub">✦ 愚蠢的真挚的情感 ✦</div>
-        </div>
-        <div class="main-grid" id="mainGrid">
-            <div class="photo-wall" id="photoWall">
-                <div class="photo-item" data-idx="0"><div class="tape"></div><div class="tape-2"></div><img src="depp1.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="1"><div class="tape"></div><div class="tape-3"></div><img src="depp2.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="2"><div class="tape"></div><div class="tape-2"></div><img src="depp3.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="3"><div class="tape"></div><div class="tape-3"></div><img src="depp4.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="4"><div class="tape"></div><div class="tape-2"></div><img src="depp5.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="5"><div class="tape"></div><div class="tape-3"></div><img src="depp6.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="6"><div class="tape"></div><div class="tape-2"></div><img src="depp7.jpg" alt="Johnny Depp" /></div>
-                <div class="photo-item" data-idx="7"><div class="tape"></div><div class="tape-3"></div><img src="depp8.jpg" alt="Johnny Depp" /></div>
-            </div>
-            <div class="note-wall" id="noteWall">
-                <div class="note"><p>我爱的你：</p></div>
-                <div class="note"><p>我常常会对着空气发呆。<br />有时候，或许很多时候，我觉得空气也并不是空的。它里面有灰尘，有光的碎屑，还有一些叫不出名字的东西。它们飘着，转着，然后就慢慢汇成了你的样子。</p></div>
-                <div class="note"><p>目光放空的时候，时间会从我眼前悄悄溜过，无声无息。但我并不在意它。你的身影就停在那里，把时间遮住了。一小时，两小时，我也不知道过去了多久。那些模糊的印象，像褪了色的照片在水里慢慢显影，一点一点被填满，最终汇成了无数个清晰的你，仿佛你就在我伸手可及的地方。</p></div>
-                <div class="note"><p>我为你所吸引。我被你卷了进去，像一片叶子落在水流里，不想挣扎，也不想上岸。</p></div>
-                <div class="note"><p>我迷恋你的眼睛，那双半眯着的、忧郁的眼睛。它们像一道缓和的流水，围绕着我，也浸透了我的眼睛。我迷恋你的声音，你在夜晚念诗的声音。我记得的，我记得的。它平和却极富深情。它没有那股力量，也没有那份激昂。它是温和的，像一只手轻轻按在我那片躁动的海浪上，让它一点一点平息下去。我迷恋你的嘴唇。当它微笑的时候，是云层后面的朝霞，忽然就亮了，把我心里的阴霾驱散。那微微弯起的弧度，比世间任何曲线都更迷人。我曾在无数个夜晚想象那道弧线，想着想着，天就亮了。</p></div>
-                <div class="note"><p>我迷恋你的一切。我爱着任何样子的你。我爱你年轻时灿烂的微笑，像夏天的阳光砸在水面上。爱你壮年时沉稳的绅士风度，像深秋的树，不言不语却让人安心。爱你中年时对孩子无私的慷慨，也爱你年老时不惧污秽的清白姿态。你的每一种情绪，开心、生气、悲伤，所有的模样，都深深地烙印在我的心里，像刻在石头上的字，风吹不掉，雨也洗不净。</p></div>
-                <div class="note"><p>别人常问，为什么会有人独自闭着眼坐在那里。因为当我闭上眼的时候，面前就是你。我想让你知道，我渴望你，渴望你出现在我面前，渴望你能坐在这里，和我一起共进晚餐。我要向你讲述我的故事，我是如何迷恋你的故事。你或许会看着我的眼睛，告诉我你在听。你或许会羞涩地低下头，惊讶于我如此直白的感情。又或许你觉得这个故事太过无聊，却还是愿意让我把它讲下去。讲到蜡烛烧完，讲到窗外的灯一盏一盏灭掉。你会在吗？你不会。可我还是要讲。</p></div>
-                <div class="note"><p>我对你的关注越来越多。我看着你的脸，想象它的触感。是柔软的？也许是冰冷的。隔着屏幕，隔着海洋，隔着无数个日夜，我永远也无法知道。可我偏偏一遍一遍地想。我收集你的资料，了解你出生的地方，记下你的生日，用最真挚的语言为你祝福。我了解你是如何成长的，了解你身边的人。我看遍了你的人生，你是如何地耀眼夺目，你拿着奖杯的身姿，你对着镜头鞠躬的模样，让我再一次迷恋上了你。每一次迷恋都像第一次，又比第一次更深。</p></div>
-                <div class="note"><p>我对你的爱，像是一座装满金银宝藏的藏屋。我向全世界炫耀它，却又害怕别人从我身前抢走它。我向别人介绍你，向别人吐露我是如何被你吸引的。当别人称赞你时，我心中无比骄傲，却又恼怒他们提到你的名字。我不能独自享有你。可当我看到荧幕里你和别人的欢声笑语，你牵着陌生人的手，你的唇落在别人脸上时，尽管知道那也许不是真的，说不清的恼怒仍会涌上心头，让我不知所措。</p></div>
-                <div class="note"><p>我的脑海里一遍遍放着你念的诗，你唱的歌，你画的画，你弹的琴。仿佛这样便能让我原谅你。可是，我有什么资格怪你呢？我是如此地爱你。我甚至没有资格说"原谅"这个词。我只是坐在黑暗里，一遍又一遍地听着你的声音，直到它把我全部淹没。</p></div>
-                <div class="note"><p>我常常后悔，自己没有早点出生，没有早点认识你。当我爱上你时，你却已是将烧尽残烛，你被日月所割出的皱纹，无声地刺痛我的心弦。我无比心疼你，却又想让你坚强。当人们误会你时，贬低你时，我的心好像也随你而去了，它与你一起经受打击，想要分担哪怕一点痛苦。</p></div>
-                <div class="note"><p>无数的岁月里，我将会一直在你身边，我用毕生的语言表达对你的支持，它会化作天上的繁星，空中的雪花，和你眼里的光辉，时刻伴随着你。所有的时光都是值得的，我会永远爱你。</p></div>
-                <div class="note"><p>我的字打完了。晚安，祝你一觉好梦。</p></div>
-                <div class="note"><p style="text-align:right; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:18px; color:#7ab7d4;">BY Virel</p></div>
-            </div>
-        </div>
-        <section class="course-section" id="course">
-            <div class="divider"></div>
-            <h2 class="course-title">COURSE</h2>
-            <div class="slider-wrapper">
-                <div class="slider-track-wrapper">
-                    <div class="rope"></div>
-                    <div class="slider-track" id="sliderTrack">
-                        <div class="slider-item"><img src="course1.jpg" alt="猛鬼街" /><div class="caption"><span class="year">1984</span><span class="movie">《猛鬼街》<br /><span class="sub-en">（A Nightmare on Elm Street）</span></span><div class="desc">Depp银幕首秀饰阳光男友格伦，被拖入床底吞噬的死亡场景血腥震撼，20岁的他青涩稚嫩却已展露独特银幕魅力。</div></div></div>
-                        <div class="slider-item"><img src="course2.jpg" alt="剪刀手爱德华" /><div class="caption"><span class="year">1990</span><span class="movie">《剪刀手爱德华》<br /><span class="sub-en">（Edward Scissorhands）</span></span><div class="desc">Depp成名作饰孤独机器人，仅凭眼神与肢体传递渴望融入人类的悲伤，苍白造型成流行符号，奠定怪诞深情戏路。</div></div></div>
-                        <div class="slider-item"><img src="course3.jpg" alt="断头谷" /><div class="caption"><span class="year">1999</span><span class="movie">《断头谷》<br /><span class="sub-en">（Sleepy Hollow）</span></span><div class="desc">Depp饰胆小警探克瑞恩，遇事就晕却智破无头骑士案，神经质与可爱拿捏精准，贡献大量笑点，与伯顿首次合作成功。</div></div></div>
-                        <div class="slider-item"><img src="course4.jpg" alt="加勒比海盗" /><div class="caption"><span class="year">2003</span><span class="movie">《加勒比海盗》<br /><span class="sub-en">（Pirates of the Caribbean）</span></span><div class="desc">Depp饰杰克船长，兰花指烟熏妆醉步疯癫，亦正亦邪即兴表演获奥斯卡提名，盘活整个系列，成其最耀目标签。</div></div></div>
-                        <div class="slider-item"><img src="course5.jpg" alt="查理和巧克力工厂" /><div class="caption"><span class="year">2005</span><span class="movie">《查理和巧克力工厂》<br /><span class="sub-en">（Charlie and the Chocolate Factory）</span></span><div class="desc">Depp饰威利·旺卡，尖细嗓音神经质笑声，童真与刻薄并存，紫红天鹅绒造型诠释童年创伤的古怪天才。</div></div></div>
-                        <div class="slider-item"><img src="course6.jpg" alt="理发师陶德" /><div class="caption"><span class="year">2007</span><span class="movie">《理发师陶德》<br /><span class="sub-en">（Sweeney Todd）</span></span><div class="desc">Depp饰复仇理发师，苍白眼神空洞，剃刀下爆发惊人戾气，亲自献唱低沉悲愤，凭此片获金球奖影帝，展暗黑歌剧实力。</div></div></div>
-                        <div class="slider-item"><img src="course7.jpg" alt="爱丽丝梦游仙境" /><div class="caption"><span class="year">2010</span><span class="movie">《爱丽丝梦游仙境》<br /><span class="sub-en">（Alice in Wonderland）</span></span><div class="desc">Depp饰疯帽子，红发烟熏癫狂下藏破碎之心，时而疯笑时而泪崩，天真忠诚如孩子，成仙境中最温暖盟友。</div></div></div>
-                        <div class="slider-item"><img src="course8.jpg" alt="神奇动物在哪里" /><div class="caption"><span class="year">2016</span><span class="movie">《神奇动物在哪里》<br /><span class="sub-en">（Fantastic Beasts and Where to Find Them）</span></span><div class="desc">Depp饰黑巫师格林德沃，苍白银发异色瞳优雅蛊惑，煽动演讲尽显反派魅力，虽戏份少却为续作埋下巨大悬念。</div></div></div>
-                    </div>
-                </div>
-                <button class="slider-btn prev" id="prevBtn" disabled>‹</button>
-                <button class="slider-btn next" id="nextBtn">›</button>
-            </div>
-        </section>
-        <div class="footer">
-            © 2026 PRECIOUS MESS · DISPLAY of Depp &nbsp;|&nbsp; <a href="index.html">回到主站</a>
-        </div>
-    </div>
-    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
-        <svg viewBox="0 0 24 24" stroke="currentColor">
-            <polyline points="18 15 12 9 6 15" />
-        </svg>
+
+<div class="scanline" aria-hidden="true"></div>
+
+<!-- ============================ TOPBAR ============================ -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+      <span></span><span></span><span></span>
     </button>
-    <script>
-        document.getElementById('refreshLogo').addEventListener('click', function() {
-            location.reload();
+    <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
+    <div class="topbar-actions">
+      <div class="font-group" role="group" aria-label="调整字号">
+        <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
+        <span class="font-level" id="fontLevel">标准</span>
+        <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
+      </div>
+      <button class="tool-btn" id="themeBtn" type="button" aria-label="切换亮色 / 暗色主题" title="切换主题">☾</button>
+      <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="label" id="musicLabel">PLAY</span>
+      </button>
+      <button class="diamond-btn" id="diamondIcon" type="button" aria-label="刷新页面" title="刷新页面"></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"><div class="read-progress-fill" id="readProgress"></div></div>
+</header>
+
+<!-- ============================ LAYOUT ============================ -->
+<div class="layout">
+
+  <!-- ---------- 左栏 ---------- -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-scroll">
+      <div class="brand">PRECIOUS<br>MESS<span>est. 2009 — archive</span></div>
+      <div class="brand-rule"></div>
+      <ul class="side-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="display.html" class="current">Display — Depp</a></li>
+        <li><a href="message.html">Message</a></li>
+        <li><a href="strange.html">Red Room</a></li>
+        <li><a href="share.html">Share</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="Video.html">Video</a></li>
+      </ul>
+    </div>
+    <div class="side-foot">
+      <div class="np">Too late, I already died</div>
+      <div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div>
+    </div>
+  </aside>
+
+  <!-- ---------- 主内容 ---------- -->
+  <main class="main">
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-mark" aria-hidden="true"></div>
+      <h1 class="hero-title">DISPLAY of Depp</h1>
+      <div class="marquee-box">
+        <div class="marquee-text">✦ 愚蠢的真挚的情感 ✦</div>
+      </div>
+    </header>
+
+    <!-- 主网格 -->
+    <div class="main-grid">
+      
+      <!-- 照片墙 -->
+      <div class="photo-wall">
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp1.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp3.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp4.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp5.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp6.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp7.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp8.jpg" alt="Johnny Depp" data-zoomable></div>
+      </div>
+
+      <!-- 信件墙 -->
+      <div class="note-wall">
+        <div class="note"><p>我爱的你：</p></div>
+        <div class="note"><p>我常常会对着空气发呆。<br>有时候，或许很多时候，我觉得空气也并不是空的。它里面有灰尘，有光的碎屑，还有一些叫不出名字的东西。它们飘着，转着，然后就慢慢汇成了你的样子。</p></div>
+        <div class="note"><p>目光放空的时候，时间会从我眼前悄悄溜过，无声无息。但我并不在意它。你的身影就停在那里，把时间遮住了。一小时，两小时，我也不知道过去了多久。那些模糊的印象，像褪了色的照片在水里慢慢显影，一点一点被填满，最终汇成了无数个清晰的你，仿佛你就在我伸手可及的地方。</p></div>
+        <div class="note"><p>我为你所吸引。我被你卷了进去，像一片叶子落在水流里，不想挣扎，也不想上岸。</p></div>
+        <div class="note"><p>我迷恋你的眼睛，那双半眯着的、忧郁的眼睛。它们像一道缓和的流水，围绕着我，也浸透了我的眼睛。我迷恋你的声音，你在夜晚念诗的声音。我记得的，我记得的。它平和却极富深情。它没有那股力量，也没有那份激昂。它是温和的，像一只手轻轻按在我那片躁动的海浪上，让它一点一点平息下去。我迷恋你的嘴唇。当它微笑的时候，是云层后面的朝霞，忽然就亮了，把我心里的阴霾驱散。那微微弯起的弧度，比世间任何曲线都更迷人。我曾在无数个夜晚想象那道弧线，想着想着，天就亮了。</p></div>
+        <div class="note"><p>我迷恋你的一切。我爱着任何样子的你。我爱你年轻时灿烂的微笑，像夏天的阳光砸在水面上。爱你壮年时沉稳的绅士风度，像深秋的树，不言不语却让人安心。爱你中年时对孩子无私的慷慨，也爱你年老时不惧污秽的清白姿态。你的每一种情绪，开心、生气、悲伤，所有的模样，都深深地烙印在我的心里，像刻在石头上的字，风吹不掉，雨也洗不净。</p></div>
+        <div class="note"><p>别人常问，为什么会有人独自闭着眼坐在那里。因为当我闭上眼的时候，面前就是你。我想让你知道，我渴望你，渴望你出现在我面前，渴望你能坐在这里，和我一起共进晚餐。我要向你讲述我的故事，我是如何迷恋你的故事。你或许会看着我的眼睛，告诉我你在听。你或许会羞涩地低下头，惊讶于我如此直白的感情。又或许你觉得这个故事太过无聊，却还是愿意让我把它讲下去。讲到蜡烛烧完，讲到窗外的灯一盏一盏灭掉。你会在吗？你不会。可我还是要讲。</p></div>
+        <div class="note"><p>我对你的关注越来越多。我看着你的脸，想象它的触感。是柔软的？也许是冰冷的。隔着屏幕，隔着海洋，隔着无数个日夜，我永远也无法知道。可我偏偏一遍一遍地想。我收集你的资料，了解你出生的地方，记下你的生日，用最真挚的语言为你祝福。我了解你是如何成长的，了解你身边的人。我看遍了你的人生，你是如何地耀眼夺目，你拿着奖杯的身姿，你对着镜头鞠躬的模样，让我再一次迷恋上了你。每一次迷恋都像第一次，又比第一次更深。</p></div>
+        <div class="note"><p>我对你的爱，像是一座装满金银宝藏的藏屋。我向全世界炫耀它，却又害怕别人从我身前抢走它。我向别人介绍你，向别人吐露我是如何被你吸引的。当别人称赞你时，我心中无比骄傲，却又恼怒他们提到你的名字。我不能独自享有你。可当我看到荧幕里你和别人的欢声笑语，你牵着陌生人的手，你的唇落在别人脸上时，尽管知道那也许不是真的，说不清的恼怒仍会涌上心头，让我不知所措。</p></div>
+        <div class="note"><p>我的脑海里一遍遍放着你念的诗，你唱的歌，你画的画，你弹的琴。仿佛这样便能让我原谅你。可是，我有什么资格怪你呢？我是如此地爱你。我甚至没有资格说"原谅"这个词。我只是坐在黑暗里，一遍又一遍地听着你的声音，直到它把我全部淹没。</p></div>
+        <div class="note"><p>我常常后悔，自己没有早点出生，没有早点认识你。当我爱上你时，你却已是将烧尽残烛，你被日月所割出的皱纹，无声地刺痛我的心弦。我无比心疼你，却又想让你坚强。当人们误会你时，贬低你时，我的心好像也随你而去了，它与你一起经受打击，想要分担哪怕一点痛苦。</p></div>
+        <div class="note"><p>无数的岁月里，我将会一直在你身边，我用毕生的语言表达对你的支持，它会化作天上的繁星，空中的雪花，和你眼里的光辉，时刻伴随着你。所有的时光都是值得的，我会永远爱你。</p></div>
+        <div class="note"><p>我的字打完了。晚安，祝你一觉好梦。</p></div>
+        <div class="note signature"><p>BY Virel</p></div>
+      </div>
+
+    </div>
+
+    <!-- Course -->
+    <section class="course-section" id="course">
+      <h2 class="course-title">COURSE</h2>
+      <div class="slider-wrapper">
+        <div class="slider-track-wrapper" id="sliderWrapper">
+          <div class="slider-track" id="sliderTrack">
+            <div class="slider-item">
+              <img src="photo/course1.jpg" alt="猛鬼街">
+              <div class="caption">
+                <span class="year">1984</span>
+                <span class="movie">《猛鬼街》<span class="sub-en">（A Nightmare on Elm Street）</span></span>
+                <div class="desc">Depp银幕首秀饰阳光男友格伦，被拖入床底吞噬的死亡场景血腥震撼，20岁的他青涩稚嫩却已展露独特银幕魅力。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course2.jpg" alt="剪刀手爱德华">
+              <div class="caption">
+                <span class="year">1990</span>
+                <span class="movie">《剪刀手爱德华》<span class="sub-en">（Edward Scissorhands）</span></span>
+                <div class="desc">Depp成名作饰孤独机器人，仅凭眼神与肢体传递渴望融入人类的悲伤，苍白造型成流行符号，奠定怪诞深情戏路。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course3.jpg" alt="断头谷">
+              <div class="caption">
+                <span class="year">1999</span>
+                <span class="movie">《断头谷》<span class="sub-en">（Sleepy Hollow）</span></span>
+                <div class="desc">Depp饰胆小警探克瑞恩，遇事就晕却智破无头骑士案，神经质与可爱拿捏精准，贡献大量笑点，与伯顿首次合作成功。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course4.jpg" alt="加勒比海盗">
+              <div class="caption">
+                <span class="year">2003</span>
+                <span class="movie">《加勒比海盗》<span class="sub-en">（Pirates of the Caribbean）</span></span>
+                <div class="desc">Depp饰杰克船长，兰花指烟熏妆醉步疯癫，亦正亦邪即兴表演获奥斯卡提名，盘活整个系列，成其最耀目标签。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course5.jpg" alt="查理和巧克力工厂">
+              <div class="caption">
+                <span class="year">2005</span>
+                <span class="movie">《查理和巧克力工厂》<span class="sub-en">（Charlie and the Chocolate Factory）</span></span>
+                <div class="desc">Depp饰威利·旺卡，尖细嗓音神经质笑声，童真与刻薄并存，紫红天鹅绒造型诠释童年创伤的古怪天才。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course6.jpg" alt="理发师陶德">
+              <div class="caption">
+                <span class="year">2007</span>
+                <span class="movie">《理发师陶德》<span class="sub-en">（Sweeney Todd）</span></span>
+                <div class="desc">Depp饰复仇理发师，苍白眼神空洞，剃刀下爆发惊人戾气，亲自献唱低沉悲愤，凭此片获金球奖影帝，展暗黑歌剧实力。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course7.jpg" alt="爱丽丝梦游仙境">
+              <div class="caption">
+                <span class="year">2010</span>
+                <span class="movie">《爱丽丝梦游仙境》<span class="sub-en">（Alice in Wonderland）</span></span>
+                <div class="desc">Depp饰疯帽子，红发烟熏癫狂下藏破碎之心，时而疯笑时而泪崩，天真忠诚如孩子，成仙境中最温暖盟友。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course8.jpg" alt="神奇动物在哪里">
+              <div class="caption">
+                <span class="year">2016</span>
+                <span class="movie">《神奇动物在哪里》<span class="sub-en">（Fantastic Beasts and Where to Find Them）</span></span>
+                <div class="desc">Depp饰黑巫师格林德沃，苍白银发异色瞳优雅蛊惑，煽动演讲尽显反派魅力，虽戏份少却为续作埋下巨大悬念。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="slider-btn prev" id="prevBtn" aria-label="上一页">‹</button>
+        <button class="slider-btn next" id="nextBtn" aria-label="下一页">›</button>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>© 2026 PRECIOUS MESS · DISPLAY of Depp</span>
+      <a href="index.html">← 回到主站</a>
+    </footer>
+
+  </main>
+</div>
+
+<!-- 菜单面板 -->
+<nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="message.html" class="menu-item">留言板</a>
+  <a href="display.html" class="menu-item">DISPLAY-Depp</a>
+  <a href="strange.html" class="menu-item">RED ROOM</a>
+  <a href="share.html" class="menu-item">share-something fun</a>
+  <a href="music.html" class="menu-item">Music</a>
+  <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
+  <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- 回到顶部 -->
+<button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部" title="回到顶部">
+  <svg class="ring" viewBox="0 0 46 46" aria-hidden="true">
+    <circle class="ring-bg" cx="23" cy="23" r="19"></circle>
+    <circle class="ring-fill" id="ringFill" cx="23" cy="23" r="19"></circle>
+  </svg>
+  <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="查看大图">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<audio id="bgMusic" loop autoplay preload="auto">
+  <source src="too late,i already died.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){
+  'use strict';
+
+  var $  = function(s, c){ return (c || document).querySelector(s); };
+  var $$ = function(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var root = document.documentElement;
+
+  var store = {
+    get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set: function(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  };
+
+  /* 1. 主题切换 */
+  (function initTheme(){
+    var btn = $('#themeBtn');
+    var KEY = 'pm_theme';
+
+    function apply(theme){
+      root.setAttribute('data-theme', theme);
+      store.set(KEY, theme);
+      if (btn) {
+        btn.textContent = theme === 'light' ? '☀' : '☾';
+        btn.setAttribute('aria-label', theme === 'light' ? '切换到暗色主题' : '切换到亮色主题');
+      }
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f5f7' : '#0a0a0b');
+    }
+
+    apply(store.get(KEY) === 'light' ? 'light' : 'dark');
+
+    if (btn) {
+      btn.addEventListener('click', function(){
+        apply(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+      });
+    }
+  })();
+
+  /* 2. 字号三档 */
+  (function initFontSize(){
+    var down = $('#fontDown');
+    var up   = $('#fontUp');
+    var level = $('#fontLevel');
+    var KEY  = 'pm_font_size';
+    var steps = [
+      { key:'md', label:'标准' },
+      { key:'lg', label:'大' },
+      { key:'xl', label:'特大' }
+    ];
+
+    function indexOf(key){
+      for (var i = 0; i < steps.length; i++) if (steps[i].key === key) return i;
+      return 0;
+    }
+
+    var current = indexOf(store.get(KEY) || 'md');
+
+    function apply(i){
+      current = Math.max(0, Math.min(steps.length - 1, i));
+      root.setAttribute('data-size', steps[current].key);
+      store.set(KEY, steps[current].key);
+      if (level) level.textContent = steps[current].label;
+      if (down) down.disabled = current === 0;
+      if (up) up.disabled = current === steps.length - 1;
+    }
+
+    apply(current);
+
+    if (down) down.addEventListener('click', function(){ apply(current - 1); });
+    if (up)   up.addEventListener('click', function(){ apply(current + 1); });
+  })();
+
+  /* 3. 阅读进度 + 回到顶部环形进度 */
+  (function initProgress(){
+    var fill  = $('#readProgress');
+    var top   = $('#backToTop');
+    var ring  = $('#ringFill');
+    var CIRC  = 119.4;
+    var ticking = false;
+
+    function update(){
+      var scrolled = window.scrollY;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = max > 0 ? Math.min(1, Math.max(0, scrolled / max)) : 0;
+
+      if (fill) fill.style.width = (pct * 100) + '%';
+      if (ring) ring.style.strokeDashoffset = CIRC * (1 - pct);
+      if (top) top.classList.toggle('show', scrolled > 500);
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive:true });
+
+    window.addEventListener('resize', update);
+    update();
+
+    if (top) {
+      top.addEventListener('click', function(){
+        window.scrollTo({ top:0, behavior:'smooth' });
+      });
+    }
+  })();
+
+  /* 4. 顶栏滚动阴影 */
+  (function initTopbar(){
+    var bar = $('#topbar');
+    if (!bar) return;
+    var ticking = false;
+
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        bar.classList.toggle('scrolled', window.scrollY > 8);
+        ticking = false;
+      });
+    }, { passive:true });
+  })();
+
+  /* 5. 背景音乐 */
+  (function initPlayer(){
+    var audio = $('#bgMusic');
+    if (!audio) return;
+
+    var musicBtn = $('#musicBtn');
+    var musicLabel = $('#musicLabel');
+
+    function paint(playing){
+      if (musicBtn) {
+        musicBtn.classList.toggle('playing', playing);
+        musicBtn.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+      }
+      if (musicLabel) musicLabel.textContent = playing ? 'PAUSE' : 'PLAY';
+    }
+
+    function toggle(){
+      if (audio.paused) {
+        var p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(function(){ paint(false); });
+      } else {
+        audio.pause();
+      }
+    }
+
+    if (musicBtn) musicBtn.addEventListener('click', toggle);
+
+    audio.addEventListener('play',  function(){ paint(true); });
+    audio.addEventListener('pause', function(){ paint(false); });
+
+    function startOnVisit(){
+      if (!audio.paused) return;
+      var promise = audio.play();
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(function(){ paint(false); });
+      }
+    }
+
+    startOnVisit();
+
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function(type){
+      window.addEventListener(type, function(event){
+        if (audio.paused && musicBtn && event.target && event.target.closest &&
+            event.target.closest('#musicBtn')) return;
+        if (audio.paused) startOnVisit();
+      }, { once:true, passive:true });
+    });
+
+    paint(false);
+  })();
+
+  /* 6. 图片灯箱 */
+  (function initLightbox(){
+    var box = $('#lightbox');
+    var img = $('#lightboxImg');
+    var close = $('#lightboxClose');
+    if (!box || !img) return;
+
+    function open(src, alt){
+      img.src = src;
+      img.alt = alt || '';
+      box.classList.add('active');
+      document.body.classList.add('no-scroll');
+    }
+
+    function hide(){
+      box.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+      setTimeout(function(){ img.src = ''; }, 300);
+    }
+
+    $$('[data-zoomable]').forEach(function(el){
+      el.addEventListener('click', function(){
+        if (!el.naturalWidth) return;
+        open(el.currentSrc || el.src, el.alt);
+      });
+    });
+
+    if (close) close.addEventListener('click', hide);
+    box.addEventListener('click', function(e){
+      if (e.target === box) hide();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && box.classList.contains('active')) hide();
+    });
+  })();
+
+  /* 7. 汉堡菜单 */
+  (function initMenu(){
+    var btn     = $('#hamburgerBtn');
+    var panel   = $('#menuPanel');
+    var sidebar = $('#sidebar');
+    var overlay = $('#overlay');
+    if (!btn || !overlay) return;
+
+    var open = false;
+    function isMobile(){ return window.innerWidth <= 1024; }
+
+    function setOpen(next){
+      open = next;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+
+      if (isMobile()) {
+        if (sidebar) sidebar.classList.toggle('open', open);
+      } else if (panel) {
+        panel.classList.toggle('active', open);
+      }
+      overlay.classList.toggle('active', open);
+      document.body.classList.toggle('no-scroll', open);
+    }
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      setOpen(!open);
+    });
+
+    overlay.addEventListener('click', function(){ if (open) setOpen(false); });
+
+    if (panel) {
+      $$('.menu-item', panel).forEach(function(item){
+        item.addEventListener('click', function(){ if (open) setOpen(false); });
+      });
+    }
+    if (sidebar) {
+      $$('.side-nav a', sidebar).forEach(function(item){
+        item.addEventListener('click', function(){
+          if (open && isMobile()) setOpen(false);
         });
-        (function() {
-            const audio = document.getElementById('bgMusic');
-            const btn = document.getElementById('musicBtn');
-            let isPlaying = false;
-            function tryAutoPlay() {
-                audio.play().then(() => {
-                    isPlaying = true;
-                    btn.textContent = '⏸';
-                    btn.classList.add('playing');
-                }).catch(() => {
-                    isPlaying = false;
-                    btn.textContent = '▶';
-                    btn.classList.remove('playing');
-                });
-            }
-            window.addEventListener('load', function() {
-                setTimeout(tryAutoPlay, 500);
-            });
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (isPlaying) {
-                    audio.pause();
-                    btn.textContent = '▶';
-                    btn.classList.remove('playing');
-                    isPlaying = false;
-                } else {
-                    audio.play().then(() => {
-                        btn.textContent = '⏸';
-                        btn.classList.add('playing');
-                        isPlaying = true;
-                    }).catch(() => {
-                        btn.textContent = '▶';
-                        btn.classList.remove('playing');
-                        isPlaying = false;
-                    });
-                }
-            });
-            audio.addEventListener('ended', function() {
-                if (!audio.loop) {
-                    btn.textContent = '▶';
-                    btn.classList.remove('playing');
-                    isPlaying = false;
-                }
-            });
-        })();
-        const cursorGlow = document.getElementById('cursorGlow');
-        document.addEventListener('mousemove', (e) => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
-        });
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            const size = Math.random() * 4 + 2;
-            particle.style.width = size + 'px';
-            particle.style.height = size + 'px';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = '-10px';
-            document.body.appendChild(particle);
-            let posY = -10;
-            let posX = parseFloat(particle.style.left);
-            const fallSpeed = Math.random() * 0.5 + 0.25;
-            const drift = (Math.random() - 0.5) * 0.3;
-            function animate() {
-                posY += fallSpeed;
-                posX += drift;
-                particle.style.top = posY + '%';
-                particle.style.left = posX + '%';
-                if (posY < 105) {
-                    requestAnimationFrame(animate);
-                } else {
-                    particle.remove();
-                }
-            }
-            animate();
-        }
-        setInterval(createParticle, 150);
-        (function drawLines() {
-            const canvas = document.getElementById('lineCanvas');
-            const ctx = canvas.getContext('2d');
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-            function getElementCenter(el) {
-                const rect = el.getBoundingClientRect();
-                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-            }
-            function drawRandomLines() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.strokeStyle = 'rgba(100, 180, 220, 0.25)';
-                ctx.lineWidth = 1.2;
-                const photos = document.querySelectorAll('.photo-item');
-                const notes = document.querySelectorAll('.note');
-                if (photos.length === 0 || notes.length === 0) return;
-                photos.forEach((photo) => {
-                    const pCenter = getElementCenter(photo);
-                    const numConnections = Math.floor(Math.random() * 2) + 1;
-                    const shuffledNotes = Array.from(notes).sort(() => Math.random() - 0.5);
-                    const targetNotes = shuffledNotes.slice(0, numConnections);
-                    targetNotes.forEach(note => {
-                        const nCenter = getElementCenter(note);
-                        const cp1x = pCenter.x + (Math.random() - 0.5) * 200;
-                        const cp1y = pCenter.y + (Math.random() - 0.5) * 200;
-                        const cp2x = nCenter.x + (Math.random() - 0.5) * 200;
-                        const cp2y = nCenter.y + (Math.random() - 0.5) * 200;
-                        ctx.beginPath();
-                        ctx.moveTo(pCenter.x, pCenter.y);
-                        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, nCenter.x, nCenter.y);
-                        ctx.stroke();
-                    });
-                });
-                for (let i = 0; i < 8; i++) {
-                    const startX = Math.random() * canvas.width;
-                    const startY = Math.random() * canvas.height;
-                    const endX = Math.random() * canvas.width;
-                    const endY = Math.random() * canvas.height;
-                    const cp1x = startX + (Math.random() - 0.5) * 300;
-                    const cp1y = startY + (Math.random() - 0.5) * 300;
-                    const cp2x = endX + (Math.random() - 0.5) * 300;
-                    const cp2y = endY + (Math.random() - 0.5) * 300;
-                    ctx.beginPath();
-                    ctx.moveTo(startX, startY);
-                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY);
-                    ctx.stroke();
-                }
-            }
-            setTimeout(drawRandomLines, 300);
-            window.addEventListener('resize', () => {
-                setTimeout(drawRandomLines, 400);
-            });
-            window.addEventListener('scroll', () => {
-                requestAnimationFrame(drawRandomLines);
-            });
-            setInterval(drawRandomLines, 4000);
-        })();
-        (function() {
-            const backBtn = document.getElementById('backToTop');
-            backBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        })();
-        (function() {
-            const track = document.getElementById('sliderTrack');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const items = track.querySelectorAll('.slider-item');
-            const itemCount = items.length;
-            let currentIndex = 0;
-            function getItemWidth() {
-                const firstItem = items[0];
-                const style = window.getComputedStyle(firstItem);
-                const marginLeft = parseFloat(style.marginLeft) || 0;
-                const marginRight = parseFloat(style.marginRight) || 0;
-                return firstItem.offsetWidth + marginLeft + marginRight;
-            }
-            function updateSlider() {
-                const itemWidth = getItemWidth();
-                const gap = 30;
-                const offset = currentIndex * (itemWidth + gap);
-                track.style.transform = `translateX(-${offset}px)`;
-                prevBtn.disabled = currentIndex === 0;
-                nextBtn.disabled = currentIndex >= itemCount - 1;
-            }
-            nextBtn.addEventListener('click', function() {
-                if (currentIndex < itemCount - 1) {
-                    currentIndex++;
-                    updateSlider();
-                }
-            });
-            prevBtn.addEventListener('click', function() {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateSlider();
-                }
-            });
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(updateSlider, 100);
-            });
-            setTimeout(updateSlider, 300);
-        })();
-        (function() {
-            const courseLink = document.querySelector('a[href="#course"]');
-            if (courseLink) {
-                courseLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.getElementById('course');
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            }
-        })();
-    </script>
+      });
+    }
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+
+    var timer;
+    window.addEventListener('resize', function(){
+      clearTimeout(timer);
+      timer = setTimeout(function(){ if (open) setOpen(false); }, 160);
+    });
+  })();
+
+  /* 8. 刷新按钮 */
+  (function initRefresh(){
+    var btn = $('#diamondIcon');
+    if (!btn) return;
+
+    btn.addEventListener('click', function(){
+      btn.classList.add('spin');
+      setTimeout(function(){ location.reload(); }, 420);
+    });
+  })();
+
+  /* 9. 轮播图控制 */
+  (function initSlider(){
+    var wrapper = $('#sliderWrapper');
+    var track = $('#sliderTrack');
+    var prevBtn = $('#prevBtn');
+    var nextBtn = $('#nextBtn');
+    if (!wrapper || !track) return;
+
+    var scrollAmount = 344; // 卡片宽度+间距
+
+    function updateButtons(){
+      if (prevBtn) prevBtn.disabled = wrapper.scrollLeft <= 10;
+      if (nextBtn) nextBtn.disabled = wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 10;
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function(){
+        wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function(){
+        wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+    }
+
+    wrapper.addEventListener('scroll', updateButtons, { passive: true });
+    window.addEventListener('resize', updateButtons);
+    setTimeout(updateButtons, 100);
+  })();
+
+})();
+</script>
 </body>
 </html>
