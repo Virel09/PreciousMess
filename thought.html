@@ -1341,7 +1341,7 @@ img{display:block;max-width:100%;}
   var $$ = function(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
   var root = document.documentElement;
 
-  // 封装本地存储
+  // 封装本地存储（仅用于账号状态相关的记忆，与点赞评论无关）
   var store = {
     get: function(k, defaultVal){ 
       try { 
@@ -1473,10 +1473,6 @@ img{display:block;max-width:100%;}
     var musicBtn = $('#musicBtn');
     var musicLabel = $('#musicLabel');
     
-    audio.addEventListener('error', function() {
-      console.error("背景音乐加载失败，请检查 6-Little-Egg.mp3 是否在根目录且名称正确。");
-    });
-
     function paint(playing){
       if (musicBtn) {
         musicBtn.classList.toggle('playing', playing);
@@ -1614,156 +1610,175 @@ img{display:block;max-width:100%;}
   }
 
   /* ============================================================
-     10. 随笔评论：按文章保存在当前浏览器
+     10. 核心：真实的点赞与评论 (真正的全网同步)
      ============================================================ */
+  var API_URL = 'https://preciousmess.top/api/messages';
+
   (function initInteractions(){
     var posts = $$('.post');
     
     posts.forEach(function(post){
       var postId = post.getAttribute('data-id');
       var likeKey = 'thought_like_' + postId;
-      var bookmarkKey = 'thought_bookmark_' + postId;
       
       var likeBtn = post.querySelector('.like-btn');
       var likeCountEl = post.querySelector('.like-count');
+      var commentText = post.querySelector('.comment-text');
       
-      // 如果找不到点赞按钮，说明是置顶帖，直接跳过
       if (!likeBtn) return;
 
-      // --- 本地点赞逻辑 ---
-      var baseLikes = parseInt(likeCountEl.textContent, 10) || 0;
-      var isLiked = store.get(likeKey, false);
-      function renderLike() {
-        likeBtn.classList.toggle('liked', isLiked);
-        likeCountEl.textContent = baseLikes + (isLiked ? 1 : 0);
-      }
-      renderLike();
+      // 我们用特殊的隐藏暗号，把点赞和评论伪装成普通的留言发给后端
+      var LIKE_PREFIX = 'MAGIC_LIKE_' + postId + '::';
+      var CMT_PREFIX = 'MAGIC_CMT_' + postId + '::';
 
-      likeBtn.addEventListener('click', function() {
-        isLiked = !isLiked;
-        store.set(likeKey, isLiked);
-        renderLike();
-      });
+      // --- 从后端拉取所有留言，计算当前的赞和评论 ---
+      function refreshStats() {
+        fetch(API_URL, { mode: 'cors' })
+          .then(function(res) {
+            if(!res.ok) throw new Error('网络错误');
+            return res.json();
+          })
+          .then(function(data) {
+            var all = Array.isArray(data) ? data : (data.data || []);
+            
+            // 统计点赞
+            var myLikes = all.filter(function(c){ 
+              return c.content && c.content.indexOf(LIKE_PREFIX) === 0; 
+            }).length;
+            
+            likeCountEl.textContent = myLikes;
+            
+            // 如果本地记录点过赞，高亮按钮
+            var isLiked = store.get(likeKey, false);
+            likeBtn.classList.toggle('liked', isLiked);
 
-      // --- 本地收藏逻辑 ---
-      var bookmarkBtn = post.querySelector('.bookmark-btn');
-      var isBookmarked = store.get(bookmarkKey, false);
-      function renderBookmark() {
-        bookmarkBtn.classList.toggle('bookmarked', isBookmarked);
-      }
-      renderBookmark();
+            // 统计评论数量 (更新文字显示)
+            var myCmts = all.filter(function(c){ 
+              return c.content && c.content.indexOf(CMT_PREFIX) === 0; 
+            }).length;
+            commentText.textContent = myCmts + ' Comments';
 
-      bookmarkBtn.addEventListener('click', function() {
-        isBookmarked = !isBookmarked;
-        store.set(bookmarkKey, isBookmarked);
-        renderBookmark();
-        showToast(isBookmarked ? '已加入收藏' : '已取消收藏');
-      });
-
-      // --- 分享逻辑 ---
-      var shareBtn = post.querySelector('.share-btn');
-      shareBtn.addEventListener('click', function() {
-        var url = window.location.origin + window.location.pathname + '#' + postId;
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(url).then(function() {
-            showToast('文章链接已复制');
-          }).catch(function() {
-            showToast('复制失败，请手动复制');
+            // 如果是展开状态，渲染评论列表
+            if (post.querySelector('.comments-section').classList.contains('composer-open')) {
+              renderComments(all, CMT_PREFIX);
+            }
+          })
+          .catch(function(err){
+            console.error('获取数据失败', err);
           });
-        } else {
-          showToast('您的浏览器不支持一键复制');
+      }
+
+      // --- 本地点赞触发网络请求 ---
+      likeBtn.addEventListener('click', function() {
+        var isLiked = store.get(likeKey, false);
+        if (isLiked) {
+          // 如果已经点过赞，就不让取消了（取消需要 DELETE 接口，目前没有，所以点过就是点过了）
+          showToast('你已经点过赞啦');
+          return;
         }
+        
+        likeBtn.disabled = true;
+        fetch(API_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name: '点赞', 
+            content: LIKE_PREFIX 
+          })
+        }).then(function(res){
+          if (res.ok) {
+            store.set(likeKey, true); // 记忆已点赞
+            refreshStats(); // 重新计算网络赞数
+          } else {
+            showToast('点赞失败');
+          }
+        }).finally(function(){
+          likeBtn.disabled = false;
+        });
       });
 
-      // --- 联网真实评论逻辑 ---
+      // --- 评论逻辑 ---
       var toggleBtn = post.querySelector('.toggle-comments');
       var commentsSection = post.querySelector('.comments-section');
       var commentList = post.querySelector('.comment-list');
       var cName = post.querySelector('.c-name');
       var cInput = post.querySelector('.c-input');
       var cSubmit = post.querySelector('.c-submit');
-      var cText = post.querySelector('.comment-text');
-      var commentKey = 'pm_thought_comments_v1_' + postId;
 
-      function readComments() {
-        var stored = localStorage.getItem(commentKey);
-        if (!stored) return [];
-        var comments = JSON.parse(stored);
-        if (!Array.isArray(comments)) throw new Error('评论数据格式无效');
-        return comments;
-      }
-
-      function renderComments(comments, showEmptyState) {
+      function renderComments(allData, prefix) {
         commentList.innerHTML = '';
-        cText.textContent = comments.length + ' Comments';
         
-        if (comments.length === 0) {
-          if (showEmptyState) {
-            commentList.innerHTML = '<div style="color:var(--text-weak); font-size:var(--fs-3); font-style:italic;">还没有评论，来抢沙发吧~</div>';
-          }
+        var myCmts = allData.filter(function(c){ 
+          return c.content && c.content.indexOf(prefix) === 0; 
+        }).map(function(c){
+          return {
+            name: c.name,
+            content: c.content.replace(prefix, '') // 切掉暗号，只留评论
+          };
+        });
+
+        if (myCmts.length === 0) {
+          commentList.innerHTML = '<div style="color:var(--text-weak); font-size:var(--fs-3); font-style:italic;">还没有评论，来抢沙发吧~</div>';
           return;
         }
 
-        comments.forEach(function(c) {
+        myCmts.forEach(function(c) {
           var div = document.createElement('div');
           div.className = 'comment-item';
           var name = c.name ? escapeHtml(c.name) : '匿名用户';
-          div.innerHTML = '<span class="c-author">' + name + ':</span><span class="c-text">' + escapeHtml(c.content || c.text) + '</span>';
+          div.innerHTML = '<span class="c-author">' + name + ':</span><span class="c-text">' + escapeHtml(c.content) + '</span>';
           commentList.appendChild(div);
         });
       }
 
-      function loadComments() {
-        try {
-          renderComments(readComments(), false);
-        } catch (err) {
-          console.error('读取评论失败:', err);
-          cText.textContent = 'Comments';
-          commentList.textContent = '评论读取失败，请检查浏览器存储设置。';
-          showToast('评论读取失败');
-        }
-      }
+      // 页面加载时，自动拉取一次数据
+      refreshStats();
 
-      loadComments();
+      // 展开/收起评论区
       toggleBtn.addEventListener('click', function() {
         var isOpening = !commentsSection.classList.contains('composer-open');
         commentsSection.classList.toggle('composer-open', isOpening);
         toggleBtn.setAttribute('aria-expanded', String(isOpening));
         if (isOpening) {
-          try {
-            renderComments(readComments(), true);
-          } catch (err) {
-            console.error('读取评论失败:', err);
-          }
           cInput.focus();
-        } else {
-          try {
-            renderComments(readComments(), false);
-          } catch (err) {
-            console.error('读取评论失败:', err);
-          }
+          refreshStats(); // 展开时刷新数据
         }
       });
 
+      // 发送评论
       cSubmit.addEventListener('click', function() {
         var val = cInput.value.trim();
         var nameVal = cName.value.trim() || '匿名用户';
         if (!val) return;
 
+        cSubmit.textContent = '发送中...';
         cSubmit.disabled = true;
-        try {
-          var comments = readComments();
-          comments.push({ name: nameVal, content: val, time: new Date().toISOString() });
-          localStorage.setItem(commentKey, JSON.stringify(comments));
-          cInput.value = '';
-          renderComments(comments, false);
-          showToast('评论成功');
-        } catch (err) {
-          console.error('保存评论失败:', err);
-          showToast('评论保存失败，请检查浏览器存储设置');
-        } finally {
+
+        fetch(API_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name: nameVal, 
+            content: CMT_PREFIX + val 
+          })
+        })
+        .then(function(res) {
+          if (res.ok) {
+            cInput.value = '';
+            refreshStats(); // 发送成功后重新拉取数据
+          } else {
+            showToast('发送失败');
+          }
+        })
+        .catch(function() {
+          showToast('网络错误');
+        })
+        .finally(function() {
+          cSubmit.textContent = '发送';
           cSubmit.disabled = false;
-        }
+        });
       });
       
       // 绑定回车发送
