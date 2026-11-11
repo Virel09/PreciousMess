@@ -1694,10 +1694,14 @@ img{display:block;max-width:100%;}
                 if (voterId && recordVoterId === voterId) isLikedByMe = true;
               }
             });
+            var hasLocalLike = store.get(el.likeKey, false);
             var myLikes = legacyCount + Object.keys(voterIds).length;
+            if (hasLocalLike && !isLikedByMe && legacyCount === 0) {
+              myLikes++;
+            }
             el.likeCountEl.textContent = myLikes;
-            
-            isLikedByMe = isLikedByMe || store.get(el.likeKey, false);
+
+            isLikedByMe = isLikedByMe || hasLocalLike;
             el.hasLiked = isLikedByMe;
             el.likeBtn.classList.toggle('liked', isLikedByMe);
             el.likeBtn.setAttribute('aria-pressed', isLikedByMe ? 'true' : 'false');
