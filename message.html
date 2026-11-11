@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   TOKENS
+   TOKENS (与主站完全一致)
    ============================================================ */
 :root{
   --fs-base:15px;
@@ -106,6 +106,7 @@ img{display:block;max-width:100%;}
   position:fixed;inset:0;z-index:200;pointer-events:none;
   background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
 }
+html[data-theme="light"] .scanline{display:none;}
 
 /* ============================================================
    TOPBAR
@@ -131,7 +132,7 @@ img{display:block;max-width:100%;}
 .hamburger{
   width:34px;height:34px;
   flex-shrink:0;
-  display:none;
+  display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
@@ -367,7 +368,6 @@ img{display:block;max-width:100%;}
   padding:48px 20px 40px;
   text-align:center;
 }
-
 .hero-mark{
   width:42px;height:42px;
   margin-bottom:22px;
@@ -385,7 +385,6 @@ img{display:block;max-width:100%;}
 }
 .hero:hover .hero-mark{border-color:var(--accent);}
 .hero:hover .hero-mark::before{transform:rotate(180deg);background:var(--accent-bright);}
-
 .hero-title{
   font-family:var(--font-ui);
   font-weight:300;
@@ -406,7 +405,6 @@ img{display:block;max-width:100%;}
   height:1px;
   background:linear-gradient(90deg,transparent,var(--accent),transparent);
 }
-
 .marquee-box{
   margin-top:38px;
   padding:9px 22px;
@@ -422,7 +420,7 @@ img{display:block;max-width:100%;}
 }
 
 /* ============================================================
-   MESSAGE BLOCK (顶部语段)
+   MESSAGE BLOCK
    ============================================================ */
 .message-block {
   display: flex;
@@ -628,11 +626,9 @@ img{display:block;max-width:100%;}
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  padding-top: 20px; /* 修改：加大了与上方分割线的距离 */
-  padding-bottom: 20px; /* 修改：加大了底部的呼吸感 */
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--line-soft);
 }
-.forum-post:first-child { padding-top: 12px; } /* 第一条稍微收一点 */
 .forum-post:last-child { border-bottom: none; margin-bottom: 0; }
 
 .forum-post-sidebar {
@@ -640,7 +636,7 @@ img{display:block;max-width:100%;}
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px; /* 修改：头像、名字、楼号之间拉开了一点距离 */
+  gap: 6px;
 }
 .forum-avatar-wrap {
   width: 50px; height: 50px;
@@ -693,7 +689,7 @@ img{display:block;max-width:100%;}
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 修改：文字框和底部时间/按钮稍微拉开 */
+  gap: 8px;
   min-width: 0;
 }
 .forum-text-box {
@@ -701,7 +697,7 @@ img{display:block;max-width:100%;}
   border: 1px solid var(--line-soft);
   border-left: 2px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 14px 18px; /* 修改：文字框内部上下的 padding 增加到 14px，左右增加到 18px */
+  padding: 12px 16px;
   width: fit-content;
   max-width: 100%;
   transition: border-color .2s;
@@ -843,7 +839,6 @@ img{display:block;max-width:100%;}
   .layout{gap:20px;padding:20px;}
 }
 @media (max-width:1024px){
-  .hamburger{display:flex;}
   .sidebar{
     position:fixed; top:0;left:0;bottom:0; width:280px; height:100vh; max-height:none;
     border-radius:0; border:none; border-right:1px solid var(--line);
@@ -854,25 +849,11 @@ img{display:block;max-width:100%;}
   .menu-panel{display:none;}
 }
 @media (max-width:900px){
-  .guestbook-container {
-    flex-direction: column;
-  }
-  .left-panel {
-    flex: 1 1 auto;
-    width: 100%;
-  }
-  .right-panel {
-    width: 100%;
-    max-height: 500px;
-  }
-  .message-block {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .bubble .signature {
-    text-align: center;
-  }
+  .guestbook-container { flex-direction: column; }
+  .left-panel { flex: 1 1 auto; width: 100%; }
+  .right-panel { width: 100%; max-height: 500px; }
+  .message-block { flex-direction: column; align-items: center; text-align: center; }
+  .bubble .signature { text-align: center; }
   .font-level{display:none;}
 }
 @media (max-width:760px){
@@ -883,8 +864,6 @@ img{display:block;max-width:100%;}
   .site-footer{justify-content:center;text-align:center;}
   .music-btn{padding:0 12px;}
   .msg-scroll-top{right: 16px; bottom: 76px;}
-  .online-indicator{display:none;}
-  .message-block{padding:20px 16px;margin-bottom:24px;}
 }
 @media (max-width:560px){
   .music-btn .label{display:none;}
@@ -894,15 +873,6 @@ img{display:block;max-width:100%;}
   .forum-avatar-wrap { width: 36px; height: 36px; }
   .forum-avatar-wrap::before { width: 10px; height: 10px; top: 7px; }
   .forum-avatar-wrap::after { width: 18px; height: 12px; top: 19px; }
-  .layout{padding:12px;gap:12px;}
-  .hero{padding:28px 12px 24px;}
-  .marquee-box{margin-top:30px;padding:8px 12px;max-width:100%;}
-  .marquee-text{letter-spacing:.12em;line-height:1.7;}
-  .message-block{gap:16px;padding:18px 14px;margin-bottom:20px;}
-  .guestbook-container{gap:16px;margin-top:16px;}
-  .left-panel,.right-panel{padding:16px;}
-  .right-panel{max-height:520px;}
-  .forum-text-box{padding:12px 14px;}
 }
 </style>
 </head>
@@ -1038,15 +1008,12 @@ img{display:block;max-width:100%;}
 
 <!-- 快捷菜单 -->
 <nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
-  <a href="index.html" class="menu-item">Home</a>
   <a href="message.html" class="menu-item">留言板</a>
-  <a href="thought.html" class="menu-item">随笔与日记</a>
   <a href="display.html" class="menu-item">DISPLAY-Depp</a>
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
-  <a href="music.html" class="menu-item">Music</a>
-  <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
-  <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+  <a href="thought.html" class="menu-item">随笔与日记</a>
+  <a href="music.html" class="menu-item">音乐播放器</a>
 </nav>
 
 <div class="overlay" id="overlay"></div>
@@ -1068,7 +1035,29 @@ img{display:block;max-width:100%;}
     set: function(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
   };
 
-  /* 1. 字号三档 */
+  /* 1. 主题切换 */
+  (function initTheme(){
+    var btn = $('#themeBtn');
+    var KEY = 'pm_theme';
+    function apply(theme){
+      root.setAttribute('data-theme', theme);
+      store.set(KEY, theme);
+      if (btn) {
+        btn.textContent = theme === 'light' ? '☀' : '☾';
+        btn.setAttribute('aria-label', theme === 'light' ? '切换到暗色主题' : '切换到亮色主题');
+      }
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f5f7' : '#0a0a0b');
+    }
+    apply(store.get(KEY) === 'light' ? 'light' : 'dark');
+    if (btn) {
+      btn.addEventListener('click', function(){
+        apply(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+      });
+    }
+  })();
+
+  /* 2. 字号三档 */
   (function initFontSize(){
     var down = $('#fontDown');
     var up   = $('#fontUp');
@@ -1097,7 +1086,7 @@ img{display:block;max-width:100%;}
     if (up)   up.addEventListener('click', function(){ apply(current + 1); });
   })();
 
-  /* 3. 阅读进度 + 回到顶部环形进度 (顶部红条) */
+  /* 3. 阅读进度 */
   (function initProgress(){
     var fill  = $('#readProgress');
     var ticking = false;
@@ -1164,9 +1153,7 @@ img{display:block;max-width:100%;}
         promise.catch(function(){ paint(false); });
       }
     }
-
     startOnVisit();
-
     ['pointerdown', 'keydown', 'touchstart'].forEach(function(type){
       window.addEventListener(type, function(event){
         var isMusicControl = event.target && event.target.closest &&
@@ -1238,8 +1225,26 @@ img{display:block;max-width:100%;}
     }
   })();
 
+  /* 8. 回到顶部 */
+  (function initBackToTop(){
+    var btn = $('#backToTop');
+    if (!btn) return;
+    var ticking = false;
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        btn.classList.toggle('show', window.scrollY > 500);
+        ticking = false;
+      });
+    }, { passive:true });
+    btn.addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+
   /* ============================================================
-     8. 留言板业务逻辑 (Uptime, 列表渲染, 发送)
+     9. 留言板业务逻辑 (已加入防污染过滤)
      ============================================================ */
   // 计时器
   var startDate = new Date("2026-08-03T09:00:00");
@@ -1290,9 +1295,13 @@ img{display:block;max-width:100%;}
       var r = await fetch(API + '/api/messages', { mode:'cors' });
       if(!r.ok) throw new Error('');
       var j = await r.json();
-      var m = j.data.filter(function(message) {
-        return message.type !== 'thought';
+      var m = j.data;
+      
+      // 【核心过滤代码】把带有 MAGIC_ 字样的随笔评论或点赞直接过滤掉！
+      m = m.filter(function(item) {
+        return !item.content || item.content.indexOf('MAGIC_') !== 0;
       });
+
       mc.innerHTML = '';
       
       // 置顶公告
@@ -1411,7 +1420,7 @@ img{display:block;max-width:100%;}
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: n || '匿名用户', content: msg, type: 'message' })
+        body: JSON.stringify({ name: n || '匿名用户', content: msg })
       });
       if(r.ok) {
         ni.value = '';
