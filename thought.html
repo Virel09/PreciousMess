@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0a0a0b">
 <title>THOUGHTS — PRECIOUS MESS</title>
-<link rel="icon" type="image/x-icon" href="photo/favicon.ico">
+<link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
@@ -513,13 +513,13 @@ img{display:block;max-width:100%;}
   align-items: center;
   gap: 12px;
   font-family: var(--font-mono);
-  font-size: 15px; /* 用户要求 15px */
+  font-size: 15px;
   color: var(--text-weak);
   margin-bottom: 16px;
 }
 
 .post-avatar {
-  width: 34px; height: 34px; /* 用户要求 34x34 */
+  width: 34px; height: 34px;
   border-radius: 50%;
   border: 1px solid var(--line);
   object-fit: cover;
@@ -625,21 +625,23 @@ img{display:block;max-width:100%;}
    评论区
    ============================================================ */
 .comments-section {
-  display: block;
   background: var(--surface-2);
   border-top: 1px solid var(--line-soft);
   padding: 20px 24px;
 }
 
+/* 默认隐藏输入框 */
 .comment-input-box {
   display: none;
   flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
 }
+/* 点击后显示输入框 */
 .comments-section.composer-open .comment-input-box {
   display: flex;
 }
+
 .comment-row {
   display: flex;
   gap: 10px;
@@ -675,6 +677,7 @@ img{display:block;max-width:100%;}
   background: var(--accent); color: #fff;
 }
 
+/* 列表直接展示 */
 .comment-list {
   display: flex;
   flex-direction: column;
@@ -947,6 +950,7 @@ img{display:block;max-width:100%;}
               <span class="like-count">0</span>
             </button>
             
+            <!-- 点击展开输入框 -->
             <button class="action-btn toggle-comments">
               <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               <span class="comment-text">0 Comments</span>
@@ -963,6 +967,7 @@ img{display:block;max-width:100%;}
         </div>
 
         <div class="comments-section">
+          <!-- 隐藏的输入框 -->
           <div class="comment-input-box">
             <div class="comment-row">
               <input type="text" class="c-name" placeholder="昵称 (可选)">
@@ -1610,150 +1615,138 @@ img{display:block;max-width:100%;}
   }
 
   /* ============================================================
-     10. 核心：真实的点赞与评论 (真正的全网同步)
+     10. 核心：真实的点赞与评论 (页面加载直接显示，点击输入框弹出)
      ============================================================ */
   var API_URL = 'https://preciousmess.top/api/messages';
 
   (function initInteractions(){
     var posts = $$('.post');
-    
+    var postElements = {};
+
+    // 收集所有的帖子和元素
     posts.forEach(function(post){
       var postId = post.getAttribute('data-id');
-      var likeKey = 'thought_like_' + postId;
-      
       var likeBtn = post.querySelector('.like-btn');
-      var likeCountEl = post.querySelector('.like-count');
-      var commentText = post.querySelector('.comment-text');
-      
-      if (!likeBtn) return;
+      if (!likeBtn) return; // 跳过置顶帖
 
-      // 我们用特殊的隐藏暗号，把点赞和评论伪装成普通的留言发给后端
-      var LIKE_PREFIX = 'MAGIC_LIKE_' + postId + '::';
-      var CMT_PREFIX = 'MAGIC_CMT_' + postId + '::';
+      postElements[postId] = {
+        postEl: post,
+        likeBtn: likeBtn,
+        likeCountEl: post.querySelector('.like-count'),
+        commentList: post.querySelector('.comment-list'),
+        commentText: post.querySelector('.comment-text'),
+        commentsSection: post.querySelector('.comments-section'),
+        toggleBtn: post.querySelector('.toggle-comments'),
+        cInput: post.querySelector('.c-input'),
+        cName: post.querySelector('.c-name'),
+        cSubmit: post.querySelector('.c-submit'),
+        likeKey: 'thought_like_' + postId
+      };
+    });
 
-      // --- 从后端拉取所有留言，计算当前的赞和评论 ---
-      function refreshStats() {
-        fetch(API_URL, { mode: 'cors' })
-          .then(function(res) {
-            if(!res.ok) throw new Error('网络错误');
-            return res.json();
-          })
-          .then(function(data) {
-            var all = Array.isArray(data) ? data : (data.data || []);
-            
-            // 统计点赞
+    // 一键渲染全部：获取全量数据 -> 分发 -> 渲染列表
+    function refreshAllStats() {
+      fetch(API_URL, { mode: 'cors' })
+        .then(function(res) {
+          if(!res.ok) throw new Error('网络错误');
+          return res.json();
+        })
+        .then(function(data) {
+          var all = Array.isArray(data) ? data : (data.data || []);
+
+          // 遍历所有帖子，进行数据分配
+          Object.keys(postElements).forEach(function(postId){
+            var el = postElements[postId];
+            var LIKE_PREFIX = 'MAGIC_LIKE_' + postId + '::';
+            var CMT_PREFIX = 'MAGIC_CMT_' + postId + '::';
+
+            // 算点赞数
             var myLikes = all.filter(function(c){ 
               return c.content && c.content.indexOf(LIKE_PREFIX) === 0; 
             }).length;
+            el.likeCountEl.textContent = myLikes;
             
-            likeCountEl.textContent = myLikes;
-            
-            // 如果本地记录点过赞，高亮按钮
-            var isLiked = store.get(likeKey, false);
-            likeBtn.classList.toggle('liked', isLiked);
+            // 更新点赞按钮状态
+            var isLiked = store.get(el.likeKey, false);
+            el.likeBtn.classList.toggle('liked', isLiked);
 
-            // 统计评论数量 (更新文字显示)
+            // 算评论
             var myCmts = all.filter(function(c){ 
               return c.content && c.content.indexOf(CMT_PREFIX) === 0; 
-            }).length;
-            commentText.textContent = myCmts + ' Comments';
+            });
+            el.commentText.textContent = myCmts.length + ' Comments';
 
-            // 如果是展开状态，渲染评论列表
-            if (post.querySelector('.comments-section').classList.contains('composer-open')) {
-              renderComments(all, CMT_PREFIX);
+            // 渲染评论列表 (直接显示)
+            el.commentList.innerHTML = '';
+            if (myCmts.length === 0) {
+              el.commentList.innerHTML = '<div style="color:var(--text-weak); font-size:var(--fs-3); font-style:italic;">还没有评论，来抢沙发吧~</div>';
+            } else {
+              myCmts.forEach(function(c) {
+                var div = document.createElement('div');
+                div.className = 'comment-item';
+                var name = c.name ? escapeHtml(c.name) : '匿名用户';
+                var cleanContent = c.content.replace(CMT_PREFIX, '');
+                div.innerHTML = '<span class="c-author">' + name + ':</span><span class="c-text">' + escapeHtml(cleanContent) + '</span>';
+                el.commentList.appendChild(div);
+              });
             }
-          })
-          .catch(function(err){
-            console.error('获取数据失败', err);
           });
-      }
+        })
+        .catch(function(err){
+          console.error('获取数据失败', err);
+        });
+    }
 
-      // --- 本地点赞触发网络请求 ---
-      likeBtn.addEventListener('click', function() {
-        var isLiked = store.get(likeKey, false);
+    // 为每个帖子绑定事件
+    Object.keys(postElements).forEach(function(postId){
+      var el = postElements[postId];
+      
+      // 点赞事件
+      el.likeBtn.addEventListener('click', function() {
+        var isLiked = store.get(el.likeKey, false);
         if (isLiked) {
-          // 如果已经点过赞，就不让取消了（取消需要 DELETE 接口，目前没有，所以点过就是点过了）
           showToast('你已经点过赞啦');
           return;
         }
         
-        likeBtn.disabled = true;
+        el.likeBtn.disabled = true;
         fetch(API_URL, {
           method: 'POST',
           mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             name: '点赞', 
-            content: LIKE_PREFIX 
+            content: 'MAGIC_LIKE_' + postId + '::' 
           })
         }).then(function(res){
           if (res.ok) {
-            store.set(likeKey, true); // 记忆已点赞
-            refreshStats(); // 重新计算网络赞数
+            store.set(el.likeKey, true);
+            refreshAllStats();
           } else {
             showToast('点赞失败');
           }
         }).finally(function(){
-          likeBtn.disabled = false;
+          el.likeBtn.disabled = false;
         });
       });
 
-      // --- 评论逻辑 ---
-      var toggleBtn = post.querySelector('.toggle-comments');
-      var commentsSection = post.querySelector('.comments-section');
-      var commentList = post.querySelector('.comment-list');
-      var cName = post.querySelector('.c-name');
-      var cInput = post.querySelector('.c-input');
-      var cSubmit = post.querySelector('.c-submit');
-
-      function renderComments(allData, prefix) {
-        commentList.innerHTML = '';
-        
-        var myCmts = allData.filter(function(c){ 
-          return c.content && c.content.indexOf(prefix) === 0; 
-        }).map(function(c){
-          return {
-            name: c.name,
-            content: c.content.replace(prefix, '') // 切掉暗号，只留评论
-          };
-        });
-
-        if (myCmts.length === 0) {
-          commentList.innerHTML = '<div style="color:var(--text-weak); font-size:var(--fs-3); font-style:italic;">还没有评论，来抢沙发吧~</div>';
-          return;
-        }
-
-        myCmts.forEach(function(c) {
-          var div = document.createElement('div');
-          div.className = 'comment-item';
-          var name = c.name ? escapeHtml(c.name) : '匿名用户';
-          div.innerHTML = '<span class="c-author">' + name + ':</span><span class="c-text">' + escapeHtml(c.content) + '</span>';
-          commentList.appendChild(div);
-        });
-      }
-
-      // 页面加载时，自动拉取一次数据
-      refreshStats();
-
-      // 展开/收起评论区
-      toggleBtn.addEventListener('click', function() {
-        var isOpening = !commentsSection.classList.contains('composer-open');
-        commentsSection.classList.toggle('composer-open', isOpening);
-        toggleBtn.setAttribute('aria-expanded', String(isOpening));
-        if (isOpening) {
-          cInput.focus();
-          refreshStats(); // 展开时刷新数据
+      // 点击评论按钮：展开输入框
+      el.toggleBtn.addEventListener('click', function() {
+        var isOpen = el.commentsSection.classList.contains('composer-open');
+        el.commentsSection.classList.toggle('composer-open', !isOpen);
+        if (!isOpen) {
+          el.cInput.focus();
         }
       });
 
-      // 发送评论
-      cSubmit.addEventListener('click', function() {
-        var val = cInput.value.trim();
-        var nameVal = cName.value.trim() || '匿名用户';
+      // 发送评论事件
+      el.cSubmit.addEventListener('click', function() {
+        var val = el.cInput.value.trim();
+        var nameVal = el.cName.value.trim() || '匿名用户';
         if (!val) return;
 
-        cSubmit.textContent = '发送中...';
-        cSubmit.disabled = true;
+        el.cSubmit.textContent = '发送中...';
+        el.cSubmit.disabled = true;
 
         fetch(API_URL, {
           method: 'POST',
@@ -1761,13 +1754,14 @@ img{display:block;max-width:100%;}
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             name: nameVal, 
-            content: CMT_PREFIX + val 
+            content: 'MAGIC_CMT_' + postId + '::' + val 
           })
         })
         .then(function(res) {
           if (res.ok) {
-            cInput.value = '';
-            refreshStats(); // 发送成功后重新拉取数据
+            el.cInput.value = '';
+            el.commentsSection.classList.remove('composer-open'); // 发完自动收起输入框
+            refreshAllStats(); // 重新拉取数据
           } else {
             showToast('发送失败');
           }
@@ -1776,19 +1770,21 @@ img{display:block;max-width:100%;}
           showToast('网络错误');
         })
         .finally(function() {
-          cSubmit.textContent = '发送';
-          cSubmit.disabled = false;
+          el.cSubmit.textContent = '发送';
+          el.cSubmit.disabled = false;
         });
       });
       
-      // 绑定回车发送
-      cInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') cSubmit.click();
+      el.cInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') el.cSubmit.click();
       });
-      cName.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') cInput.focus();
+      el.cName.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') el.cInput.focus();
       });
     });
+
+    // 页面打开时，立刻请求一次全量数据
+    refreshAllStats();
   })();
 
 })();
