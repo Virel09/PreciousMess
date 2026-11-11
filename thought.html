@@ -1622,6 +1622,24 @@ img{display:block;max-width:100%;}
   (function initInteractions(){
     var posts = $$('.post');
     var postElements = {};
+    var voterIdKey = 'pm_thought_voter_id';
+    var voterId = null;
+
+    function getVoterId() {
+      try {
+        voterId = localStorage.getItem(voterIdKey);
+        if (!voterId) {
+          voterId = 'v-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+          localStorage.setItem(voterIdKey, voterId);
+        }
+        return voterId;
+      } catch (err) {
+        console.error('读取点赞身份失败:', err);
+        showToast('无法保存点赞状态，请检查浏览器存储设置');
+        return null;
+      }
+    }
+    voterId = getVoterId();
 
     // 收集所有的帖子和元素
     posts.forEach(function(post){
@@ -1640,7 +1658,8 @@ img{display:block;max-width:100%;}
         cInput: post.querySelector('.c-input'),
         cName: post.querySelector('.c-name'),
         cSubmit: post.querySelector('.c-submit'),
-        likeKey: 'thought_like_' + postId
+        likeKey: 'thought_like_' + postId,
+        hasLiked: store.get('thought_like_' + postId, false)
       };
     });
 
@@ -1660,15 +1679,28 @@ img{display:block;max-width:100%;}
             var LIKE_PREFIX = 'MAGIC_LIKE_' + postId + '::';
             var CMT_PREFIX = 'MAGIC_CMT_' + postId + '::';
 
-            // 算点赞数
-            var myLikes = all.filter(function(c){ 
+            var likeRecords = all.filter(function(c){
               return c.content && c.content.indexOf(LIKE_PREFIX) === 0; 
-            }).length;
+            });
+            var voterIds = {};
+            var legacyCount = 0;
+            var isLikedByMe = false;
+            likeRecords.forEach(function(record) {
+              var recordVoterId = record.content.slice(LIKE_PREFIX.length);
+              if (!recordVoterId) {
+                legacyCount++;
+              } else {
+                voterIds[recordVoterId] = true;
+                if (voterId && recordVoterId === voterId) isLikedByMe = true;
+              }
+            });
+            var myLikes = legacyCount + Object.keys(voterIds).length;
             el.likeCountEl.textContent = myLikes;
             
-            // 更新点赞按钮状态
-            var isLiked = store.get(el.likeKey, false);
-            el.likeBtn.classList.toggle('liked', isLiked);
+            isLikedByMe = isLikedByMe || store.get(el.likeKey, false);
+            el.hasLiked = isLikedByMe;
+            el.likeBtn.classList.toggle('liked', isLikedByMe);
+            el.likeBtn.setAttribute('aria-pressed', isLikedByMe ? 'true' : 'false');
 
             // 算评论
             var myCmts = all.filter(function(c){ 
@@ -1700,33 +1732,45 @@ img{display:block;max-width:100%;}
     // 为每个帖子绑定事件
     Object.keys(postElements).forEach(function(postId){
       var el = postElements[postId];
+      var isSubmittingLike = false;
       
       // 点赞事件
       el.likeBtn.addEventListener('click', function() {
-        var isLiked = store.get(el.likeKey, false);
-        if (isLiked) {
+        if (isSubmittingLike || el.hasLiked || store.get(el.likeKey, false)) {
           showToast('你已经点过赞啦');
           return;
         }
+
+        var currentVoterId = getVoterId();
+        if (!currentVoterId) return;
         
+        isSubmittingLike = true;
         el.likeBtn.disabled = true;
+        el.likeBtn.setAttribute('aria-busy', 'true');
         fetch(API_URL, {
           method: 'POST',
           mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             name: '点赞', 
-            content: 'MAGIC_LIKE_' + postId + '::' 
+            content: 'MAGIC_LIKE_' + postId + '::' + currentVoterId
           })
         }).then(function(res){
-          if (res.ok) {
-            store.set(el.likeKey, true);
-            refreshAllStats();
-          } else {
-            showToast('点赞失败');
-          }
+          if (!res.ok) throw new Error('点赞请求失败，HTTP ' + res.status);
+          store.set(el.likeKey, true);
+          el.hasLiked = true;
+          el.likeBtn.classList.add('liked');
+          el.likeBtn.setAttribute('aria-pressed', 'true');
+          el.likeCountEl.textContent = (parseInt(el.likeCountEl.textContent, 10) || 0) + 1;
+          showToast('点赞成功');
+          refreshAllStats();
+        }).catch(function(err) {
+          console.error('点赞失败:', err);
+          showToast('点赞失败，请检查网络后重试');
         }).finally(function(){
+          isSubmittingLike = false;
           el.likeBtn.disabled = false;
+          el.likeBtn.removeAttribute('aria-busy');
         });
       });
 
