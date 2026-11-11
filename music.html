@@ -63,27 +63,6 @@
 html[data-size="lg"]{ --fs-base:16.5px; --fs-card-title:23px; --fs-brand:22px; }
 html[data-size="xl"]{ --fs-base:18px; --fs-card-title:26px; --fs-brand:24px; }
 
-html[data-theme="light"]{
-  --bg:#f5f5f7;
-  --grid-line:#eaeaee;
-  --surface:#ffffff;
-  --surface-2:#fafafb;
-  --surface-3:#f0f0f3;
-  --surface-hover:#f4f4f7;
-  --line:#dedee3;
-  --line-soft:#ececef;
-  --text:#3a3a44;
-  --text-bright:#141418;
-  --text-dim:#5c5c68;
-  --text-weak:#8b8b96;
-  --accent:#8b1a1a;
-  --accent-bright:#a82424;
-  --accent-soft:rgba(139,26,26,.07);
-  --topbar-bg:rgba(255,255,255,.9);
-  --shadow:0 16px 48px rgba(0,0,0,.14);
-  --card-shadow:0 1px 2px rgba(20,20,24,.05);
-}
-
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
 html{
@@ -127,7 +106,6 @@ img{display:block;max-width:100%;}
   position:fixed;inset:0;z-index:200;pointer-events:none;
   background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
 }
-html[data-theme="light"] .scanline{display:none;}
 
 /* ============================================================
    TOPBAR
@@ -153,7 +131,7 @@ html[data-theme="light"] .scanline{display:none;}
 .hamburger{
   width:34px;height:34px;
   flex-shrink:0;
-  display:flex;
+  display:none;
   flex-direction:column;
   align-items:center;
   justify-content:center;
@@ -561,6 +539,7 @@ html[data-theme="light"] .scanline{display:none;}
   transition: all .2s;
   margin-bottom: 24px;
 }
+.netease-link[hidden] { display: none; }
 .netease-link:hover {
   background: var(--accent);
   color: #fff;
@@ -792,6 +771,7 @@ html[data-theme="light"] .scanline{display:none;}
   .layout{gap:20px;padding:20px;}
 }
 @media (max-width:1024px){
+  .hamburger{display:flex;}
   .sidebar{
     position:fixed; top:0;left:0;bottom:0; width:280px; height:100vh; max-height:none;
     border-radius:0; border:none; border-right:1px solid var(--line);
@@ -844,7 +824,6 @@ html[data-theme="light"] .scanline{display:none;}
         <span class="font-level" id="fontLevel">标准</span>
         <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
       </div>
-      <button class="tool-btn" id="themeBtn" type="button" aria-label="切换亮色 / 暗色主题" title="切换主题">☾</button>
       <button class="music-btn" id="globalMusicBtn" type="button" aria-label="播放背景音乐">
         <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="label" id="musicLabel">PLAY</span>
@@ -865,11 +844,11 @@ html[data-theme="light"] .scanline{display:none;}
       <div class="brand-rule"></div>
       <ul class="side-nav">
         <li><a href="index.html">Home</a></li>
-        <li><a href="display.html">Display — Depp</a></li>
         <li><a href="message.html">Message</a></li>
+        <li><a href="thought.html">Thoughts</a></li>
+        <li><a href="display.html">Display — Depp</a></li>
         <li><a href="strange.html">Red Room</a></li>
         <li><a href="share.html">Share</a></li>
-        <li><a href="thought.html">Thoughts</a></li>
         <li><a href="music.html" class="current">Music</a></li>
         <li><a href="Video.html">Video</a></li>
       </ul>
@@ -898,16 +877,16 @@ html[data-theme="light"] .scanline{display:none;}
       <!-- 左侧控制台 -->
       <div class="player-console">
         <div class="record-player" id="recordPlayer">
-          <img class="album-cover" id="albumCover" src="post/I Don't Know.jpg" alt="Cover" onerror="this.src='photo/100day.jpg'">
+          <img class="album-cover" id="albumCover" src="post/6-Little-Egg.jpg" alt="Cover" onerror="this.src='photo/100day.jpg'">
         </div>
         
         <div class="song-info">
-          <div class="song-title" id="songTitle">I Don't Know</div>
+          <div class="song-title" id="songTitle">6 Little Egg</div>
           <div class="song-artist" id="songArtist">Virel09</div>
         </div>
 
         <!-- 网易云外链跳转 -->
-        <a href="https://music.163.com/#/song?id=1294161099" target="_blank" class="netease-link" id="neteaseLink">
+        <a href="https://music.163.com/#/song?id=501997638" target="_blank" class="netease-link" id="neteaseLink">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm-9-1.5c0 .83-.67 1.5-1.5 1.5S4.5 15.83 4.5 15s.67-1.5 1.5-1.5 1.5.67 1.5 1.5zm3-3c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
           在网易云音乐收听
         </a>
@@ -966,11 +945,12 @@ html[data-theme="light"] .scanline{display:none;}
 
 <!-- 快捷菜单 -->
 <nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="index.html" class="menu-item">Home</a>
   <a href="message.html" class="menu-item">留言板</a>
+  <a href="thought.html" class="menu-item">随笔与日记</a>
   <a href="display.html" class="menu-item">DISPLAY-Depp</a>
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
-  <a href="thought.html" class="menu-item">随笔与日记</a>
   <a href="music.html" class="menu-item">音乐播放器</a>
 </nav>
 
@@ -998,16 +978,16 @@ html[data-theme="light"] .scanline{display:none;}
   };
 
   /* ============================================================
-     ⚠️ 数据配置：已修正 Too late 的图片和音频路径（注意大小写和空格）
+     ⚠️ 数据配置：已精准填入你提供的 5 个网易云链接
      ============================================================ */
   var playlist = [
     {
       id: 1,
-      title: "I Don't Know",
+      title: "6 Little Egg",
       artist: "Virel09",
-      cover: "post/I Don't Know.jpg",
-      src: "I Don't Know.mp3",
-      netease: "https://music.163.com/#/song?id=1294161099"
+      cover: "post/6-Little-Egg.jpg",
+      src: "6-Little-Egg.mp3",
+      netease: "https://music.163.com/#/song?id=501997638"
     },
     {
       id: 2,
@@ -1019,6 +999,46 @@ html[data-theme="light"] .scanline{display:none;}
     },
     {
       id: 3,
+      title: "Better off Alone",
+      artist: "Virel09",
+      cover: "post/Better off Alone.jpg",
+      src: "Better off Alone.mp3",
+      netease: "https://music.163.com/#/song?id=5218172"
+    },
+    {
+      id: 4,
+      title: "Drugs",
+      artist: "Virel09",
+      cover: "post/Drugs.jpg",
+      src: "Drugs.mp3",
+      netease: "https://music.163.com/#/song?id=1886054393"
+    },
+    {
+      id: 5,
+      title: "I Don't Know",
+      artist: "Virel09",
+      cover: "post/I Don't Know.jpg",
+      src: "I Don't Know.mp3",
+      netease: "https://music.163.com/#/song?id=1294161099"
+    },
+    {
+      id: 6,
+      title: "Kiss Me Again",
+      artist: "Virel09",
+      cover: "post/Kiss Me Again.jpg",
+      src: "Kiss Me Again.mp3",
+      netease: "https://music.163.com/#/song?id=2626808312"
+    },
+    {
+      id: 7,
+      title: "Pretty Scene Girl",
+      artist: "Virel09",
+      cover: "post/Pretty Scene Girl.jpg",
+      src: "Pretty Scene Girl.mp3",
+      netease: "https://music.163.com/#/song?id=2109451787"
+    },
+    {
+      id: 8,
       title: "Too late, i already died",
       artist: "Virel09",
       cover: "post/Too late, i already died.jpg",
@@ -1026,7 +1046,7 @@ html[data-theme="light"] .scanline{display:none;}
       netease: "https://music.163.com/#/song?id=2638616976"
     },
     {
-      id: 4,
+      id: 9,
       title: "WTF",
       artist: "Virel09",
       cover: "post/WTF.jpg",
@@ -1035,29 +1055,7 @@ html[data-theme="light"] .scanline{display:none;}
     }
   ];
 
-  /* 1. 主题切换 */
-  (function initTheme(){
-    var btn = $('#themeBtn');
-    var KEY = 'pm_theme';
-    function apply(theme){
-      root.setAttribute('data-theme', theme);
-      store.set(KEY, theme);
-      if (btn) {
-        btn.textContent = theme === 'light' ? '☀' : '☾';
-        btn.setAttribute('aria-label', theme === 'light' ? '切换到暗色主题' : '切换到亮色主题');
-      }
-      var meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f5f7' : '#0a0a0b');
-    }
-    apply(store.get(KEY) === 'light' ? 'light' : 'dark');
-    if (btn) {
-      btn.addEventListener('click', function(){
-        apply(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
-      });
-    }
-  })();
-
-  /* 2. 字号三档 */
+  /* 1. 字号三档 */
   (function initFontSize(){
     var down = $('#fontDown');
     var up   = $('#fontUp');
@@ -1246,9 +1244,9 @@ html[data-theme="light"] .scanline{display:none;}
           <div class="item-title">${song.title}</div>
           <div class="item-artist">${song.artist}</div>
         </div>
-        <a href="${song.netease}" target="_blank" class="item-action" title="在网易云音乐打开" onclick="event.stopPropagation()">
+        ${song.netease ? `<a href="${song.netease}" target="_blank" rel="noopener noreferrer" class="item-action" title="在网易云音乐打开" onclick="event.stopPropagation()">
           <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        </a>
+        </a>` : ''}
       `;
       el.addEventListener('click', function() {
         if (currentIndex === index) {
@@ -1270,7 +1268,13 @@ html[data-theme="light"] .scanline{display:none;}
     albumCover.src = song.cover;
     songTitle.textContent = song.title;
     songArtist.textContent = song.artist;
-    neteaseLink.href = song.netease;
+    if (song.netease) {
+      neteaseLink.href = song.netease;
+      neteaseLink.hidden = false;
+    } else {
+      neteaseLink.removeAttribute('href');
+      neteaseLink.hidden = true;
+    }
     
     var items = playlistList.querySelectorAll('.song-item');
     items.forEach(function(item, i) {

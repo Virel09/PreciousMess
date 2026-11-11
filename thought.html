@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-size="md">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0b">
+<title>THOUGHTS — PRECIOUS MESS</title>
+<link rel="icon" type="image/x-icon" href="photo/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --fs-base:15px;
+  --fs-0:var(--fs-base);
+  --fs-1:calc(var(--fs-base) - 1px);
+  --fs-2:calc(var(--fs-base) - 2px);
+  --fs-3:calc(var(--fs-base) - 3px);
+  --fs-4:calc(var(--fs-base) - 4px);
+  --fs-5:calc(var(--fs-base) - 5px);
+  --fs-card-title:22px;
+  --fs-brand:20px;
+
+  --bg:#0a0a0b;
+  --grid-line:#131316;
+  --surface:#121214;
+  --surface-2:#18181b;
+  --surface-3:#1f1f24;
+  --surface-hover:#202026;
+
+  --line:#2a2a31;
+  --line-soft:#1e1e23;
+
+  --text:#c8c8d0;
+  --text-bright:#eeeeF4;
+  --text-dim:#90909b;
+  --text-weak:#65656f;
+
+  --accent:#8b1a1a;
+  --accent-bright:#c23434;
+  --accent-soft:rgba(139,26,26,.14);
+  
+  /* 互动颜色 */
+  --like-color:#c23434;
+  --bookmark-color:#b58a29;
+
+  --topbar-bg:rgba(10,10,11,.88);
+  --shadow:0 16px 48px rgba(0,0,0,.65);
+  --card-shadow:none;
+
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --font-mono:'Space Mono','SFMono-Regular',Consolas,'Courier New',monospace;
+  --font-serif:'Cormorant Garamond',Georgia,'Songti SC',serif;
+
+  --radius-sm:6px;
+  --radius:10px;
+  --radius-lg:14px;
+
+  --topbar-h:56px;
+  --sidebar-w:264px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+html[data-size="lg"]{ --fs-base:16.5px; --fs-card-title:24px; --fs-brand:22px; }
+html[data-size="xl"]{ --fs-base:18px; --fs-card-title:26px; --fs-brand:24px; }
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--topbar-h) + 20px);
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:80px 80px;
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:var(--fs-0);
+  line-height:1.7;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  transition:background-color .25s var(--ease),color .25s var(--ease);
+}
+body.no-scroll{overflow:hidden;}
+
+a{color:inherit;text-decoration:none;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+img{display:block;max-width:100%;}
+::selection{background:var(--accent);color:#fff;}
+
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border:2px solid var(--bg);border-radius:6px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+:focus-visible{outline:2px solid var(--accent-bright);outline-offset:2px;}
+
+.scanline{
+  position:fixed;inset:0;z-index:200;pointer-events:none;
+  background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--topbar-bg);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+  transition:border-color .2s var(--ease),background .25s var(--ease);
+}
+.topbar.scrolled{border-bottom-color:var(--line);}
+
+.topbar-inner{
+  height:var(--topbar-h);
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.hamburger{
+  width:34px;height:34px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.hamburger:hover{border-color:var(--accent);background:var(--surface-2);}
+.hamburger span{width:16px;height:1.5px;background:var(--text-dim);transition:background .2s var(--ease);}
+.hamburger:hover span{background:var(--accent-bright);}
+
+.topbar-brand{
+  font-family:var(--font-ui);
+  font-weight:500;
+  font-size:var(--fs-2);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:color .2s var(--ease);
+}
+.topbar-brand:hover{color:var(--accent-bright);}
+
+/* 搜索框 */
+.search-box{
+  flex:1;
+  min-width:0;
+  max-width:400px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  height:34px;
+  padding:0 12px;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:999px;
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.search-box:focus-within{border-color:var(--accent);background:var(--surface);}
+.search-box svg{width:15px;height:15px;flex-shrink:0;fill:none;stroke:var(--text-weak);stroke-width:2;}
+.search-box input{
+  flex:1;min-width:0;
+  background:none;border:none;outline:none;
+  color:var(--text);
+  font-family:var(--font-mono);
+  font-size:var(--fs-3);
+  letter-spacing:.02em;
+}
+.search-box input::placeholder{color:var(--text-weak);}
+.search-clear{
+  width:20px;height:20px;
+  flex-shrink:0;
+  display:grid;place-items:center;
+  border-radius:50%;
+  font-size:11px;
+  color:var(--text-weak);
+  transition:background .18s,color .18s;
+}
+.search-clear:hover{background:var(--surface-3);color:var(--accent-bright);}
+
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+.tool-btn{
+  height:32px;
+  min-width:32px;
+  padding:0 9px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.06em;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.tool-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.tool-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+.font-group{
+  display:flex;
+  align-items:center;
+  gap:1px;
+  padding:2px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+}
+.font-group .tool-btn{border:none;height:26px;min-width:28px;padding:0 6px;border-radius:4px;}
+.font-level{
+  padding:0 7px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.06em;
+  color:var(--text-weak);
+  white-space:nowrap;
+  user-select:none;
+}
+
+.music-btn{
+  height:32px;
+  padding:0 14px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.music-btn:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.music-btn.playing{color:var(--accent-bright);border-color:var(--accent);background:var(--accent-soft);}
+.music-btn .eq{display:inline-flex;align-items:flex-end;gap:2px;height:10px;}
+.music-btn .eq i{display:block;width:2px;height:3px;background:currentColor;border-radius:1px;}
+.music-btn.playing .eq i{animation:eqBounce .9s infinite ease-in-out;}
+.music-btn.playing .eq i:nth-child(2){animation-delay:.15s;}
+.music-btn.playing .eq i:nth-child(3){animation-delay:.3s;}
+@keyframes eqBounce{0%,100%{height:3px;}50%{height:10px;}}
+
+.diamond-btn{
+  width:32px;height:32px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:50%;
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover{border-color:var(--accent);background:var(--surface-2);}
+.diamond-btn::before{
+  content:'';
+  width:7px;height:7px;
+  background:var(--accent);
+  transform:rotate(45deg);
+  transition:transform .55s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover::before{transform:rotate(225deg);background:var(--accent-bright);}
+.diamond-btn.spin::before{transform:rotate(405deg);}
+
+.read-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent;pointer-events:none;}
+.read-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));transition:width .1s linear;}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout{
+  max-width:1560px;
+  margin:0 auto;
+  padding:24px;
+  display:grid;
+  grid-template-columns:var(--sidebar-w) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+}
+
+/* ---------- 左栏 ---------- */
+.sidebar{
+  position:sticky;
+  top:calc(var(--topbar-h) + 24px);
+  height:calc(100vh - var(--topbar-h) - 48px);
+  min-height:460px;
+  display:flex;
+  flex-direction:column;
+  padding:24px 18px 18px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--card-shadow);
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+}
+.sidebar-scroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--accent) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar{width:6px;}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:3px;}
+
+.brand{
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:var(--fs-brand);
+  line-height:1.3;
+  letter-spacing:.02em;
+  color:var(--text-bright);
+}
+.brand span{
+  display:block;
+  margin-top:8px;
+  font-family:var(--font-mono);
+  font-weight:400;
+  font-size:var(--fs-5);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+.brand-rule{height:1px;margin:18px 0;background:var(--line);position:relative;}
+.brand-rule::before{
+  content:'';
+  position:absolute;left:0;top:-2px;
+  width:5px;height:5px;
+  background:var(--accent);
+  transform:rotate(45deg);
+}
+
+.side-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.side-nav a{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;
+  border-radius:var(--radius-sm);
+  font-size:var(--fs-2);
+  color:var(--text-dim);
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.side-nav a::before{
+  content:'';
+  width:4px;height:4px;
+  background:var(--text-weak);
+  transform:rotate(45deg);
+  flex-shrink:0;
+  transition:background .18s var(--ease);
+}
+.side-nav a:hover,
+.side-nav a.current{background:var(--surface-2);color:var(--text-bright);}
+.side-nav a:hover::before,
+.side-nav a.current::before{background:var(--accent-bright);}
+
+.side-foot{
+  flex-shrink:0;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.08em;
+  line-height:1.9;
+  color:var(--text-weak);
+}
+.side-foot .np{color:var(--accent-bright);}
+.side-foot .np::before{content:'♪ ';}
+
+/* ---------- 主内容 ---------- */
+.main{
+  width:100%;
+  max-width:820px;
+  margin:0 auto;
+  min-width:0;
+  padding-bottom:60px;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:48px 20px 40px;
+  text-align:center;
+}
+.hero-mark{
+  width:42px;height:42px;
+  margin-bottom:22px;
+  border:1px solid var(--line);
+  display:grid;place-items:center;
+  transform:rotate(45deg);
+  transition:border-color .3s var(--ease);
+  cursor:pointer;
+}
+.hero-mark::before{
+  content:'';
+  width:9px;height:9px;
+  background:var(--accent);
+  transition:transform .5s var(--ease),background .3s var(--ease);
+}
+.hero:hover .hero-mark{border-color:var(--accent);}
+.hero:hover .hero-mark::before{transform:rotate(180deg);background:var(--accent-bright);}
+.hero-title{
+  font-family:var(--font-ui);
+  font-weight:300;
+  font-size:clamp(2.1rem,4.6vw,3.6rem);
+  line-height:1.1;
+  letter-spacing:.16em;
+  padding-left:.16em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  position:relative;
+}
+.hero-title::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-16px;
+  transform:translateX(-50%);
+  width:min(70%,280px);
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.marquee-box{
+  margin-top:38px;
+  padding:9px 22px;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+}
+.marquee-text{
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.22em;
+  color:var(--text-weak);
+}
+
+/* 搜索空状态 */
+.search-empty{
+  margin-bottom:20px;
+  padding:18px 22px;
+  background:var(--surface);
+  border:1px dashed var(--line);
+  border-radius:var(--radius);
+  font-family:var(--font-mono);
+  font-size:var(--fs-3);
+  letter-spacing:.06em;
+  color:var(--text-weak);
+  text-align:center;
+}
+
+/* ============================================================
+   REDDIT STYLE POSTS
+   ============================================================ */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.post {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color .2s var(--ease);
+  overflow: hidden;
+  scroll-margin-top: calc(var(--topbar-h) + 20px);
+}
+
+.post:hover {
+  border-color: var(--surface-hover);
+}
+
+/* 置顶帖特殊样式 */
+.post.pinned {
+  background: linear-gradient(180deg, rgba(139,26,26,0.15) 0%, var(--surface) 100%);
+  border-color: rgba(194, 52, 52, 0.4);
+}
+
+/* 主体内容 */
+.post-main {
+  padding: 24px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 发帖人信息 */
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 15px; /* 用户要求 15px */
+  color: var(--text-weak);
+  margin-bottom: 16px;
+}
+
+.post-avatar {
+  width: 34px; height: 34px; /* 用户要求 34x34 */
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  object-fit: cover;
+}
+
+.post-author {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.post-author:hover { text-decoration: underline; }
+
+.post-time::before {
+  content: '·';
+  margin-right: 8px;
+}
+
+/* 标题 */
+.post-title {
+  font-family: var(--font-ui);
+  font-size: var(--fs-card-title);
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+/* 正文 */
+.post-content {
+  font-family: var(--font-serif);
+  font-size: calc(var(--fs-0) + 2px);
+  line-height: 1.95;
+  color: var(--text);
+  letter-spacing: .02em;
+  margin-bottom: 20px;
+}
+.post-content p { margin-bottom: 14px; }
+.post-content p:last-child { margin-bottom: 0; }
+
+/* 签名 */
+.post-signature {
+  text-align: right;
+  font-style: italic;
+  color: var(--accent-bright);
+  font-family: var(--font-serif);
+  font-size: calc(var(--fs-0) + 4px);
+  margin-top: 16px;
+}
+
+/* 底部操作栏 */
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--text-dim);
+  transition: all .2s;
+  cursor: pointer;
+}
+.action-btn:hover {
+  background: var(--surface-3);
+  color: var(--text-bright);
+  border-color: var(--line-soft);
+}
+
+/* 激活状态的颜色 */
+.action-btn.liked {
+  color: var(--like-color);
+  border-color: var(--like-color);
+  background: var(--accent-soft);
+}
+.action-btn.bookmarked {
+  color: var(--bookmark-color);
+  border-color: var(--bookmark-color);
+  background: rgba(181, 138, 41, 0.1);
+}
+
+.action-btn svg {
+  width: 16px; height: 16px;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: fill .2s;
+}
+
+/* 点赞图标改变填充 */
+.action-btn.liked svg { fill: var(--like-color); }
+.action-btn.bookmarked svg { fill: var(--bookmark-color); }
+
+/* ============================================================
+   评论区
+   ============================================================ */
+.comments-section {
+  display: block;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line-soft);
+  padding: 20px 24px;
+}
+
+.comment-input-box {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.comments-section.composer-open .comment-input-box {
+  display: flex;
+}
+.comment-row {
+  display: flex;
+  gap: 10px;
+}
+.comment-row input[type="text"] {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-bright);
+  font-family: var(--font-ui);
+  font-size: var(--fs-2);
+  outline: none;
+  transition: border-color .2s;
+}
+.comment-row input[type="text"]:focus { border-color: var(--accent); }
+.comment-row input.c-name {
+  flex: 0 0 120px;
+}
+.comment-row button {
+  padding: 0 20px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  color: var(--accent-bright);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  transition: all .2s;
+  cursor: pointer;
+}
+.comment-row button:hover {
+  background: var(--accent); color: #fff;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.comment-item {
+  display: flex;
+  gap: 10px;
+  font-size: var(--fs-2);
+  line-height: 1.6;
+}
+.comment-item .c-author {
+  color: var(--accent-bright);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.comment-item .c-text {
+  color: var(--text);
+}
+
+/* ============================================================
+   TOAST 提示
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: var(--fs-3);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s var(--ease);
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,.5);
+}
+.toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   FOOTER & 其他
+   ============================================================ */
+.site-footer{
+  margin-top:32px;
+  padding-top:22px;
+  border-top:1px solid var(--line-soft);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+.site-footer a { transition: color .2s; }
+.site-footer a:hover { color: var(--accent-bright); }
+
+/* ============================================================
+   MENU PANEL / OVERLAY / BACK TO TOP
+   ============================================================ */
+.menu-panel{
+  position:fixed; top:calc(var(--topbar-h) + 10px); left:20px; width:250px;
+  z-index:112; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow); opacity:0; visibility:hidden; transform:translateY(-6px);
+  transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;
+}
+.menu-panel.active{opacity:1;visibility:visible;transform:translateY(0);}
+.menu-panel .menu-item{
+  display:flex;align-items:center;gap:10px; height:44px; padding:0 16px;
+  font-size:var(--fs-2); color:var(--text-dim); border-bottom:1px solid var(--line-soft);
+  transition:background .16s var(--ease),color .16s var(--ease);
+}
+.menu-panel .menu-item:last-child{border-bottom:none;}
+.menu-panel .menu-item::before{
+  content:''; width:4px;height:4px; flex-shrink:0; background:var(--text-weak);
+  transform:rotate(45deg); transition:background .16s var(--ease);
+}
+.menu-panel .menu-item:hover{background:var(--surface-2);color:var(--text-bright);}
+.menu-panel .menu-item:hover::before{background:var(--accent-bright);}
+.overlay{
+  position:fixed;inset:0; z-index:108; background:rgba(0,0,0,.6);
+  opacity:0; visibility:hidden; transition:opacity .28s var(--ease),visibility .28s;
+}
+.overlay.active{opacity:1;visibility:visible;}
+
+.back-to-top {
+  position: fixed; right: 26px; bottom: 26px;
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 50%;
+  z-index: 95; opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: all .28s var(--ease);
+}
+.back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover { border-color: var(--accent); background: var(--surface-3); }
+.back-to-top svg { width: 18px; height: 18px; fill: none; stroke: var(--text-dim); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.back-to-top:hover svg { stroke: var(--accent-bright); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1280px){
+  .layout{gap:20px;padding:20px;}
+}
+@media (max-width:1024px){
+  .sidebar{
+    position:fixed; top:0;left:0;bottom:0; width:280px; height:100vh; max-height:none;
+    border-radius:0; border:none; border-right:1px solid var(--line);
+    transform:translateX(-100%); transition:transform .3s var(--ease); z-index:110;
+  }
+  .sidebar.open{transform:translateX(0);}
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px;gap:16px;}
+  .menu-panel{display:none;}
+}
+@media (max-width:900px){
+  .font-level{display:none;}
+  .search-box{max-width:none;}
+}
+@media (max-width:760px){
+  .topbar-inner{padding:0 14px;gap:8px;}
+  .hero{padding:36px 16px 30px;}
+  .hero-mark{display:none;}
+  .hero-title{letter-spacing:.1em;padding-left:.1em;}
+  .site-footer{justify-content:center;text-align:center;}
+  .music-btn{padding:0 12px;}
+  .back-to-top{right:16px;bottom:16px;}
+  
+  .post-main { padding: 20px 16px; }
+  .post-title { font-size: var(--fs-1); }
+  .post-content { font-size: var(--fs-0); line-height: 1.85; }
+  .post-actions { flex-wrap: wrap; }
+  .comments-section { padding: 16px; }
+  .comment-row { flex-direction: column; }
+  .comment-row input.c-name { flex: auto; }
+  .comment-row button { padding: 10px; }
+}
+@media (max-width:560px){
+  .music-btn .label{display:none;}
+  .music-btn{padding:0 11px;}
+}
+</style>
+</head>
+<body>
+
+<div class="scanline" aria-hidden="true"></div>
+
+<!-- ============================ TOPBAR ============================ -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
+    
+    <!-- 搜索框 -->
+    <label class="search-box" for="searchInput">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <input type="search" id="searchInput" placeholder="搜索站内内容…" autocomplete="off" aria-label="搜索站内内容">
+      <button class="search-clear" id="searchClear" type="button" aria-label="清除搜索" hidden>✕</button>
+    </label>
+
+    <div class="topbar-actions">
+      <div class="font-group" role="group" aria-label="调整字号">
+        <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
+        <span class="font-level" id="fontLevel">标准</span>
+        <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
+      </div>
+      <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="label" id="musicLabel">PLAY</span>
+      </button>
+      <button class="diamond-btn" id="diamondIcon" type="button" aria-label="刷新页面" title="刷新页面"></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"><div class="read-progress-fill" id="readProgress"></div></div>
+</header>
+
+<!-- ============================ LAYOUT ============================ -->
+<div class="layout">
+
+  <!-- ---------- 左栏 ---------- -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-scroll">
+      <div class="brand">PRECIOUS<br>MESS<span>est. 2009 — archive</span></div>
+      <div class="brand-rule"></div>
+      <ul class="side-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="message.html">Message</a></li>
+        <li><a href="thought.html" class="current">Thoughts</a></li>
+        <li><a href="display.html">Display — Depp</a></li>
+        <li><a href="strange.html">Red Room</a></li>
+        <li><a href="share.html">Share</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="Video.html">Video</a></li>
+      </ul>
+    </div>
+    <div class="side-foot">
+      <div class="np">6 Little Egg</div>
+      <div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div>
+    </div>
+  </aside>
+
+  <!-- ---------- 主内容 ---------- -->
+  <main class="main">
+
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
+      <h1 class="hero-title">THOUGHTS</h1>
+      <div class="marquee-box">
+        <div class="marquee-text">in my feeling</div>
+      </div>
+    </header>
+
+    <!-- 搜索空状态 -->
+    <div class="search-empty" id="searchEmpty" hidden>
+      没有找到匹配的内容 —— 换个关键词试试。
+    </div>
+
+    <!-- 论坛帖子列表 -->
+    <div class="post-list" id="postList">
+      
+      <!-- 🟢 置顶帖 -->
+      <article class="post pinned" data-id="post-pinned" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time" style="color: var(--accent-bright); font-weight: 600;">📌 置顶</span>
+          </div>
+          <h2 class="post-title" style="color: var(--accent-bright);">写在最前面</h2>
+          <div class="post-content">
+            <p>在这里，此时此刻。给你所有我想告诉你的那些事。我脑子里转的……我白天不说出口的那些，我半夜醒了突然想到的那些。</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 帖子 0 (11.11 血肉与混凝土) -->
+      <article class="post" data-id="post-7" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">2026.11.11</span>
+          </div>
+          <h2 class="post-title">《血肉与混凝土》</h2>
+          <div class="post-content">
+            <p>他看见的不止是一个帽子 就像是你多年工作后，看见上学常用的一支笔，满脑都是回忆，</p>
+            <p>你回忆过往，他也回忆过往</p>
+            <p>你想到曾经的同座，在阳光下对着你微笑</p>
+            <p>他想着曾经的战友和自己说笑间被打爆了头颅，白花花的脑浆洒在脸上，血液溅射在身上</p>
+            <p>你想到自己的上学时没心没肺的好哥们，满脸掩饰不住的笑容</p>
+            <p>他想到出生入死的过命兄弟，在战场上被一颗流弹击穿大腿，他搀扶着兄弟回去，一路上他们谈天说地，聊人生，聊理想，聊爱人，一直到战地医院，看着兄弟躺在床上，脸色煞白，他开玩笑的说，你又死不了，瞅给你吓得，此时护士冷漠的说出“他失血过多快要死了，战地医院没有足够血液”</p>
+            <p>你想起了自己暗恋的人，甜兮兮的发香似乎在鼻尖萦绕</p>
+            <p>他想起了自己的爱人，战争开始后，被当做医护人员征调，最终在救治许多人后，被德军击毙，悄无声息，无人在意，抛尸荒野</p>
+            <p>你想起了在操场上奔跑肆意的青春</p>
+            <p>他记起来了，记起来了炮弹在身边炸响，不知是肠子还是脑子砸在脸上，一把抹过，随后又是一发子弹击倒了前面的人，鲜血迸射进喉咙，咸腥味充斥他的喉咙</p>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+      <!-- 帖子 1 (9.28) -->
+      <article class="post" data-id="post-6" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">2026.9.28</span>
+          </div>
+          <h2 class="post-title">《无聊的恩赐02》</h2>
+          <div class="post-content">
+            <p>电视上的雪花点，也就是那种老式电视没有信号时出现的、看起来毫无意义的白色噪点，实际是有相当一部分来自宇宙微波，也就是宇宙诞生时，宇宙大爆炸所残留下来的热量，它经过138亿年的冷却，从X射线变成微波，变成无线电波，最终被人类的天线接收，以噪点的形式呈现在屏幕上。所以当你盯着那片雪花看的时候，你看到的不是故障，而是宇宙的余晖，是宇宙诞生时留下的东西。</p>
+            <div class="post-signature">—— excited</div>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+      <!-- 帖子 2 (9.18) -->
+      <article class="post" data-id="post-4" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">2026.9.18</span>
+          </div>
+          <h2 class="post-title">《Nothing Happened02》</h2>
+          <div class="post-content">
+            <p>我又路过了那条河。水面很平，像什么都没发生过。</p>
+            <p>其实并不是特意去的。就只是在那条路回家，经过桥才想起来的。哦，是这里。我站在那看了看，往下，风从水面吹上来。我忽然想跳下去试试，或许能见到他能见到的风景呢？那是别人一辈子也想象不到的风景吧？</p>
+            <p>但我觉得这样挺好的。人生最后剩下的东西，可能就是这点有惊无险的，那一点水花。</p>
+            <div class="post-signature">——Bored</div>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+      <!-- 帖子 3 (7.11) -->
+      <article class="post" data-id="post-5" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">2026.7.11</span>
+          </div>
+          <h2 class="post-title">《无聊的恩赐01》</h2>
+          <div class="post-content">
+            <p>Precious Mess.</p>
+            <p>我将它译为“珍贵的混乱”。这个名字，我想了很久。</p>
+            <p>我大部分生活都活得很乱。混乱。我的脑子里同时开着一百个窗口，每个都放着不同的音乐，有时候是画面，有时候只是一种感觉。那种整个世界都在往前跑，只有我站在原地；那种发烧时，做的窒息的梦；又或许是西西弗斯推着巨石到达山顶又落下来，回到原点的无力。</p>
+            <p>世界上的任何东西都是混乱的，所有真实的东西——爱是混乱的，成长是混乱的，活着本身就是一场美丽的失控。我们总是花太多时间整理、归类，假装井然有序，却忘了那些最珍贵的时刻往往诞生于意外、错误和无法复刻的慌张里。</p>
+            <div class="post-signature">——Precious</div>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+      <!-- 帖子 4 (5.24) -->
+      <article class="post" data-id="post-3" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">2026.5.24</span>
+          </div>
+          <h2 class="post-title">《Nothing Happened01》</h2>
+          <div class="post-content">
+            <p>那天我记得天气很好。天蓝得像一块干净的桌布，河净得像一面镜子，风也不大，气温温和。</p>
+            <p>我坐在教室里，听见有人在议论，说他昨晚没回家，说他母亲来收拾他的东西，说有人在河边见到了他。</p>
+            <p>这是我人生里第三次见证身边人的死亡。</p>
+            <p>第一次是我的长辈，他们把我领到送葬的队伍里，我站在远处，盯着那口棺材，我不懂一个人怎么会变成一个东西。我依然照样吃饭、照样睡觉，只是奇怪为什么他们脸上的表情那么的难看。第二次是我的堂哥，所有人都在哭，仿佛谁越大声谁就更爱他，是这样的吧？我觉得厌烦。死就死了，哭什么？反而，我不难过。他却拥有了个弟弟，是他的替代品吗？真是好笑，好像也没有人多么爱你。</p>
+            <p>然后第三次，就是他。</p>
+            <p>我并不算同他熟，同一个楼却没多说过话，拥有wechat，却只发过几条消息。水这东西很奇怪，它掩住人的时候一点声音都没有。他笑起来眼睛挤成一条缝，就这様，被水淹没。</p>
+            <p>我在想——他站在水边的时候，有没有回头？跳进去的那一刻，有没有反悔？也许什么都没有，也许是一件很小的事。</p>
+            <p>那个念头就是那时候来的。</p>
+            <p>“可怜。”</p>
+            <p>这个词从来和我没关系，我从来、从来没有觉得一个人死可怜。在他跳河的前一天，我们在公交车站偶遇，我跟他寒暄，他笑着回答我，笑容依旧是那个傻样。别人说他傻，给他起外号。可是，我并不觉得他傻，他很聪明，他只是来错了地方，或许，他会去到个适合他的地方，只是不会回来了。</p>
+            <p>只是从那天起，有个地方不一样了，我说不清，他只是先走了一步。</p>
+            <div class="post-signature">—— upset.</div>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+      <!-- 帖子 5 (2.17) -->
+      <article class="post" data-id="post-1" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">2026.2.17</span>
+          </div>
+          <h2 class="post-title">《一张轻飘飘的纸.01》</h2>
+          <div class="post-content">
+            <p>你知道吗？当你坐在这银质椅子上时，你早晚会消失在上面。</p>
+            <p>这里是人人都讨厌的地方，消毒水的气味，阴冷的氛围。但人们又渴望能在这里得到救助，妄想起死回生？他们只是在被控制。</p>
+            <p>当我坐在这里时，我其实没什么感觉，就是一个人坐在那儿。看着医生写字。我知道她在写什么，她说的那些我其实都懂，我早就给自己写下过诊断了。这不可笑吗？你可以整天坐在那里，不用听我讲些什么，只是说几句令人生厌的道理。他们研究了那么久，写了那么多，抽走了我的血，最后给我个名字，和几盒作呕的药，顺带骗走我几百块钱。而我早就知道了，他们可没有我自己更了解我。</p>
+            <p>我以为我无所不能，有时候又突然卡死。我时常想要飞起来，同时干一百件事，脑子里亮得像有一个人把所有灯打开了……又在突然被捏碎，心脏突然被捏碎，全世界向我压来...翻转。</p>
+            <p>躺在病床上，不知道是该高兴还是难过。它们被人割开，用刀划过我的脑子，穿过鼻梁，嘴唇、咽喉……我的脑袋像四叶草一样绽开，从里面仔细挑选，最后拿走较为满意的部分，珍贵的混乱。</p>
+            <p>我不知道还剩下点什么。我还是很喜欢飞，虽然飞完总会摔。但谁规定人只能待在地上？</p>
+            <div class="post-signature">——Marginal</div>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+      <!-- 帖子 6 (珍贵的混乱) -->
+      <article class="post" data-id="post-2" data-searchable>
+        <div class="post-main">
+          <div class="post-meta">
+            <img src="photo/touxiang1.jpg" alt="Avatar" class="post-avatar" onerror="this.style.display='none'">
+            <span class="post-author">u/Virel09</span>
+            <span class="post-time">珍贵的混乱01</span>
+          </div>
+          <h2 class="post-title">《珍贵的混乱01》</h2>
+          <div class="post-content">
+            <p>人活着这件事，不过是把死亡不断地推到身后的动作。</p>
+            <p>人们害怕它，又把它包装得如此隆重。鲜花、音乐、一张照片。像生产线上的加工产品。他们说，他走了，他安息了。我坐在那些椅子上，看着所有人低着头，发出一声声抽泣。我厌烦地堵住双耳，把眉头紧皱。我看向我的同伴们，我问，你们在干什么？没有人会回答我。有个人死了？是谁死了，我好像忘了。世界变成一个黑白的画面。我好像想起，他给我递糖果的样子，现在，他躺在那具大盒子里。这对于年幼的我，是第一次接触到死亡的意义。</p>
+            <p>人死后，真的可以去天堂，得到安息，吗？他们受不了一个人就这么没了，所以给它加上了荒诞的意义，加上天堂，加上轮回，还有“他永远活在你心里”。或许你会记得他。那五年后，十年后，一百年后呢？当海洋干涸，当地球毁灭后呢？记忆会烂，就像他的身体在土里。五年后、十年后，被啃食、腐烂完，变成蛆虫的食物，变成说说笑笑的躯壳，变成一个白色的骷髅头？就像海盗那样？你还记得他吗。这个时候，他才真正地死。死第二次，在你的脑子里。</p>
+            <p>这是死亡最诚实的地方。</p>
+            <p>你问我怕死吗？其实我也不知道。但我又觉得，死亡是对的。我是说——如果没有人会死，那活着有什么意义。这句话好像有点矛盾。因为你迟早会死亡，因为你爱的人会走，你会在他还在的时候，多看一眼他们。死亡给了你截止日期，没有截止日期的东西，人们是不会珍惜的。只有拥有保质期的东西，人们才会认真对待。</p>
+            <p>所以我尊重死亡，我并不怕它。我甚至觉得它是一种馈赠——它让所有的混乱变得珍贵。这正是我向往的，就像为什么梵高死后，所有人才开始爱他。在我活着的时候，它们是混乱的，或许在我死后，真的会变得珍贵呢？毕竟那是我在这世上，留下的唯一的东西。我的每次呼吸，每次心跳，都珍贵。所以它们是好的。如果，它们是永恒的，那它们就是垃圾。</p>
+            <p>我唯一的要求是，当我走的时候，别给我放钢琴曲，别把我的照片变成黑白，别说什么我去了更好的地方。我只需要，寥寥数人，放一首《Never See me again》，不要把我埋进土里，把我的灵魂和潮湿的泥土、腐败的蛆虫混在一起。要把我烧掉，洒在我故乡的大海里，或把我切掉，变成种子，让我和树木生长在一起。或许可以借此开一次party。这将会很惬意。也可以，将我变成一件或几件艺术品，你知道，像戈德·盖里的艺术品一样，让我以完美、优雅的形态，永存。</p>
+            <p>总之，这是我向往的事情。并没有什么好怕的。</p>
+            <div class="post-signature">—— Valnable</div>
+          </div>
+          
+          <div class="post-actions">
+            <button class="action-btn like-btn">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="like-count">0</span>
+            </button>
+            
+            <button class="action-btn toggle-comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="comment-text">0 Comments</span>
+            </button>
+
+            <button class="action-btn bookmark-btn" aria-label="收藏">
+              <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+
+            <button class="action-btn share-btn" aria-label="分享">
+              <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <div class="comment-input-box">
+            <div class="comment-row">
+              <input type="text" class="c-name" placeholder="昵称 (可选)">
+            </div>
+            <div class="comment-row">
+              <input type="text" class="c-input" placeholder="写点什么...">
+              <button class="c-submit">发送</button>
+            </div>
+          </div>
+          <div class="comment-list"></div>
+        </div>
+      </article>
+
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2026 PRECIOUS MESS · THOUGHTS</span>
+      <a href="index.html">← 回到主站</a>
+    </footer>
+
+  </main>
+</div>
+
+<!-- Toast 提示 -->
+<div class="toast" id="toast">已复制链接</div>
+
+<!-- 快捷菜单 -->
+<nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="index.html" class="menu-item">Home</a>
+  <a href="message.html" class="menu-item">留言板</a>
+  <a href="thought.html" class="menu-item">随笔与日记</a>
+  <a href="display.html" class="menu-item">DISPLAY-Depp</a>
+  <a href="strange.html" class="menu-item">RED ROOM</a>
+  <a href="share.html" class="menu-item">share-something fun</a>
+  <a href="music.html" class="menu-item">音乐播放器</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- 回到顶部 -->
+<button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- 音乐 -->
+<audio id="bgMusic" loop autoplay preload="auto">
+  <source src="6-Little-Egg.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){
+  'use strict';
+
+  var $  = function(s, c){ return (c || document).querySelector(s); };
+  var $$ = function(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var root = document.documentElement;
+
+  // 封装本地存储
+  var store = {
+    get: function(k, defaultVal){ 
+      try { 
+        var v = localStorage.getItem(k); 
+        return v ? JSON.parse(v) : defaultVal; 
+      } catch(e){ return defaultVal; } 
+    },
+    set: function(k, v){ 
+      try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} 
+    }
+  };
+
+  // 防 XSS 注入
+  function escapeHtml(text) {
+    if (!text) return '';
+    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
+
+  /* 1. 字号三档 */
+  (function initFontSize(){
+    var down = $('#fontDown');
+    var up   = $('#fontUp');
+    var level = $('#fontLevel');
+    var KEY  = 'pm_font_size';
+    var steps = [
+      { key:'md', label:'标准' },
+      { key:'lg', label:'大' },
+      { key:'xl', label:'特大' }
+    ];
+    function indexOf(key){
+      for (var i = 0; i < steps.length; i++) if (steps[i].key === key) return i;
+      return 0;
+    }
+    var current = indexOf(localStorage.getItem(KEY) || 'md');
+    function apply(i){
+      current = Math.max(0, Math.min(steps.length - 1, i));
+      root.setAttribute('data-size', steps[current].key);
+      localStorage.setItem(KEY, steps[current].key);
+      if (level) level.textContent = steps[current].label;
+      if (down) down.disabled = current === 0;
+      if (up) up.disabled = current === steps.length - 1;
+    }
+    apply(current);
+    if (down) down.addEventListener('click', function(){ apply(current - 1); });
+    if (up)   up.addEventListener('click', function(){ apply(current + 1); });
+  })();
+
+  /* 2. 站内搜索 */
+  (function initSearch(){
+    var input = $('#searchInput');
+    var clear = $('#searchClear');
+    var empty = $('#searchEmpty');
+    if (!input) return;
+
+    var items = $$('[data-searchable]');
+
+    function run(){
+      var q = input.value.trim().toLowerCase();
+      var hits = 0;
+
+      items.forEach(function(el){
+        var match = !q || el.textContent.toLowerCase().indexOf(q) !== -1;
+        el.hidden = !match;
+        if (match) hits++;
+      });
+
+      if (clear) clear.hidden = !q;
+      if (empty) empty.hidden = !(q && hits === 0);
+    }
+
+    input.addEventListener('input', run);
+
+    if (clear) {
+      clear.addEventListener('click', function(){
+        input.value = '';
+        input.focus();
+        run();
+      });
+    }
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === '/' && document.activeElement !== input) {
+        e.preventDefault();
+        input.focus();
+      }
+    });
+  })();
+
+  /* 3. 阅读进度 */
+  (function initProgress(){
+    var fill  = $('#readProgress');
+    var ticking = false;
+    function update(){
+      var scrolled = window.scrollY;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = max > 0 ? Math.min(1, Math.max(0, scrolled / max)) : 0;
+      if (fill) fill.style.width = (pct * 100) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive:true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+
+  /* 4. 顶栏滚动阴影 */
+  (function initTopbar(){
+    var bar = $('#topbar');
+    if (!bar) return;
+    var ticking = false;
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        bar.classList.toggle('scrolled', window.scrollY > 8);
+        ticking = false;
+      });
+    }, { passive:true });
+  })();
+
+  /* 5. 背景音乐 */
+  (function initPlayer(){
+    var audio = $('#bgMusic');
+    if (!audio) return;
+    var musicBtn = $('#musicBtn');
+    var musicLabel = $('#musicLabel');
+    
+    audio.addEventListener('error', function() {
+      console.error("背景音乐加载失败，请检查 6-Little-Egg.mp3 是否在根目录且名称正确。");
+    });
+
+    function paint(playing){
+      if (musicBtn) {
+        musicBtn.classList.toggle('playing', playing);
+        musicBtn.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+      }
+      if (musicLabel) musicLabel.textContent = playing ? 'PAUSE' : 'PLAY';
+    }
+    
+    function toggle(){
+      if (audio.paused) {
+        var p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(function(e){ 
+          console.log('播放被浏览器拦截，需要用户交互', e); 
+          paint(false); 
+        });
+      } else {
+        audio.pause();
+      }
+    }
+    
+    if (musicBtn) musicBtn.addEventListener('click', toggle);
+    audio.addEventListener('play',  function(){ paint(true); });
+    audio.addEventListener('pause', function(){ paint(false); });
+
+    function startOnVisit(){
+      if (!audio.paused) return;
+      var promise = audio.play();
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(function(){ paint(false); });
+      }
+    }
+    setTimeout(startOnVisit, 500);
+    
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function(type){
+      window.addEventListener(type, function(event){
+        var isMusicControl = event.target && event.target.closest && event.target.closest('#musicBtn');
+        if (audio.paused && !isMusicControl) {
+          startOnVisit();
+        }
+      }, { once:true, passive:true });
+    });
+
+    paint(false);
+  })();
+
+  /* 6. 汉堡菜单 */
+  (function initMenu(){
+    var btn     = $('#hamburgerBtn');
+    var panel   = $('#menuPanel');
+    var sidebar = $('#sidebar');
+    var overlay = $('#overlay');
+    if (!btn || !overlay) return;
+    var open = false;
+    function isMobile(){ return window.innerWidth <= 1024; }
+    function setOpen(next){
+      open = next;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+      if (isMobile()) {
+        if (sidebar) sidebar.classList.toggle('open', open);
+      } else if (panel) {
+        panel.classList.toggle('active', open);
+      }
+      overlay.classList.toggle('active', open);
+      document.body.classList.toggle('no-scroll', open);
+    }
+    btn.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!open); });
+    overlay.addEventListener('click', function(){ if (open) setOpen(false); });
+    if (panel) {
+      $$('.menu-item', panel).forEach(function(item){
+        item.addEventListener('click', function(){ if (open) setOpen(false); });
+      });
+    }
+    if (sidebar) {
+      $$('.side-nav a', sidebar).forEach(function(item){
+        item.addEventListener('click', function(){ if (open && isMobile()) setOpen(false); });
+      });
+    }
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+    var timer;
+    window.addEventListener('resize', function(){
+      clearTimeout(timer);
+      timer = setTimeout(function(){ if (open) setOpen(false); }, 160);
+    });
+  })();
+
+  /* 7. 刷新按钮 */
+  (function initRefresh(){
+    var btn = $('#diamondIcon');
+    var centerBtn = $('#refreshDiamond');
+    function doReload(){ location.reload(); }
+    if (btn) {
+      btn.addEventListener('click', function(){
+        btn.classList.add('spin');
+        setTimeout(doReload, 420);
+      });
+    }
+    if (centerBtn) {
+      centerBtn.style.cursor = 'pointer';
+      centerBtn.addEventListener('click', doReload);
+    }
+  })();
+
+  /* 8. 回到顶部 */
+  (function initBackToTop(){
+    var btn = $('#backToTop');
+    if (!btn) return;
+    var ticking = false;
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        btn.classList.toggle('show', window.scrollY > 500);
+        ticking = false;
+      });
+    }, { passive:true });
+    btn.addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+
+  /* 9. Toast 提示逻辑 */
+  var toastTimer;
+  function showToast(msg) {
+    var toast = $('#toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 2500);
+  }
+
+  /* ============================================================
+     10. 随笔评论：按文章保存在当前浏览器
+     ============================================================ */
+  (function initInteractions(){
+    var posts = $$('.post');
+    
+    posts.forEach(function(post){
+      var postId = post.getAttribute('data-id');
+      var likeKey = 'thought_like_' + postId;
+      var bookmarkKey = 'thought_bookmark_' + postId;
+      
+      var likeBtn = post.querySelector('.like-btn');
+      var likeCountEl = post.querySelector('.like-count');
+      
+      // 如果找不到点赞按钮，说明是置顶帖，直接跳过
+      if (!likeBtn) return;
+
+      // --- 本地点赞逻辑 ---
+      var baseLikes = parseInt(likeCountEl.textContent, 10) || 0;
+      var isLiked = store.get(likeKey, false);
+      function renderLike() {
+        likeBtn.classList.toggle('liked', isLiked);
+        likeCountEl.textContent = baseLikes + (isLiked ? 1 : 0);
+      }
+      renderLike();
+
+      likeBtn.addEventListener('click', function() {
+        isLiked = !isLiked;
+        store.set(likeKey, isLiked);
+        renderLike();
+      });
+
+      // --- 本地收藏逻辑 ---
+      var bookmarkBtn = post.querySelector('.bookmark-btn');
+      var isBookmarked = store.get(bookmarkKey, false);
+      function renderBookmark() {
+        bookmarkBtn.classList.toggle('bookmarked', isBookmarked);
+      }
+      renderBookmark();
+
+      bookmarkBtn.addEventListener('click', function() {
+        isBookmarked = !isBookmarked;
+        store.set(bookmarkKey, isBookmarked);
+        renderBookmark();
+        showToast(isBookmarked ? '已加入收藏' : '已取消收藏');
+      });
+
+      // --- 分享逻辑 ---
+      var shareBtn = post.querySelector('.share-btn');
+      shareBtn.addEventListener('click', function() {
+        var url = window.location.origin + window.location.pathname + '#' + postId;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function() {
+            showToast('文章链接已复制');
+          }).catch(function() {
+            showToast('复制失败，请手动复制');
+          });
+        } else {
+          showToast('您的浏览器不支持一键复制');
+        }
+      });
+
+      // --- 联网真实评论逻辑 ---
+      var toggleBtn = post.querySelector('.toggle-comments');
+      var commentsSection = post.querySelector('.comments-section');
+      var commentList = post.querySelector('.comment-list');
+      var cName = post.querySelector('.c-name');
+      var cInput = post.querySelector('.c-input');
+      var cSubmit = post.querySelector('.c-submit');
+      var cText = post.querySelector('.comment-text');
+      var commentKey = 'pm_thought_comments_v1_' + postId;
+
+      function readComments() {
+        var stored = localStorage.getItem(commentKey);
+        if (!stored) return [];
+        var comments = JSON.parse(stored);
+        if (!Array.isArray(comments)) throw new Error('评论数据格式无效');
+        return comments;
+      }
+
+      function renderComments(comments, showEmptyState) {
+        commentList.innerHTML = '';
+        cText.textContent = comments.length + ' Comments';
+        
+        if (comments.length === 0) {
+          if (showEmptyState) {
+            commentList.innerHTML = '<div style="color:var(--text-weak); font-size:var(--fs-3); font-style:italic;">还没有评论，来抢沙发吧~</div>';
+          }
+          return;
+        }
+
+        comments.forEach(function(c) {
+          var div = document.createElement('div');
+          div.className = 'comment-item';
+          var name = c.name ? escapeHtml(c.name) : '匿名用户';
+          div.innerHTML = '<span class="c-author">' + name + ':</span><span class="c-text">' + escapeHtml(c.content || c.text) + '</span>';
+          commentList.appendChild(div);
+        });
+      }
+
+      function loadComments() {
+        try {
+          renderComments(readComments(), false);
+        } catch (err) {
+          console.error('读取评论失败:', err);
+          cText.textContent = 'Comments';
+          commentList.textContent = '评论读取失败，请检查浏览器存储设置。';
+          showToast('评论读取失败');
+        }
+      }
+
+      loadComments();
+      toggleBtn.addEventListener('click', function() {
+        var isOpening = !commentsSection.classList.contains('composer-open');
+        commentsSection.classList.toggle('composer-open', isOpening);
+        toggleBtn.setAttribute('aria-expanded', String(isOpening));
+        if (isOpening) {
+          try {
+            renderComments(readComments(), true);
+          } catch (err) {
+            console.error('读取评论失败:', err);
+          }
+          cInput.focus();
+        } else {
+          try {
+            renderComments(readComments(), false);
+          } catch (err) {
+            console.error('读取评论失败:', err);
+          }
+        }
+      });
+
+      cSubmit.addEventListener('click', function() {
+        var val = cInput.value.trim();
+        var nameVal = cName.value.trim() || '匿名用户';
+        if (!val) return;
+
+        cSubmit.disabled = true;
+        try {
+          var comments = readComments();
+          comments.push({ name: nameVal, content: val, time: new Date().toISOString() });
+          localStorage.setItem(commentKey, JSON.stringify(comments));
+          cInput.value = '';
+          renderComments(comments, false);
+          showToast('评论成功');
+        } catch (err) {
+          console.error('保存评论失败:', err);
+          showToast('评论保存失败，请检查浏览器存储设置');
+        } finally {
+          cSubmit.disabled = false;
+        }
+      });
+      
+      // 绑定回车发送
+      cInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') cSubmit.click();
+      });
+      cName.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') cInput.focus();
+      });
+    });
+  })();
+
+})();
+</script>
+</body>
+</html>

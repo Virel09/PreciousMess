@@ -63,27 +63,6 @@
 html[data-size="lg"]{ --fs-base:16.5px; --fs-card-title:23px; --fs-brand:22px; }
 html[data-size="xl"]{ --fs-base:18px; --fs-card-title:26px; --fs-brand:24px; }
 
-html[data-theme="light"]{
-  --bg:#f5f5f7;
-  --grid-line:#eaeaee;
-  --surface:#ffffff;
-  --surface-2:#fafafb;
-  --surface-3:#f0f0f3;
-  --surface-hover:#f4f4f7;
-  --line:#dedee3;
-  --line-soft:#ececef;
-  --text:#3a3a44;
-  --text-bright:#141418;
-  --text-dim:#5c5c68;
-  --text-weak:#8b8b96;
-  --accent:#8b1a1a;
-  --accent-bright:#a82424;
-  --accent-soft:rgba(139,26,26,.07);
-  --topbar-bg:rgba(255,255,255,.9);
-  --shadow:0 16px 48px rgba(0,0,0,.14);
-  --card-shadow:0 1px 2px rgba(20,20,24,.05);
-}
-
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
 html{
@@ -127,7 +106,6 @@ img{display:block;max-width:100%;}
   position:fixed;inset:0;z-index:200;pointer-events:none;
   background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
 }
-html[data-theme="light"] .scanline{display:none;}
 
 /* ============================================================
    TOPBAR
@@ -153,7 +131,7 @@ html[data-theme="light"] .scanline{display:none;}
 .hamburger{
   width:34px;height:34px;
   flex-shrink:0;
-  display:flex;
+  display:none;
   flex-direction:column;
   align-items:center;
   justify-content:center;
@@ -685,6 +663,7 @@ html[data-theme="light"] .scanline{display:none;}
   .layout{gap:20px;padding:20px;}
 }
 @media (max-width:1024px){
+  .hamburger{display:flex;}
   .sidebar{
     position:fixed; top:0;left:0;bottom:0; width:280px; height:100vh; max-height:none;
     border-radius:0; border:none; border-right:1px solid var(--line);
@@ -734,7 +713,6 @@ html[data-theme="light"] .scanline{display:none;}
         <span class="font-level" id="fontLevel">标准</span>
         <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
       </div>
-      <button class="tool-btn" id="themeBtn" type="button" aria-label="切换亮色 / 暗色主题" title="切换主题">☾</button>
       <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
         <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="label" id="musicLabel">PLAY</span>
@@ -755,8 +733,9 @@ html[data-theme="light"] .scanline{display:none;}
       <div class="brand-rule"></div>
       <ul class="side-nav">
         <li><a href="index.html">Home</a></li>
-        <li><a href="display.html">Display — Depp</a></li>
         <li><a href="message.html">Message</a></li>
+        <li><a href="thought.html">Thoughts</a></li>
+        <li><a href="display.html">Display — Depp</a></li>
         <li><a href="strange.html">Red Room</a></li>
         <li><a href="share.html" class="current">Share</a></li>
         <li><a href="music.html">Music</a></li>
@@ -878,7 +857,9 @@ html[data-theme="light"] .scanline{display:none;}
 
 <!-- 快捷菜单 -->
 <nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="index.html" class="menu-item">Home</a>
   <a href="message.html" class="menu-item">留言板</a>
+  <a href="thought.html" class="menu-item">随笔与日记</a>
   <a href="display.html" class="menu-item">DISPLAY-Depp</a>
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
@@ -912,29 +893,7 @@ html[data-theme="light"] .scanline{display:none;}
     set: function(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
   };
 
-  /* 1. 主题切换 */
-  (function initTheme(){
-    var btn = $('#themeBtn');
-    var KEY = 'pm_theme';
-    function apply(theme){
-      root.setAttribute('data-theme', theme);
-      store.set(KEY, theme);
-      if (btn) {
-        btn.textContent = theme === 'light' ? '☀' : '☾';
-        btn.setAttribute('aria-label', theme === 'light' ? '切换到暗色主题' : '切换到亮色主题');
-      }
-      var meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', theme === 'light' ? '#f5f5f7' : '#0a0a0b');
-    }
-    apply(store.get(KEY) === 'light' ? 'light' : 'dark');
-    if (btn) {
-      btn.addEventListener('click', function(){
-        apply(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
-      });
-    }
-  })();
-
-  /* 2. 字号三档 */
+  /* 1. 字号三档 */
   (function initFontSize(){
     var down = $('#fontDown');
     var up   = $('#fontUp');
