@@ -8,7 +8,7 @@
 <link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* ============================================================
    TOKENS
@@ -769,6 +769,7 @@ img{display:block;max-width:100%;}
   color:var(--accent-bright);
 }
 .quote-foot{display:flex;justify-content:flex-end;margin-top:12px;}
+.thought-more{display:flex;width:max-content;margin-top:16px;height:34px;}
 
 /* ============================================================
    PLAYER
@@ -1421,7 +1422,7 @@ img{display:block;max-width:100%;}
 <!-- ============================ TOPBAR ============================ -->
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
-    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar menuPanel">
       <span></span><span></span><span></span>
     </button>
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
@@ -1583,6 +1584,9 @@ img{display:block;max-width:100%;}
           给你所有我想告诉你的那些事。我脑子里转的……我白天不说出口的那些，我半夜醒了突然想到的那些。<br><br>
           放东西的地方，是永远不够用的。我想，一个另类的人心中的某种想法，可以真正的被人理解吗。那些肮脏的，烂掉的东西。于是我把它们放进我的网站，让它们终于有了栖息之地。
         </p>
+        <a class="mini-btn thought-more" href="thought.html" aria-label="更多内容，前往随笔页面">
+          更多内容 <span aria-hidden="true">↗</span>
+        </a>
       </article>
 
     </div>
@@ -1703,6 +1707,7 @@ img{display:block;max-width:100%;}
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
   <a href="music.html" class="menu-item">Music</a>
+  <a href="Video.html" class="menu-item">Video</a>
   <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
   <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
 </nav>

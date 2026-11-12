@@ -8,7 +8,7 @@
 <link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* ============================================================
    TOKENS (与主站完全一致)
@@ -883,7 +883,7 @@ html[data-theme="light"] .scanline{display:none;}
 <!-- ============================ TOPBAR ============================ -->
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
-    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar menuPanel">
       <span></span><span></span><span></span>
     </button>
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
@@ -978,7 +978,7 @@ html[data-theme="light"] .scanline{display:none;}
           <div class="email-address">29viyoster@gmail.com</div>
         </div>
         
-        <a class="create-email-link" href="https://www.88.com/#/" target="_blank">创建邮箱</a>
+        <a class="create-email-link" href="https://www.88.com/#/" target="_blank" rel="noopener noreferrer">创建邮箱</a>
       </div>
 
       <!-- 右侧留言列表 -->
@@ -1008,12 +1008,14 @@ html[data-theme="light"] .scanline{display:none;}
 
 <!-- 快捷菜单 -->
 <nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="index.html" class="menu-item">Home</a>
   <a href="message.html" class="menu-item">留言板</a>
+  <a href="thought.html" class="menu-item">随笔与日记</a>
   <a href="display.html" class="menu-item">DISPLAY-Depp</a>
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
-  <a href="thought.html" class="menu-item">随笔与日记</a>
   <a href="music.html" class="menu-item">音乐播放器</a>
+  <a href="Video.html" class="menu-item">Video</a>
 </nav>
 
 <div class="overlay" id="overlay"></div>

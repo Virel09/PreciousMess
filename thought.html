@@ -8,7 +8,7 @@
 <link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* ============================================================
    TOKENS
@@ -835,7 +835,7 @@ img{display:block;max-width:100%;}
 <!-- ============================ TOPBAR ============================ -->
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
-    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar menuPanel">
       <span></span><span></span><span></span>
     </button>
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
@@ -1325,6 +1325,7 @@ img{display:block;max-width:100%;}
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
   <a href="music.html" class="menu-item">音乐播放器</a>
+  <a href="Video.html" class="menu-item">Video</a>
 </nav>
 
 <div class="overlay" id="overlay"></div>
@@ -1861,6 +1862,12 @@ img{display:block;max-width:100%;}
         })
         .catch(function(err){
           console.error('获取数据失败', err);
+          Object.keys(postElements).forEach(function(postId){
+            var el = postElements[postId];
+            el.commentText.textContent = '评论暂不可用';
+            el.commentList.textContent = '暂时无法加载评论，请稍后重试';
+          });
+          showToast('评论加载失败，请检查网络后重试');
         });
     }
 
@@ -1922,7 +1929,11 @@ img{display:block;max-width:100%;}
       el.cSubmit.addEventListener('click', function() {
         var val = el.cInput.value.trim();
         var nameVal = el.cName.value.trim() || '匿名用户';
-        if (!val) return;
+        if (!val) {
+          showToast('请先输入评论内容');
+          el.cInput.focus();
+          return;
+        }
 
         el.cSubmit.textContent = '发送中...';
         el.cSubmit.disabled = true;

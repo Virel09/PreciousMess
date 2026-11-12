@@ -8,7 +8,7 @@
 <link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 /* ============================================================
    TOKENS
@@ -592,6 +592,12 @@ img{display:block;max-width:100%;}
   gap: 20px;
   width: 100%;
 }
+.playback-status {
+  margin: 10px 0 0;
+  color: var(--accent-bright);
+  font-size: var(--fs-3);
+  text-align: center;
+}
 .ctrl-btn {
   color: var(--text-dim);
   transition: color .2s, transform .1s;
@@ -661,6 +667,15 @@ img{display:block;max-width:100%;}
   border-left: 3px solid var(--accent);
 }
 .song-item.active .item-title { color: var(--accent-bright); }
+.song-select {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+.song-select:focus-visible { outline-offset: -2px; }
 
 .item-index {
   width: 30px;
@@ -813,7 +828,7 @@ img{display:block;max-width:100%;}
 <!-- ============================ TOPBAR ============================ -->
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
-    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="menuPanel">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar menuPanel">
       <span></span><span></span><span></span>
     </button>
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
@@ -886,14 +901,15 @@ img{display:block;max-width:100%;}
         </div>
 
         <!-- 网易云外链跳转 -->
-        <a href="https://music.163.com/#/song?id=501997638" target="_blank" class="netease-link" id="neteaseLink">
+        <a href="https://music.163.com/#/song?id=501997638" target="_blank" rel="noopener noreferrer" class="netease-link" id="neteaseLink">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm-9-1.5c0 .83-.67 1.5-1.5 1.5S4.5 15.83 4.5 15s.67-1.5 1.5-1.5 1.5.67 1.5 1.5zm3-3c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
           在网易云音乐收听
         </a>
 
         <!-- 进度条 -->
         <div class="progress-container" id="progressContainer">
-          <div class="progress-bar" id="progressBar">
+          <div class="progress-bar" id="progressBar" role="slider" tabindex="0"
+               aria-label="播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="00:00 / 00:00">
             <div class="progress-fill" id="progressFill">
               <div class="progress-thumb"></div>
             </div>
@@ -917,6 +933,7 @@ img{display:block;max-width:100%;}
             <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
           </button>
         </div>
+        <p class="playback-status" id="playbackStatus" role="status" aria-live="polite" hidden></p>
       </div>
 
       <!-- 右侧列表 -->
@@ -952,6 +969,7 @@ img{display:block;max-width:100%;}
   <a href="strange.html" class="menu-item">RED ROOM</a>
   <a href="share.html" class="menu-item">share-something fun</a>
   <a href="music.html" class="menu-item">音乐播放器</a>
+  <a href="Video.html" class="menu-item">Video</a>
 </nav>
 
 <div class="overlay" id="overlay"></div>
@@ -1238,24 +1256,27 @@ img{display:block;max-width:100%;}
       var el = document.createElement('div');
       el.className = 'song-item' + (index === currentIndex ? ' active' : '');
       el.innerHTML = `
-        <div class="item-index">${index + 1}</div>
-        <img class="item-cover" src="${song.cover}" alt="${song.title}" onerror="this.src='photo/100day.jpg'">
-        <div class="item-info">
-          <div class="item-title">${song.title}</div>
-          <div class="item-artist">${song.artist}</div>
-        </div>
-        ${song.netease ? `<a href="${song.netease}" target="_blank" rel="noopener noreferrer" class="item-action" title="在网易云音乐打开" onclick="event.stopPropagation()">
+        <button type="button" class="song-select" aria-label="播放 ${song.title} - ${song.artist}" aria-pressed="${index === currentIndex}">
+          <div class="item-index">${index + 1}</div>
+          <img class="item-cover" src="${song.cover}" alt="">
+          <div class="item-info">
+            <div class="item-title">${song.title}</div>
+            <div class="item-artist">${song.artist}</div>
+          </div>
+        </button>
+        ${song.netease ? `<a href="${song.netease}" target="_blank" rel="noopener noreferrer" class="item-action" title="在网易云音乐打开">
           <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>` : ''}
       `;
-      el.addEventListener('click', function() {
+      function selectSong() {
         if (currentIndex === index) {
           togglePlay();
         } else {
           loadSong(index);
           playSong();
         }
-      });
+      }
+      el.querySelector('.song-select').addEventListener('click', selectSong);
       playlistList.appendChild(el);
     });
   }
@@ -1276,12 +1297,16 @@ img{display:block;max-width:100%;}
       neteaseLink.hidden = true;
     }
     
-    var items = playlistList.querySelectorAll('.song-item');
+    var items = playlistList.querySelectorAll('.song-select');
     items.forEach(function(item, i) {
-      item.classList.toggle('active', i === currentIndex);
+      item.setAttribute('aria-pressed', i === currentIndex ? 'true' : 'false');
+      item.closest('.song-item').classList.toggle('active', i === currentIndex);
     });
+    $('#playbackStatus').hidden = true;
 
     progressFill.style.width = '0%';
+    progressBar.setAttribute('aria-valuenow', '0');
+    progressBar.setAttribute('aria-valuetext', '00:00 / 00:00');
     currentTimeEl.textContent = '00:00';
     totalTimeEl.textContent = '00:00';
   }
@@ -1290,16 +1315,17 @@ img{display:block;max-width:100%;}
     if (isPlaying) {
       audio.pause();
     } else {
-      audio.play().catch(function(e){ console.log('播放失败', e); });
+      audio.play().catch(reportPlaybackError);
     }
   }
 
   function playSong() {
-    audio.play().catch(function(e){ console.log('播放失败', e); });
+    audio.play().catch(reportPlaybackError);
   }
 
   function updatePlayState(playing) {
     isPlaying = playing;
+    if (playing) $('#playbackStatus').hidden = true;
     if (playing) {
       iconPlay.style.display = 'none';
       iconPause.style.display = 'block';
@@ -1317,18 +1343,34 @@ img{display:block;max-width:100%;}
     }
   }
 
+  function reportPlaybackError(error) {
+    updatePlayState(false);
+    if (error && (error.name === 'NotAllowedError' || error.name === 'AbortError')) return;
+    console.error('音乐播放失败:', error);
+    var status = $('#playbackStatus');
+    if (status) {
+      status.textContent = '播放失败，请检查音频文件是否可访问后重试。';
+      status.hidden = false;
+    }
+  }
+
   if (audio) {
     audio.addEventListener('play', function(){ updatePlayState(true); });
     audio.addEventListener('pause', function(){ updatePlayState(false); });
+    audio.addEventListener('error', function() {
+      if (audio.error) reportPlaybackError(new Error('媒体资源加载失败，错误代码 ' + audio.error.code));
+    });
     
     audio.addEventListener('timeupdate', function() {
       var current = audio.currentTime;
       var duration = audio.duration;
       if (isFinite(duration)) {
-        var pct = (current / duration) * 100;
+        var pct = duration > 0 ? (current / duration) * 100 : 0;
         progressFill.style.width = pct + '%';
         currentTimeEl.textContent = formatTime(current);
         totalTimeEl.textContent = formatTime(duration);
+        progressBar.setAttribute('aria-valuenow', Math.round(pct));
+        progressBar.setAttribute('aria-valuetext', formatTime(current) + ' / ' + formatTime(duration));
       }
     });
 
@@ -1368,9 +1410,15 @@ img{display:block;max-width:100%;}
     function seek(e) {
       if (!isFinite(audio.duration)) return;
       var rect = progressBar.getBoundingClientRect();
-      var x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+      if (!rect.width) return;
+      var clientX = e.clientX;
+      if (typeof clientX !== 'number' && e.touches && e.touches.length) {
+        clientX = e.touches[0].clientX;
+      }
+      var x = clientX - rect.left;
       var pct = Math.max(0, Math.min(1, x / rect.width));
       progressFill.style.width = (pct * 100) + '%';
+      progressBar.setAttribute('aria-valuenow', Math.round(pct * 100));
       audio.currentTime = pct * audio.duration;
     }
 
@@ -1386,6 +1434,14 @@ img{display:block;max-width:100%;}
     });
     progressBar.addEventListener('pointerup', function(){ dragging = false; });
     progressBar.addEventListener('pointercancel', function(){ dragging = false; });
+    progressBar.addEventListener('keydown', function(event) {
+      if (!isFinite(audio.duration)) return;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        var delta = event.key === 'ArrowRight' ? 5 : -5;
+        audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + delta));
+      }
+    });
   }
 
   renderPlaylist();
@@ -1393,7 +1449,7 @@ img{display:block;max-width:100%;}
 
   (function initAutoplay(){
     function tryPlay() {
-      if (audio.paused) audio.play().catch(function(){});
+      if (audio.paused) audio.play().catch(reportPlaybackError);
     }
     tryPlay();
     ['pointerdown', 'keydown', 'touchstart'].forEach(function(type){
