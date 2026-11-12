@@ -1292,10 +1292,12 @@ html[data-theme="light"] .scanline{display:none;}
 
   async function load() {
     try {
-      var r = await fetch(API + '/api/messages', { mode:'cors' });
+      // 🔥 加上时间戳，防止浏览器缓存老数据
+      var r = await fetch(API + '/api/messages?_t=' + Date.now(), { mode:'cors' });
       if(!r.ok) throw new Error('');
       var j = await r.json();
-      var m = j.data;
+      // 🔥 兼容新版纯数组和老版 data 包装
+      var m = Array.isArray(j) ? j : (j.data || []);
       
       // 【核心过滤代码】把带有 MAGIC_ 字样的随笔评论或点赞直接过滤掉！
       m = m.filter(function(item) {
@@ -1337,17 +1339,27 @@ html[data-theme="light"] .scanline{display:none;}
         mc.appendChild(ed);
       } else {
         us(m.length);
-        m.sort(function(a,b){ return new Date(a.time) - new Date(b.time); });
+        
+        // 🔥 排序兼容 created_at 字段
+        m.sort(function(a,b){ 
+          var tA = new Date(a.time || a.created_at);
+          var tB = new Date(b.time || b.created_at);
+          return tA - tB; 
+        });
+        
         m.forEach(function(msg, i){
           var fn = i + 1;
           var un = msg.name && msg.name.trim() ? msg.name : '匿名用户';
+          
+          // 🔥 时间显示兼容 created_at 字段
           var pt = '刚刚';
-          if(msg.time){
-            if(msg.time.includes('T') && msg.time.includes('Z')){
-              var d = new Date(msg.time);
+          var timeStr = msg.time || msg.created_at;
+          if(timeStr){
+            if(timeStr.includes('T') && timeStr.includes('Z')){
+              var d = new Date(timeStr);
               pt = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
             } else {
-              pt = msg.time;
+              pt = timeStr;
             }
           }
 
