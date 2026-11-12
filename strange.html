@@ -1232,7 +1232,12 @@ img{display:block;max-width:100%;}
 
   async function loadRedRoomData() {
     try {
-      const res = await fetch(API_REDROOM, { mode: 'cors' });
+      // 🔥 加时间戳强制绕过缓存
+      const res = await fetch(API_REDROOM + '?_t=' + Date.now(), { 
+        mode: 'cors',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      });
       if (!res.ok) throw new Error('加载失败');
       const data = await res.json();
       
@@ -1251,6 +1256,8 @@ img{display:block;max-width:100%;}
           });
           chatContainer.scrollTop = chatContainer.scrollHeight;
         }
+      } else {
+        console.warn('后端返回错误:', data.error);
       }
     } catch (e) {
       console.error('RED ROOM 数据加载失败:', e);
@@ -1308,21 +1315,30 @@ img{display:block;max-width:100%;}
       return;
     }
     try {
+      sendBtn.disabled = true;
+      sendBtn.textContent = '发送中...';
+      
       const res = await fetch(API_REDROOM, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'chat', name: name, content: msg })
       });
-      if (res.ok) {
+      
+      // 🔥 修改点 2：不再只判断 res.ok，而是把后端的真实报错揪出来
+      const data = await res.json();
+      if (data.success) {
         msgInput.value = '';
         await loadRedRoomData();
       } else {
-        alert('发送失败，请稍后重试');
+        alert('发送失败：' + (data.error || '未知错误'));
       }
     } catch (e) {
       console.error('弹幕发送错误', e);
-      alert('网络错误，请检查网络');
+      alert('网络错误，请检查控制台');
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = '发送';
     }
   }
 
