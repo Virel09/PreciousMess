@@ -609,6 +609,7 @@ img{display:block;max-width:100%;}
   border-color: var(--bookmark-color);
   background: rgba(181, 138, 41, 0.1);
 }
+.action-btn:disabled { opacity: .5; cursor: not-allowed; }
 
 .action-btn svg {
   width: 16px; height: 16px;
@@ -895,7 +896,7 @@ img{display:block;max-width:100%;}
       <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
       <h1 class="hero-title">THOUGHTS</h1>
       <div class="marquee-box">
-        <div class="marquee-text">in my feeling</div>
+        <div class="marquee-text">in my feelings</div>
       </div>
     </header>
 
@@ -1614,8 +1615,138 @@ img{display:block;max-width:100%;}
     }, 2500);
   }
 
+  /* 10. 收藏与分享 */
+  (function initBookmarkAndShare(){
+    var storageUnavailable = false;
+
+    function paintBookmark(button, bookmarked) {
+      button.classList.toggle('bookmarked', bookmarked);
+      button.setAttribute('aria-pressed', bookmarked ? 'true' : 'false');
+      button.setAttribute('aria-label', bookmarked ? '取消收藏' : '收藏');
+    }
+
+    function legacyCopy(text) {
+      var input = document.createElement('textarea');
+      input.value = text;
+      input.setAttribute('readonly', '');
+      input.style.position = 'fixed';
+      input.style.opacity = '0';
+      document.body.appendChild(input);
+      input.select();
+      var copied = document.execCommand('copy');
+      input.remove();
+      if (!copied) throw new Error('浏览器未能复制分享链接');
+    }
+
+    function copyLink(url) {
+      if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+        return Promise.resolve().then(function(){ legacyCopy(url); });
+      }
+      var copyPromise;
+      try {
+        copyPromise = navigator.clipboard.writeText(url);
+      } catch (err) {
+        try {
+          legacyCopy(url);
+          return Promise.resolve();
+        } catch (copyErr) {
+          console.error('复制分享链接失败:', err, copyErr);
+          return Promise.reject(copyErr);
+        }
+      }
+      return Promise.resolve(copyPromise).catch(function(err) {
+        try {
+          legacyCopy(url);
+        } catch (copyErr) {
+          console.error('复制分享链接失败:', err, copyErr);
+          throw copyErr;
+        }
+      });
+    }
+
+    $$('.post').forEach(function(post) {
+      var postId = post.getAttribute('data-id');
+      if (!postId) return;
+      post.id = postId;
+
+      var bookmarkBtn = $('.bookmark-btn', post);
+      if (bookmarkBtn) {
+        var bookmarkKey = 'pm_thought_bookmark_' + postId;
+        var bookmarked = false;
+        try {
+          bookmarked = localStorage.getItem(bookmarkKey) === 'true';
+        } catch (err) {
+          storageUnavailable = true;
+          bookmarkBtn.disabled = true;
+          console.error('读取收藏状态失败:', err);
+        }
+        paintBookmark(bookmarkBtn, bookmarked);
+        bookmarkBtn.addEventListener('click', function() {
+          var nextState = !bookmarked;
+          try {
+            localStorage.setItem(bookmarkKey, String(nextState));
+          } catch (err) {
+            console.error('保存收藏状态失败:', err);
+            showToast('收藏保存失败，请检查浏览器存储设置');
+            return;
+          }
+          bookmarked = nextState;
+          paintBookmark(bookmarkBtn, bookmarked);
+          showToast(bookmarked ? '已收藏' : '已取消收藏');
+        });
+      }
+
+      var shareBtn = $('.share-btn', post);
+      if (!shareBtn) return;
+      shareBtn.addEventListener('click', function() {
+        var shareUrl = new URL(window.location.href);
+        shareUrl.hash = postId;
+        var url = shareUrl.toString();
+        var title = $('.post-title', post);
+        var shareData = {
+          title: title ? title.textContent.trim() : document.title,
+          text: title ? title.textContent.trim() : document.title,
+          url: url
+        };
+
+        function shareByLink() {
+          copyLink(url).then(function() {
+            showToast('已复制帖子链接，可转发给朋友');
+          }).catch(function(err) {
+            console.error('分享链接失败:', err);
+            showToast('无法分享，请检查浏览器权限后重试');
+          });
+        }
+
+        if (typeof navigator.share !== 'function') {
+          shareByLink();
+          return;
+        }
+        var sharePromise;
+        try {
+          sharePromise = navigator.share(shareData);
+        } catch (err) {
+          console.error('系统分享失败，改为复制链接:', err);
+          shareByLink();
+          return;
+        }
+        Promise.resolve(sharePromise).then(function() {
+          showToast('分享成功');
+        }).catch(function(err) {
+          if (err && err.name === 'AbortError') return;
+          console.error('系统分享失败，改为复制链接:', err);
+          shareByLink();
+        });
+      });
+    });
+
+    if (storageUnavailable) {
+      showToast('无法读取收藏状态，请检查浏览器存储设置');
+    }
+  })();
+
   /* ============================================================
-     10. 核心：真实的点赞与评论 (页面加载直接显示，点击输入框弹出)
+     11. 核心：真实的点赞与评论 (页面加载直接显示，点击输入框弹出)
      ============================================================ */
   var API_URL = 'https://preciousmess.top/api/messages';
 
