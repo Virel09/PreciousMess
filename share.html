@@ -700,7 +700,14 @@ img{display:block;max-width:100%;}
   .topbar-brand{font-size:var(--fs-3);letter-spacing:.1em;}
   .font-group{display:none;}
 }
+/* 在线状态 */
+.online-indicator{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--fs-5);color:var(--text-weak);text-transform:uppercase;}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 8px var(--accent-bright);animation:onlineBreathe 2.5s infinite ease-in-out;}
+@keyframes onlineBreathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+@media(max-width:760px){.online-indicator{display:none;}}
 </style>
+<link rel="stylesheet" href="music-modal.css">
+<link rel="stylesheet" href="layout-calibration.css">
 </head>
 <body>
 
@@ -715,6 +722,7 @@ img{display:block;max-width:100%;}
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
     
     <div class="topbar-actions">
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态"><span class="online-dot" aria-hidden="true"></span><span>ONLINE</span></div>
       <div class="font-group" role="group" aria-label="调整字号">
         <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
         <span class="font-level" id="fontLevel">标准</span>
@@ -751,7 +759,7 @@ img{display:block;max-width:100%;}
       </ul>
     </div>
     <div class="side-foot">
-      <div class="np">WTF</div>
+      <div class="np">Kiss Me Again</div>
       <div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div>
     </div>
   </aside>
@@ -761,7 +769,7 @@ img{display:block;max-width:100%;}
 
     <!-- Hero -->
     <header class="hero">
-      <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
       <h1 class="hero-title">SHARE</h1>
       <div class="marquee-box">
         <div class="marquee-text">✦ 无法打开的链接请使用 VPN 后尝试 ✦</div>
@@ -770,7 +778,7 @@ img{display:block;max-width:100%;}
 
     <!-- 感谢框 -->
     <div class="thanks-box">
-      <p>特别感谢暴力王老师，这位是我很崇拜的创作者。</p>
+      <p>特别感谢暴力王，这位是我非常崇拜的创作者。</p>
       <p>我非常喜欢她的画和网站，并且我制作网站也向 <a href="https://www.baolywang666.com/" target="_blank">such a prico</a> 吸取了很多灵感，我对这个网站的喜爱也是我也想制作自己网站的原因。</p>
       <p>大家请多多支持。</p>
     </div>
@@ -887,7 +895,7 @@ img{display:block;max-width:100%;}
 
 <!-- 音乐 -->
 <audio id="bgMusic" loop autoplay preload="auto">
-  <source src="WTF.mp3" type="audio/mpeg">
+  <source src="Kiss Me Again.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -1068,8 +1076,10 @@ img{display:block;max-width:100%;}
       });
     }
     if (centerBtn) {
-      centerBtn.style.cursor = 'pointer';
-      centerBtn.addEventListener('click', doReload);
+      centerBtn.addEventListener('click', function(){
+        centerBtn.classList.add('spin');
+        setTimeout(doReload, 420);
+      });
     }
   })();
 
@@ -1140,5 +1150,6 @@ img{display:block;max-width:100%;}
 
 })();
 </script>
+<script src="music-modal.js"></script>
 </body>
 </html>

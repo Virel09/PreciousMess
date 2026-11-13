@@ -780,9 +780,9 @@ html[data-theme="light"] .scanline{display:none;}
   border-radius: 50%;
   background: var(--accent-bright);
   box-shadow: 0 0 8px var(--accent-bright);
-  animation: breathe 2.5s infinite ease-in-out;
+  animation: onlineBreathe 2.5s infinite ease-in-out;
 }
-@keyframes breathe {
+@keyframes onlineBreathe {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
@@ -883,6 +883,8 @@ html[data-theme="light"] .scanline{display:none;}
   .font-group{display:none;}
 }
 </style>
+<link rel="stylesheet" href="music-modal.css">
+<link rel="stylesheet" href="layout-calibration.css">
 </head>
 <body>
 
@@ -897,8 +899,8 @@ html[data-theme="light"] .scanline{display:none;}
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
     
     <div class="topbar-actions">
-      <div class="online-indicator" style="margin-right: 12px;">
-        <div class="online-dot"></div>
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态">
+        <span class="online-dot" aria-hidden="true"></span>
         <span>ONLINE</span>
       </div>
       
@@ -948,7 +950,7 @@ html[data-theme="light"] .scanline{display:none;}
 
     <!-- Hero -->
     <header class="hero">
-      <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
       <h1 class="hero-title">Leave a Message</h1>
       <div class="marquee-box">
         <div class="marquee-text">✦ 试着留下你存在过的痕迹 ✦</div>
@@ -1234,8 +1236,10 @@ html[data-theme="light"] .scanline{display:none;}
       });
     }
     if (centerBtn) {
-      centerBtn.style.cursor = 'pointer';
-      centerBtn.addEventListener('click', doReload);
+      centerBtn.addEventListener('click', function(){
+        centerBtn.classList.add('spin');
+        setTimeout(doReload, 420);
+      });
     }
   })();
 
@@ -1477,5 +1481,6 @@ html[data-theme="light"] .scanline{display:none;}
 
 })();
 </script>
+<script src="music-modal.js"></script>
 </body>
 </html>

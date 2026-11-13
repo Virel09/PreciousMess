@@ -166,42 +166,6 @@ img{display:block;max-width:100%;}
 }
 .topbar-brand:hover{color:var(--accent-bright);}
 
-.search-box{
-  flex:1;
-  min-width:0;
-  max-width:400px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  height:34px;
-  padding:0 12px;
-  background:var(--surface-2);
-  border:1px solid var(--line);
-  border-radius:999px;
-  transition:border-color .2s var(--ease),background .2s var(--ease);
-}
-.search-box:focus-within{border-color:var(--accent);background:var(--surface);}
-.search-box svg{width:15px;height:15px;flex-shrink:0;fill:none;stroke:var(--text-weak);stroke-width:2;}
-.search-box input{
-  flex:1;min-width:0;
-  background:none;border:none;outline:none;
-  color:var(--text);
-  font-family:var(--font-mono);
-  font-size:var(--fs-3);
-  letter-spacing:.02em;
-}
-.search-box input::placeholder{color:var(--text-weak);}
-.search-clear{
-  width:20px;height:20px;
-  flex-shrink:0;
-  display:grid;place-items:center;
-  border-radius:50%;
-  font-size:11px;
-  color:var(--text-weak);
-  transition:background .18s,color .18s;
-}
-.search-clear:hover{background:var(--surface-3);color:var(--accent-bright);}
-
 .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
 
 .tool-btn{
@@ -289,6 +253,123 @@ img{display:block;max-width:100%;}
 
 .read-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent;pointer-events:none;}
 .read-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));transition:width .1s linear;}
+
+/* ============================================================
+   🌟 灵动岛音乐弹窗 (长方形卡片)
+   ============================================================ */
+.di-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s var(--ease), visibility .3s;
+}
+.di-overlay.active { opacity: 1; visibility: visible; }
+
+.dynamic-island {
+  position: fixed;
+  top: calc(var(--topbar-h) + 12px);
+  right: 24px;
+  width: 320px; /* 变大 */
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: 16px; /* 长方形圆角 */
+  padding: 16px;
+  display: flex;
+  flex-direction: column; /* 纵向布局 */
+  gap: 16px;
+  z-index: 1001;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.8);
+  transform: translateY(-10px) scale(0.95);
+  opacity: 0; visibility: hidden;
+  transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity .3s, visibility .3s;
+}
+.dynamic-island.active {
+  transform: translateY(0) scale(1);
+  opacity: 1; visibility: visible;
+}
+
+/* 上半部分：封面+信息+按钮 */
+.di-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.di-cover {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.di-cover img { width: 100%; height: 100%; object-fit: cover; }
+/* 只有加上 is-playing 类时才会旋转 */
+.dynamic-island.is-playing .di-cover img { animation: spinCover 8s linear infinite; }
+
+.di-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.di-title {
+  font-family: var(--font-ui);
+  font-size: 15px; font-weight: 600;
+  color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.di-artist {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-weak);
+  letter-spacing: .05em;
+}
+
+.di-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  transition: background .2s, color .2s;
+}
+.di-btn:hover { background: var(--accent); color: #fff; }
+
+/* 下半部分：进度条+时间 */
+.di-bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.di-progress-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.di-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-bright);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+@keyframes spinCover { 100% { transform: rotate(360deg); } }
 
 /* ============================================================
    LAYOUT
@@ -424,7 +505,6 @@ img{display:block;max-width:100%;}
   text-align:center;
 }
 
-/* 大标题上方刷新按钮（菱形） */
 .hero-mark{
   width:42px;height:42px;
   margin-bottom:22px;
@@ -1098,8 +1178,6 @@ img{display:block;max-width:100%;}
 }
 .menu-panel .menu-item:hover{background:var(--surface-2);color:var(--text-bright);}
 .menu-panel .menu-item:hover::before{background:var(--accent-bright);}
-.menu-panel .menu-item[aria-current="page"]{background:var(--accent-soft);color:var(--accent-bright);}
-.menu-panel .menu-item[aria-current="page"]::before{background:var(--accent-bright);}
 
 .overlay{
   position:fixed;inset:0;
@@ -1387,7 +1465,6 @@ img{display:block;max-width:100%;}
 }
 @media (max-width:900px){
   .font-level{display:none;}
-  .search-box{max-width:none;}
 }
 @media (max-width:760px){
   .topbar-inner{padding:0 14px;gap:8px;}
@@ -1406,6 +1483,17 @@ img{display:block;max-width:100%;}
   .back-to-top{right:16px;bottom:16px;}
   .music-btn{padding:0 12px;}
   .rightbar{gap:16px;}
+  
+  /* 手机端灵动岛居中 */
+  .dynamic-island {
+    right: 50%;
+    transform: translateX(50%) translateY(-10px) scale(0.95);
+    width: calc(100% - 32px);
+    max-width: 340px;
+  }
+  .dynamic-island.active {
+    transform: translateX(50%) translateY(0) scale(1);
+  }
 }
 @media (max-width:560px){
   .music-btn .label{display:none;}
@@ -1448,9 +1536,15 @@ img{display:block;max-width:100%;}
   }
   .celebration-wave span{transform:none !important;}
 }
+/* 在线状态 */
+.online-indicator{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--fs-5);color:var(--text-weak);text-transform:uppercase;}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 8px var(--accent-bright);animation:onlineBreathe 2.5s infinite ease-in-out;}
+@keyframes onlineBreathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+@media(max-width:760px){.online-indicator{display:none;}}
 </style>
+<link rel="stylesheet" href="layout-calibration.css">
 </head>
-<body>
+<body class="home-page">
 
 <div class="scanline" aria-hidden="true"></div>
 
@@ -1461,22 +1555,20 @@ img{display:block;max-width:100%;}
       <span></span><span></span><span></span>
     </button>
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
-    <label class="search-box" for="searchInput">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-      <input type="search" id="searchInput" placeholder="搜索站内内容…" autocomplete="off" aria-label="搜索站内内容">
-      <button class="search-clear" id="searchClear" type="button" aria-label="清除搜索" hidden>✕</button>
-    </label>
     <div class="topbar-actions">
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态">
+        <span class="online-dot" aria-hidden="true"></span>
+        <span>ONLINE</span>
+      </div>
       <div class="font-group" role="group" aria-label="调整字号">
         <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
         <span class="font-level" id="fontLevel">标准</span>
         <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
       </div>
-      <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
+      <button class="music-btn" id="musicBtn" type="button" aria-label="查看音乐播放器">
         <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="label" id="musicLabel">PLAY</span>
       </button>
-      <!-- 👑 右上角：圆形按钮 -->
       <button class="diamond-btn" id="diamondIcon" type="button" aria-label="刷新页面" title="刷新页面"></button>
     </div>
   </div>
@@ -1514,8 +1606,7 @@ img{display:block;max-width:100%;}
 
     <!-- Hero -->
     <header class="hero">
-      <!-- 👑 大标题上方：菱形按钮 -->
-      <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
       <h1 class="hero-title">PRECIOUS MESS</h1>
       <div class="marquee-box">
         <div class="marquee-text">PRECIOUS MESS website — 珍贵的混乱网站</div>
@@ -1527,13 +1618,8 @@ img{display:block;max-width:100%;}
       </nav>
     </header>
 
-    <!-- 搜索空状态 -->
-    <div class="search-empty" id="searchEmpty" hidden>
-      没有找到匹配的内容 —— 换个关键词试试。
-    </div>
-
     <!-- 庆祝卡片 -->
-    <section class="celebration" data-searchable>
+    <section class="celebration">
       <div class="celebration-bg" aria-hidden="true">Celebration</div>
 
       <div class="celebration-inner">
@@ -1579,7 +1665,7 @@ img{display:block;max-width:100%;}
     <!-- 帖子列 -->
     <div class="content-main">
 
-      <article class="card text-card" id="about" data-searchable>
+      <article class="card text-card" id="about">
         <div class="card-head">
           <span class="card-kicker"><b>01</b> / about</span>
           <div class="card-tools">
@@ -1607,7 +1693,7 @@ img{display:block;max-width:100%;}
         </div>
       </article>
 
-      <article class="card text-card" id="thoughts" data-searchable>
+      <article class="card text-card" id="thoughts">
         <div class="card-head">
           <span class="card-kicker"><b>02</b> / notes</span>
           <div class="card-tools">
@@ -1622,7 +1708,6 @@ img{display:block;max-width:100%;}
           给你所有我想告诉你的那些事。我脑子里转的……我白天不说出口的那些，我半夜醒了突然想到的那些。<br><br>
           放东西的地方，是永远不够用的。我想，一个另类的人心中的某种想法，可以真正的被人理解吗。那些肮脏的，烂掉的东西。于是我把它们放进我的网站，让它们终于有了栖息之地。
         </p>
-        <!-- “更多内容”按钮（无箭头居中） -->
         <a class="mini-btn thought-more" href="thought.html" aria-label="更多内容，前往随笔页面">
           <span class="thought-more-copy">
             <span class="thought-more-title">更多内容</span>
@@ -1757,6 +1842,29 @@ img{display:block;max-width:100%;}
 
 <div class="overlay" id="overlay"></div>
 
+<!-- 👑 灵动岛音乐弹窗 (长方形卡片) -->
+<div class="di-overlay" id="diOverlay"></div>
+<div class="dynamic-island" id="dynamicIsland">
+  <div class="di-top">
+    <div class="di-cover">
+      <!-- 使用 post/音乐名.jpg 的逻辑，并加上兜底 -->
+      <img src="post/I Don't Know.jpg" alt="Cover" onerror="this.src='photo/touxiang1.jpg'">
+    </div>
+    <div class="di-info">
+      <div class="di-title">I Don't Know</div>
+      <div class="di-artist">Meeting · Track 09</div>
+    </div>
+    <button class="di-btn" id="diPlayBtn" type="button" aria-label="播放/暂停">▶</button>
+  </div>
+  <div class="di-bottom">
+    <span id="diTimeCur">00:00</span>
+    <div class="di-progress-wrap">
+      <div class="di-progress-bar" id="diProgressBar"></div>
+    </div>
+    <span id="diTimeTotal">00:00</span>
+  </div>
+</div>
+
 <!-- 回到顶部 -->
 <button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部" title="回到顶部">
   <svg class="ring" viewBox="0 0 46 46" aria-hidden="true">
@@ -1851,47 +1959,6 @@ img{display:block;max-width:100%;}
     if (up)   up.addEventListener('click', function(){ apply(current + 1); });
   })();
 
-  /* 3. 站内搜索 */
-  (function initSearch(){
-    var input = $('#searchInput');
-    var clear = $('#searchClear');
-    var empty = $('#searchEmpty');
-    if (!input) return;
-
-    var items = $$('[data-searchable]');
-
-    function run(){
-      var q = input.value.trim().toLowerCase();
-      var hits = 0;
-
-      items.forEach(function(el){
-        var match = !q || el.textContent.toLowerCase().indexOf(q) !== -1;
-        el.hidden = !match;
-        if (match) hits++;
-      });
-
-      if (clear) clear.hidden = !q;
-      if (empty) empty.hidden = !(q && hits === 0);
-    }
-
-    input.addEventListener('input', run);
-
-    if (clear) {
-      clear.addEventListener('click', function(){
-        input.value = '';
-        input.focus();
-        run();
-      });
-    }
-
-    document.addEventListener('keydown', function(e){
-      if (e.key === '/' && document.activeElement !== input) {
-        e.preventDefault();
-        input.focus();
-      }
-    });
-  })();
-
   /* 4. 阅读进度 + 回到顶部环形进度 */
   (function initProgress(){
     var fill  = $('#readProgress');
@@ -1944,7 +2011,7 @@ img{display:block;max-width:100%;}
     }, { passive:true });
   })();
 
-  /* 6. 背景音乐 + 播放器全部控件 */
+  /* 6. 背景音乐 + 灵动岛弹窗交互 */
   (function initPlayer(){
     var audio = $('#bgMusic');
     if (!audio) return;
@@ -1953,6 +2020,14 @@ img{display:block;max-width:100%;}
     var musicLabel = $('#musicLabel');
     var playBtn = $('#playBtn');
     var muteBtn = $('#muteBtn');
+    
+    var diPlayBtn = $('#diPlayBtn');
+    var dynamicIsland = $('#dynamicIsland');
+    var diOverlay = $('#diOverlay');
+    var diProgressBar = $('#diProgressBar');
+    var diTimeCur = $('#diTimeCur');
+    var diTimeTotal = $('#diTimeTotal');
+
     var seek = $('#seek');
     var seekFill = $('#seekFill');
     var timeCur = $('#timeCurrent');
@@ -1979,7 +2054,7 @@ img{display:block;max-width:100%;}
     function paint(playing){
       if (musicBtn) {
         musicBtn.classList.toggle('playing', playing);
-        musicBtn.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+        musicBtn.setAttribute('aria-label', playing ? '暂停背景音乐' : '查看音乐播放器');
       }
       if (musicLabel) musicLabel.textContent = playing ? 'PAUSE' : 'PLAY';
       if (playBtn) {
@@ -1987,6 +2062,13 @@ img{display:block;max-width:100%;}
         playBtn.textContent = playing ? '❚❚' : '▶';
         playBtn.setAttribute('aria-label', playing ? '暂停' : '播放');
         playBtn.title = playing ? '暂停' : '播放';
+      }
+      // 同步灵动岛上的按钮和旋转状态
+      if (diPlayBtn) {
+        diPlayBtn.innerHTML = playing ? '❚❚' : '▶';
+      }
+      if (dynamicIsland) {
+        dynamicIsland.classList.toggle('is-playing', playing);
       }
     }
 
@@ -2005,8 +2087,51 @@ img{display:block;max-width:100%;}
       }
     }
 
-    if (musicBtn) musicBtn.addEventListener('click', toggle);
-    if (playBtn)  playBtn.addEventListener('click', toggle);
+    // 👑 灵动岛逻辑
+    var islandOpen = false;
+    function toggleIsland() {
+      islandOpen = !islandOpen;
+      if (islandOpen) {
+        if (dynamicIsland) dynamicIsland.classList.add('active');
+        if (diOverlay) diOverlay.classList.add('active');
+        document.body.classList.add('no-scroll');
+      } else {
+        if (dynamicIsland) dynamicIsland.classList.remove('active');
+        if (diOverlay) diOverlay.classList.remove('active');
+        document.body.classList.remove('no-scroll');
+      }
+    }
+
+    // 点击顶部音乐按钮 -> 打开灵动岛
+    if (musicBtn) {
+      musicBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        toggleIsland();
+      });
+    }
+
+    // 点击灵动岛内的播放/暂停
+    if (diPlayBtn) {
+      diPlayBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        toggle();
+      });
+    }
+
+    // 点击背景遮罩关闭灵动岛
+    if (diOverlay) {
+      diOverlay.addEventListener('click', toggleIsland);
+    }
+
+    // ESC 关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && islandOpen) toggleIsland();
+    });
+
+    // 页面原有的右侧卡片播放按钮
+    if (playBtn) {
+      playBtn.addEventListener('click', toggle);
+    }
 
     audio.addEventListener('play',  function(){ paint(true); });
     audio.addEventListener('pause', function(){ paint(false); });
@@ -2016,11 +2141,19 @@ img{display:block;max-width:100%;}
         ? (audio.currentTime / audio.duration) * 100
         : 0;
       if (!draggingSeek) setPct(pct);
-      if (timeCur) timeCur.textContent = fmt(audio.currentTime);
+      
+      var curTimeStr = fmt(audio.currentTime);
+      if (timeCur) timeCur.textContent = curTimeStr;
+      if (diTimeCur) diTimeCur.textContent = curTimeStr;
+
+      // 🔥 同步灵动岛进度条
+      if (diProgressBar) diProgressBar.style.width = pct + '%';
     });
 
     function fillDuration(){
-      if (timeTotal) timeTotal.textContent = fmt(audio.duration);
+      var durStr = fmt(audio.duration);
+      if (timeTotal) timeTotal.textContent = durStr;
+      if (diTimeTotal) diTimeTotal.textContent = durStr;
     }
     audio.addEventListener('loadedmetadata', fillDuration);
     if (audio.readyState >= 1) fillDuration();
@@ -2337,7 +2470,7 @@ img{display:block;max-width:100%;}
     targets.forEach(function(t){ io.observe(t); });
   })();
 
-  /* 12. 刷新按钮 (支持两个按钮) */
+  /* 12. 刷新按钮 */
   (function initRefresh(){
     var btn = $('#diamondIcon');
     var centerBtn = $('#refreshDiamond');
@@ -2349,8 +2482,10 @@ img{display:block;max-width:100%;}
       });
     }
     if (centerBtn) {
-      centerBtn.style.cursor = 'pointer';
-      centerBtn.addEventListener('click', doReload);
+      centerBtn.addEventListener('click', function(){
+        centerBtn.classList.add('spin');
+        setTimeout(doReload, 420);
+      });
     }
   })();
 

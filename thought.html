@@ -833,7 +833,14 @@ img{display:block;max-width:100%;}
   .topbar-brand{font-size:var(--fs-3);letter-spacing:.1em;}
   .font-group{display:none;}
 }
+/* 在线状态 */
+.online-indicator{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--fs-5);color:var(--text-weak);text-transform:uppercase;}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 8px var(--accent-bright);animation:onlineBreathe 2.5s infinite ease-in-out;}
+@keyframes onlineBreathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+@media(max-width:760px){.online-indicator{display:none;}}
 </style>
+<link rel="stylesheet" href="music-modal.css">
+<link rel="stylesheet" href="layout-calibration.css">
 </head>
 <body>
 
@@ -855,6 +862,7 @@ img{display:block;max-width:100%;}
     </label>
 
     <div class="topbar-actions">
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态"><span class="online-dot" aria-hidden="true"></span><span>ONLINE</span></div>
       <div class="font-group" role="group" aria-label="调整字号">
         <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
         <span class="font-level" id="fontLevel">标准</span>
@@ -901,7 +909,7 @@ img{display:block;max-width:100%;}
 
     <!-- Hero -->
     <header class="hero">
-      <div class="hero-mark" id="refreshDiamond" aria-hidden="true" title="点击刷新"></div>
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
       <h1 class="hero-title">THOUGHTS</h1>
       <div class="marquee-box">
         <div class="marquee-text">in my feelings</div>
@@ -1209,7 +1217,7 @@ img{display:block;max-width:100%;}
             <span class="post-author">u/Virel09</span>
             <span class="post-time">2026.2.17</span>
           </div>
-          <h2 class="post-title">《一张轻飘飘的纸.01》</h2>
+          <h2 class="post-title">《一张轻飘飘的纸01》</h2>
           <div class="post-content">
             <p>你知道吗？当你坐在这银质椅子上时，你早晚会消失在上面。</p>
             <p>这里是人人都讨厌的地方，消毒水的气味，阴冷的氛围。但人们又渴望能在这里得到救助，妄想起死回生？他们只是在被控制。</p>
@@ -1591,8 +1599,10 @@ img{display:block;max-width:100%;}
       });
     }
     if (centerBtn) {
-      centerBtn.style.cursor = 'pointer';
-      centerBtn.addEventListener('click', doReload);
+      centerBtn.addEventListener('click', function(){
+        centerBtn.classList.add('spin');
+        setTimeout(doReload, 420);
+      });
     }
   })();
 
@@ -1990,5 +2000,6 @@ img{display:block;max-width:100%;}
 
 })();
 </script>
+<script src="music-modal.js"></script>
 </body>
 </html>

@@ -383,8 +383,11 @@ img{display:block;max-width:100%;}
   border:1px solid var(--line);
   display:grid;place-items:center;
   transform:rotate(45deg);
-  transition:border-color .3s var(--ease);
+  cursor:pointer;
+  transition:border-color .3s var(--ease),transform .42s var(--ease);
 }
+.hero-mark:hover{border-color:var(--accent);}
+.hero-mark.spin{transform:rotate(405deg);}
 .hero-mark::before{
   content:'';
   width:9px;height:9px;
@@ -926,7 +929,14 @@ img{display:block;max-width:100%;}
   .topbar-brand{font-size:var(--fs-3);letter-spacing:.1em;}
   .font-group{display:none;}
 }
+/* 在线状态 */
+.online-indicator{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--fs-5);color:var(--text-weak);text-transform:uppercase;}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 8px var(--accent-bright);animation:onlineBreathe 2.5s infinite ease-in-out;}
+@keyframes onlineBreathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+@media(max-width:760px){.online-indicator{display:none;}}
 </style>
+<link rel="stylesheet" href="music-modal.css">
+<link rel="stylesheet" href="layout-calibration.css">
 </head>
 <body>
 
@@ -940,6 +950,7 @@ img{display:block;max-width:100%;}
     </button>
     <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
     <div class="topbar-actions">
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态"><span class="online-dot" aria-hidden="true"></span><span>ONLINE</span></div>
       <div class="font-group" role="group" aria-label="调整字号">
         <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
         <span class="font-level" id="fontLevel">标准</span>
@@ -986,7 +997,7 @@ img{display:block;max-width:100%;}
 
     <!-- Hero -->
     <header class="hero">
-      <div class="hero-mark" aria-hidden="true"></div>
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
       <h1 class="hero-title">DISPLAY of Depp</h1>
       <div class="marquee-box">
         <div class="marquee-text">✦ 愚蠢的真挚的情感 ✦</div>
@@ -1393,12 +1404,13 @@ img{display:block;max-width:100%;}
   /* 8. 刷新按钮 */
   (function initRefresh(){
     var btn = $('#diamondIcon');
-    if (!btn) return;
-
-    btn.addEventListener('click', function(){
-      btn.classList.add('spin');
+    var centerBtn = $('#refreshDiamond');
+    function reload(button){
+      if (button) button.classList.add('spin');
       setTimeout(function(){ location.reload(); }, 420);
-    });
+    }
+    if (btn) btn.addEventListener('click', function(){ reload(btn); });
+    if (centerBtn) centerBtn.addEventListener('click', function(){ reload(centerBtn); });
   })();
 
   /* 9. 轮播图控制 */
@@ -1434,5 +1446,6 @@ img{display:block;max-width:100%;}
 
 })();
 </script>
+<script src="music-modal.js"></script>
 </body>
 </html>
