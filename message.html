@@ -624,19 +624,21 @@ html[data-theme="light"] .scanline{display:none;}
    ============================================================ */
 .forum-post {
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  padding-bottom: 16px;
+  gap: 20px;
+  align-items: center; /* 垂直居中，让内容与上下分割线距离相等 */
+  padding-top: 32px;
+  padding-bottom: 32px;
   border-bottom: 1px solid var(--line-soft);
 }
-.forum-post:last-child { border-bottom: none; margin-bottom: 0; }
+.forum-post:first-child { padding-top: 0; }
+.forum-post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
 
 .forum-post-sidebar {
   flex: 0 0 70px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .forum-avatar-wrap {
   width: 50px; height: 50px;
@@ -649,17 +651,18 @@ html[data-theme="light"] .scanline{display:none;}
 .forum-avatar-wrap::before {
   content: '';
   position: absolute;
-  top: 10px; left: 50%; transform: translateX(-50%);
+  top: 9px; left: 50%; transform: translateX(-50%);
   width: 14px; height: 14px;
   background: var(--text-weak);
   border-radius: 50%;
   z-index: 1;
 }
+/* 修复：默认头像身体贴底 */
 .forum-avatar-wrap::after {
   content: '';
   position: absolute;
-  top: 26px; left: 50%; transform: translateX(-50%);
-  width: 26px; height: 18px;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 28px; height: 22px;
   background: var(--text-weak);
   border-radius: 50% 50% 0 0;
   z-index: 1;
@@ -669,14 +672,14 @@ html[data-theme="light"] .scanline{display:none;}
 .forum-avatar-wrap.master-avatar { background: transparent; border-color: var(--accent); }
 
 .forum-sidebar-name {
-  font-size: var(--fs-4);
+  font-size: var(--fs-3); /* 字体调大 */
   color: var(--text);
   font-weight: 500;
   text-align: center;
   word-break: break-all;
 }
 .forum-sidebar-floor {
-  font-size: var(--fs-5);
+  font-size: var(--fs-4); /* 字体调大 */
   color: var(--text-weak);
   background: var(--surface-2);
   padding: 2px 8px;
@@ -689,7 +692,7 @@ html[data-theme="light"] .scanline{display:none;}
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   min-width: 0;
 }
 .forum-text-box {
@@ -697,7 +700,7 @@ html[data-theme="light"] .scanline{display:none;}
   border: 1px solid var(--line-soft);
   border-left: 2px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
+  padding: 16px 20px; /* 增加一点内边距配合大字体 */
   width: fit-content;
   max-width: 100%;
   transition: border-color .2s;
@@ -707,7 +710,7 @@ html[data-theme="light"] .scanline{display:none;}
   border-left-color: var(--accent);
 }
 .forum-text {
-  font-size: var(--fs-3);
+  font-size: var(--fs-0); /* 字体调大至基准字号 15px */
   color: var(--text-dim);
   line-height: 1.8;
   word-break: break-word;
@@ -720,10 +723,11 @@ html[data-theme="light"] .scanline{display:none;}
   width: 100%;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 4px;
 }
 .forum-time {
   font-family: var(--font-mono);
-  font-size: var(--fs-5);
+  font-size: var(--fs-4); /* 字体调大 */
   color: var(--text-weak);
 }
 .forum-actions { display: flex; gap: 8px; }
@@ -731,9 +735,9 @@ html[data-theme="light"] .scanline{display:none;}
   background: transparent;
   border: 1px solid var(--line);
   color: var(--text-dim);
-  padding: 2px 10px;
+  padding: 4px 12px; /* 稍微加大按钮 */
   border-radius: 4px;
-  font-size: var(--fs-5);
+  font-size: var(--fs-4); /* 字体调大 */
   transition: all .2s;
 }
 .forum-action-btn:hover {
@@ -835,7 +839,7 @@ html[data-theme="light"] .scanline{display:none;}
 .overlay.active{opacity:1;visibility:visible;}
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIVE (保持不变)
    ============================================================ */
 @media (max-width:1280px){
   .layout{gap:20px;padding:20px;}
@@ -872,11 +876,20 @@ html[data-theme="light"] .scanline{display:none;}
 @media (max-width:560px){
   .music-btn .label{display:none;}
   .music-btn{padding:0 11px;}
-  .forum-post { flex-direction: column; gap: 8px; }
-  .forum-post-sidebar { flex-direction: row; width: 100%; justify-content: flex-start; gap: 10px; }
+  
+  /* 手机端排版保持垂直排列，同时确保上下间距相等 */
+  .forum-post { 
+    flex-direction: column; 
+    gap: 12px; 
+    padding-top: 24px;
+    padding-bottom: 24px; 
+    align-items: stretch; 
+  }
+  .forum-post:first-child { padding-top: 0; }
+  .forum-post-sidebar { flex-direction: row; width: 100%; justify-content: flex-start; gap: 12px; align-items: center; }
   .forum-avatar-wrap { width: 36px; height: 36px; }
   .forum-avatar-wrap::before { width: 10px; height: 10px; top: 7px; }
-  .forum-avatar-wrap::after { width: 18px; height: 12px; top: 19px; }
+  .forum-avatar-wrap::after { width: 20px; height: 16px; bottom: 0; }
 }
 @media (max-width:360px){
   .topbar-inner{padding:0 10px;gap:4px;}
@@ -1263,7 +1276,7 @@ html[data-theme="light"] .scanline{display:none;}
   })();
 
   /* ============================================================
-     9. 留言板业务逻辑 (已加入防污染过滤)
+     9. 留言板业务逻辑 (从新到旧排序 + 楼数倒序)
      ============================================================ */
   // 计时器
   var startDate = new Date("2026-08-03T09:00:00");
@@ -1309,16 +1322,57 @@ html[data-theme="light"] .scanline{display:none;}
     return t.replace(/[&<>"']/g,function(x){ return m[x]; });
   }
 
+  // 👑 暴力时间解析器
+  function formatTime(str) {
+    if (!str) return '刚刚';
+    str = String(str);
+    
+    if (/^\d+$/.test(str)) {
+      var d = new Date(parseInt(str, 10));
+      return fillTime(d);
+    }
+    
+    if (str.indexOf('T') > -1) {
+      var parts = str.split('T');
+      var datePart = parts[0];
+      var timePart = parts[1].split('.')[0];
+      
+      var ymd = datePart.split('-');
+      var hm = timePart.split(':');
+      
+      var y = ymd[0] || '2026';
+      var m = (ymd[1] || '1').padStart(2, '0');
+      var d = (ymd[2] || '1').padStart(2, '0');
+      var h = (hm[0] || '0').padStart(2, '0');
+      var min = (hm[1] || '0').padStart(2, '0');
+      
+      return y + '-' + m + '-' + d + ' ' + h + ':' + min;
+    }
+    
+    var safeStr = str.replace(/-/g, '/');
+    var dateObj = new Date(safeStr);
+    if (!isNaN(dateObj.getTime())) {
+      return fillTime(dateObj);
+    }
+    return str;
+  }
+  
+  function fillTime(d) {
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    var h = String(d.getHours()).padStart(2, '0');
+    var min = String(d.getMinutes()).padStart(2, '0');
+    return y + '-' + m + '-' + day + ' ' + h + ':' + min;
+  }
+
   async function load() {
     try {
-      // 🔥 加上时间戳，防止浏览器缓存老数据
       var r = await fetch(API + '/api/messages?_t=' + Date.now(), { mode:'cors' });
       if(!r.ok) throw new Error('');
       var j = await r.json();
-      // 🔥 兼容新版纯数组和老版 data 包装
       var m = Array.isArray(j) ? j : (j.data || []);
       
-      // 【核心过滤代码】把带有 MAGIC_ 字样的随笔评论或点赞直接过滤掉！
       m = m.filter(function(item) {
         return !item.content || item.content.indexOf('MAGIC_') !== 0;
       });
@@ -1359,28 +1413,19 @@ html[data-theme="light"] .scanline{display:none;}
       } else {
         us(m.length);
         
-        // 🔥 排序兼容 created_at 字段
+        // 🔥 排序：从新到旧 (tB - tA)
         m.sort(function(a,b){ 
-          var tA = new Date(a.time || a.created_at);
-          var tB = new Date(b.time || b.created_at);
-          return tA - tB; 
+          var tA = new Date((a.time || a.created_at || '').toString().replace(/-/g, '/')).getTime() || 0;
+          var tB = new Date((b.time || b.created_at || '').toString().replace(/-/g, '/')).getTime() || 0;
+          return tB - tA; 
         });
         
         m.forEach(function(msg, i){
-          var fn = i + 1;
+          // 🔥 楼层倒序
+          var fn = m.length - i;
           var un = msg.name && msg.name.trim() ? msg.name : '匿名用户';
           
-          // 🔥 时间显示兼容 created_at 字段
-          var pt = '刚刚';
-          var timeStr = msg.time || msg.created_at;
-          if(timeStr){
-            if(timeStr.includes('T') && timeStr.includes('Z')){
-              var d = new Date(timeStr);
-              pt = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-            } else {
-              pt = timeStr;
-            }
-          }
+          var pt = formatTime(msg.time || msg.created_at);
 
           var isMaster = (msg.name === 'Virel09');
           var borderColor = isMaster ? 'var(--accent)' : 'var(--line-soft)';
@@ -1391,7 +1436,7 @@ html[data-theme="light"] .scanline{display:none;}
           var avatarClass = isMaster ? 'forum-avatar-wrap master-avatar' : 'forum-avatar-wrap';
           var avatarContent = '<div class="' + avatarClass + '"></div>';
           if (isMaster) {
-            avatarContent = '<div class="' + avatarClass + '" style="border-color: var(--accent);"><img src="photo/touxiang1.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" /></div>';
+            avatarContent = '<div class="' + avatarClass + '"><img src="photo/touxiang1.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" /></div>';
           }
 
           var dv = document.createElement('div');
