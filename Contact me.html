@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-size="md">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0b">
+<title>Contact me — PRECIOUS MESS</title>
+<link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+:root{
+  --fs-base:15px;--fs-0:var(--fs-base);--fs-2:calc(var(--fs-base) - 2px);--fs-3:calc(var(--fs-base) - 3px);--fs-4:calc(var(--fs-base) - 4px);--fs-5:calc(var(--fs-base) - 5px);--fs-brand:20px;
+  --bg:#0a0a0b;--grid-line:#131316;--surface:#121214;--surface-2:#18181b;--surface-3:#1f1f24;--line:#2a2a31;--line-soft:#1e1e23;
+  --text:#c8c8d0;--text-bright:#eeeeF4;--text-dim:#90909b;--text-weak:#65656f;--accent:#8b1a1a;--accent-bright:#c23434;--accent-soft:rgba(139,26,26,.14);
+  --topbar-bg:rgba(10,10,11,.88);--font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;
+  --font-mono:'Space Mono','SFMono-Regular',Consolas,'Courier New',monospace;--font-serif:'Cormorant Garamond',Georgia,'Songti SC',serif;--radius-sm:6px;--radius:10px;--topbar-h:56px;--sidebar-w:264px;--ease:cubic-bezier(.4,0,.2,1);
+}
+html[data-size="lg"]{--fs-base:16.5px;--fs-brand:22px;}html[data-size="xl"]{--fs-base:18px;--fs-brand:24px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--topbar-h) + 20px);}
+body{min-height:100vh;overflow-x:hidden;background-color:var(--bg);background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:80px 80px;background-attachment:fixed;color:var(--text);font-family:var(--font-ui);font-size:var(--fs-0);line-height:1.8;-webkit-font-smoothing:antialiased;}
+body.no-scroll{overflow:hidden;}a{color:inherit;text-decoration:none;}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
+:focus-visible{outline:2px solid var(--accent-bright);outline-offset:3px;}
+.scanline{position:fixed;inset:0;z-index:200;pointer-events:none;background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.01) 1px,transparent 2px);}
+.topbar{position:sticky;top:0;z-index:100;background:var(--topbar-bg);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft);}
+.topbar-inner{height:var(--topbar-h);padding:0 20px;display:flex;align-items:center;gap:12px;}
+.hamburger{width:34px;height:34px;flex:none;display:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid var(--line);border-radius:var(--radius-sm);}
+.hamburger span{width:16px;height:1.5px;background:var(--text-dim);}
+.topbar-brand{font-family:var(--font-ui);font-size:var(--fs-2);font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text-bright);white-space:nowrap;flex-shrink:0;}.topbar-brand:hover{color:var(--accent-bright);}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.font-group{display:flex;align-items:center;gap:1px;padding:2px;border:1px solid var(--line);border-radius:var(--radius-sm);}
+.tool-btn{height:32px;min-width:32px;padding:0 9px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);color:var(--text-dim);font-family:var(--font-mono);font-size:var(--fs-4);}
+.font-group .tool-btn{height:26px;min-width:28px;padding:0 6px;border:0;border-radius:4px;}
+.tool-btn:hover:not(:disabled){background:var(--accent-soft);color:var(--accent-bright);}.tool-btn:disabled{opacity:.35;cursor:not-allowed;}
+.font-level{padding:0 7px;color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-5);white-space:nowrap;}
+.music-btn{height:32px;padding:0 14px;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;color:var(--text-dim);font-family:var(--font-mono);font-size:var(--fs-4);letter-spacing:.1em;text-transform:uppercase;}
+.music-btn:hover,.music-btn.playing{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.music-btn .eq{display:inline-flex;align-items:flex-end;gap:2px;height:10px;}.music-btn .eq i{display:block;width:2px;height:3px;background:currentColor;border-radius:1px;}
+.music-btn.playing .eq i{animation:eqBounce .9s infinite ease-in-out;}.music-btn.playing .eq i:nth-child(2){animation-delay:.15s;}.music-btn.playing .eq i:nth-child(3){animation-delay:.3s;}
+@keyframes eqBounce{0%,100%{height:3px;}50%{height:10px;}}
+.diamond-btn{width:32px;height:32px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;transition:border-color .2s var(--ease),background .2s var(--ease);}
+.diamond-btn:hover{border-color:var(--accent);background:var(--surface-2);}
+.diamond-btn::before{content:'';width:7px;height:7px;background:var(--accent);transform:rotate(45deg);transition:transform .55s var(--ease),background .2s var(--ease);}
+.diamond-btn:hover::before{transform:rotate(225deg);background:var(--accent-bright);}
+.diamond-btn.spin::before{transform:rotate(405deg);}
+.read-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;pointer-events:none;}.read-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));}
+.layout{max-width:1560px;margin:0 auto;padding:24px;display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);gap:28px;align-items:start;}
+.sidebar{position:sticky;top:calc(var(--topbar-h) + 24px);height:calc(100vh - var(--topbar-h) - 48px);min-height:460px;display:flex;flex-direction:column;padding:24px 18px 18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);}
+.sidebar-scroll{flex:1;min-height:0;overflow-y:auto;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--accent) transparent;}.brand{font-size:var(--fs-brand);font-weight:600;line-height:1.3;color:var(--text-bright);}
+.brand span{display:block;margin-top:8px;color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-5);font-weight:400;letter-spacing:.16em;text-transform:uppercase;}
+.brand-rule{height:1px;margin:20px 0;background:var(--line);}.side-nav{list-style:none;display:grid;gap:4px;}
+.sidebar-contact{flex:none;padding-top:12px;border-top:1px solid var(--line-soft);}
+.side-nav a{min-height:40px;padding:9px 12px;display:flex;align-items:center;gap:10px;border-radius:var(--radius-sm);color:var(--text-dim);font-size:var(--fs-2);}
+.side-nav a::before{content:'';width:4px;height:4px;flex:none;background:var(--text-weak);transform:rotate(45deg);}
+.side-nav a:hover,.side-nav a.current{background:var(--accent-soft);color:var(--text-bright);}.side-nav a.current::before,.side-nav a:hover::before{background:var(--accent-bright);}
+.side-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line-soft);color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-5);letter-spacing:.08em;}
+.side-foot .np{color:var(--accent-bright);}.side-foot .np::before{content:'♪ ';}
+.main{width:100%;max-width:1080px;margin:0 auto;min-width:0;padding-bottom:60px;}
+.hero{padding:54px 20px 30px;text-align:center;}.hero-mark{width:36px;height:36px;margin:0 auto 20px;display:grid;place-items:center;border:1px solid var(--line);transform:rotate(45deg);cursor:pointer;transition:border-color .3s var(--ease),transform .42s var(--ease);}
+.hero-mark:hover{border-color:var(--accent);}
+.hero-mark::before{content:'';width:8px;height:8px;background:var(--accent);transition:transform .3s var(--ease),background .3s var(--ease);}.hero-mark:hover::before{transform:rotate(180deg);background:var(--accent-bright);}.hero-title{color:var(--text-bright);font-size:clamp(2rem,5vw,3.2rem);font-weight:300;letter-spacing:.16em;line-height:1.2;}
+.hero-mark.spin{transform:rotate(405deg);}
+.marquee-box{width:max-content;max-width:100%;margin:22px auto 0;padding:8px 18px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);}
+.marquee-text{color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-4);letter-spacing:.16em;}
+
+.content-card{padding:clamp(22px,4vw,36px);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);}
+.content-card + .content-card{margin-top:24px;}
+.card-kicker{color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-4);letter-spacing:.16em;text-transform:uppercase;}.card-kicker b{color:var(--accent-bright);font-weight:400;}
+.content-card h2{margin-top:12px;color:var(--text-bright);font-size:clamp(1.5rem,3vw,2rem);font-weight:400;letter-spacing:.03em;}
+.intro-text{min-width:0;}
+.intro-text p { color: var(--text-dim); line-height: 2; margin-bottom: 20px; }
+.intro-text p:last-child { margin-bottom: 0; }
+
+/* 联系信息列表 */
+.contact-links { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+.contact-item { display: flex; align-items: center; gap: 16px; }
+.contact-icon {
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  color: var(--text-dim); transition: all 0.25s var(--ease); flex-shrink: 0;
+}
+.contact-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.contact-item:hover .contact-icon { 
+  color: var(--accent-bright); border-color: var(--accent); box-shadow: 0 0 12px var(--accent-soft); background: var(--accent-soft);
+}
+.contact-info { display: flex; flex-direction: column; line-height: 1.5; }
+.contact-label { font-family: var(--font-mono); font-size: var(--fs-5); color: var(--text-weak); text-transform: uppercase; letter-spacing: 0.1em; }
+.contact-info a { font-size: var(--fs-2); color: var(--text); transition: color 0.2s; font-family: var(--font-mono); }
+.contact-item:hover .contact-info a { color: var(--text-bright); }
+
+/* 捐赠扫码区 */
+.donate-grid { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
+.donate-item { flex: 1; min-width: 220px; text-align: center; }
+.donate-img-box {
+  width: 100%; aspect-ratio: 1; max-width: 240px; margin: 0 auto;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+}
+.donate-img-box::before {
+  content: '请放置图片至 photo/'; position: absolute; font-family: var(--font-mono); font-size: 12px; color: var(--text-weak); z-index: 0; text-align: center; padding: 0 20px;
+}
+.donate-img-box img { width: 100%; height: 100%; object-fit: contain; z-index: 1; position: relative; }
+.donate-title { margin-top: 16px; font-family: var(--font-mono); font-size: var(--fs-3); color: var(--text-bright); letter-spacing: 0.05em;}
+
+.site-footer{margin:28px 0 10px;padding-top:20px;display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line-soft);color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-5);letter-spacing:.12em;text-transform:uppercase;}
+.site-footer a:hover{color:var(--accent-bright);}
+.menu-panel{position:fixed;top:calc(var(--topbar-h) + 10px);left:20px;z-index:112;width:250px;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .2s var(--ease),visibility .2s;}
+.menu-panel.active{opacity:1;visibility:visible;transform:translateY(0);}.menu-item{min-height:42px;padding:9px 16px;display:flex;align-items:center;border-bottom:1px solid var(--line-soft);color:var(--text-dim);font-size:var(--fs-2);}
+.menu-item:last-child{border-bottom:0;}.menu-item:hover{background:var(--surface-2);color:var(--text-bright);}.menu-item[aria-current="page"]{background:var(--accent-soft);color:var(--accent-bright);}
+.overlay{position:fixed;inset:0;z-index:108;background:rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;}.overlay.active{opacity:1;visibility:visible;}
+.back-to-top{position:fixed;right:26px;bottom:26px;z-index:95;width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .28s var(--ease),transform .28s var(--ease),visibility .28s,border-color .2s var(--ease),background .2s var(--ease);}
+.back-to-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+.back-to-top:hover{border-color:var(--accent);background:var(--surface-3);}
+.back-to-top .ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.back-to-top .ring circle{fill:none;stroke-width:2;}
+.ring-bg{stroke:var(--line);}
+.ring-fill{stroke:var(--accent-bright);stroke-linecap:round;stroke-dasharray:119.4;stroke-dashoffset:119.4;transition:stroke-dashoffset .1s linear;}
+.back-to-top .arrow{position:relative;width:18px;height:18px;fill:none;stroke:var(--text-dim);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s var(--ease);}
+.back-to-top:hover .arrow{stroke:var(--accent-bright);}
+
+@media(max-width:1280px){.layout{gap:20px;padding:20px;}}
+@media(max-width:900px){.font-level{display:none;}}
+@media(max-width:1024px){
+  .hamburger{display:flex;}
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px;gap:16px;}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:110;width:280px;height:100vh;max-height:none;min-height:0;border:0;border-right:1px solid var(--line);border-radius:0;transform:translateX(-100%);transition:transform .3s var(--ease);}
+  .sidebar.open{transform:translateX(0);}.menu-panel{display:none;}
+  .main{max-width:none;margin:0;}
+}
+@media(max-width:760px){
+  .topbar-inner{padding:0 14px;gap:8px;}.hero{padding:36px 16px 30px;}.hero-mark{display:none;}.hero-title{letter-spacing:.1em;padding-left:.1em;}.marquee-text{font-size:var(--fs-5);letter-spacing:.14em;}.site-footer{justify-content:center;text-align:center;}.back-to-top{right:16px;bottom:16px;}
+  .donate-grid { gap: 20px; }
+}
+@media(max-width:560px){.music-btn{padding:0 11px;}.music-btn .label{display:none;}}
+@media(max-width:360px){.topbar-inner{padding:0 10px;gap:4px;}.topbar-brand{font-size:var(--fs-3);letter-spacing:.1em;}.font-group{display:none;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto !important;animation-duration:.01ms !important;transition-duration:.01ms !important;}}
+/* 在线状态 */
+.online-indicator{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--fs-5);color:var(--text-weak);text-transform:uppercase;}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 8px var(--accent-bright);animation:onlineBreathe 2.5s infinite ease-in-out;}
+@keyframes onlineBreathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+@media(max-width:760px){.online-indicator{display:none;}}
+</style>
+<link rel="stylesheet" href="music-modal.css">
+<link rel="stylesheet" href="layout-calibration.css">
+</head>
+<body>
+<div class="scanline" aria-hidden="true"></div>
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <button class="hamburger" id="hamburgerBtn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar menuPanel"><span></span><span></span><span></span></button>
+    <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
+    <div class="topbar-actions">
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态"><span class="online-dot" aria-hidden="true"></span><span>ONLINE</span></div>
+      <div class="font-group" role="group" aria-label="调整字号">
+        <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
+        <span class="font-level" id="fontLevel">标准</span>
+        <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
+      </div>
+      <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="label" id="musicLabel">PLAY</span>
+      </button>
+      <button class="diamond-btn" id="refreshBtn" type="button" aria-label="刷新页面" title="刷新页面"></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"><div class="read-progress-fill" id="readProgress"></div></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-scroll">
+      <div class="brand">PRECIOUS<br>MESS<span>est. 2009 — archive</span></div>
+      <div class="brand-rule"></div>
+      <ul class="side-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="message.html">Message</a></li>
+        <li><a href="Inner mess.html">Inner mess</a></li>
+        <li><a href="Precious love.html">Precious love</a></li>
+        <li><a href="Alone world.html">Alone world</a></li>
+        <li><a href="Red room.html">Red room</a></li>
+        <li><a href="Kiss you.html">Kiss you</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="More mess.html">More mess</a></li>
+      </ul>
+    </div>
+    <ul class="side-nav sidebar-contact">
+      <li><a href="Contact me.html" class="current" aria-current="page">Contact me</a></li>
+    </ul>
+    <div class="side-foot"><div class="np">Pretty Scene Girl</div><div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div></div>
+  </aside>
+  
+  <main class="main">
+    <header class="hero">
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
+      <h1 class="hero-title">CONTACT ME</h1>
+      <div class="marquee-box"><div class="marquee-text">✦ It's a pretty scene world ✦</div></div>
+    </header>
+
+    <!-- 1. 联系站长 -->
+    <section class="content-card" id="contact">
+      <span class="card-kicker"><b>01</b> / REACH OUT</span>
+      <h2>联系站长</h2>
+      <div class="intro-text">
+        <p>如果你想与我交流、探讨技术、分享你喜欢的音乐，或者投稿一些有趣的东西。可以通过以下方式找到我。我会在看到消息后尽快回复。</p>
+      </div>
+      
+      <div class="contact-links">
+        <!-- 邮箱 -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <path d="M22 6l-10 7L2 6"></path>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">Email</span>
+            <a href="mailto:viyoster@88.com">viyoster@88.com</a>
+          </div>
+        </div>
+        
+        <!-- QQ -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <!-- 极简暗黑版企鹅 SVG -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C8.5 2 6 5 6 9c0 2 .5 4 1 5-1.5 1-2 2.5-2 4 0 1.5 1 2 2 2h10c1 0 2-.5 2-2 0-1.5-.5-3-2-4 .5-1 1-3 1-5 0-4-2.5-7-6-7z"></path>
+              <circle cx="9.5" cy="8" r="1" fill="currentColor" stroke="none"></circle>
+              <circle cx="14.5" cy="8" r="1" fill="currentColor" stroke="none"></circle>
+              <path d="M11 11h2l-1 2z" fill="currentColor" stroke="none"></path>
+              <path d="M10 16l-1 2m5-2l1 2"></path>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">QQ</span>
+            <a href="https://im.qq.com/index/#/" target="_blank" rel="noopener noreferrer">2907148270</a>
+          </div>
+        </div>
+
+        <!-- 网易云音乐 -->
+        <div class="contact-item">
+          <div class="contact-icon">
+            <!-- 极简暗黑版网易云 SVG -->
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M13 7v8a3 3 0 1 1-3-3v-2"></path>
+              <path d="M13 7l4 1.5"></path>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <span class="contact-label">网易云音乐</span>
+            <a href="https://music.163.com/#/user/home?id=8737266532" target="_blank" rel="noopener noreferrer">8737266532</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 捐赠 -->
+    <section class="content-card" id="donate">
+      <span class="card-kicker"><b>02</b> / SUPPORT</span>
+      <h2>Donate</h2>
+      <div class="intro-text">
+        <p></p>如果这个站点曾给你带来过片刻的安慰、快乐或是共鸣，你可以选择对它捐赠。在这里，一点心意也将被记住，我会在下面展示你的名字。你的每一份支持，都是我继续维护和创作“珍贵的混乱”的动力。
+      </div>
+      <div class="donate-grid">
+        <div class="donate-item">
+          <div class="donate-img-box">
+            <img src="photo/wx.jpg" alt="微信收款码" onerror="this.style.display='none'">
+          </div>
+          <div class="donate-title">WeChat Pay</div>
+        </div>
+        <div class="donate-item">
+          <div class="donate-img-box">
+            <img src="photo/zfb.jpg" alt="支付宝收款码" onerror="this.style.display='none'">
+          </div>
+          <div class="donate-title">AliPay</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer"><span>© 2026 PRECIOUS MESS · CONTACT ME</span><a href="index.html">← 回到主站</a></footer>
+  </main>
+</div>
+
+<nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="index.html" class="menu-item">Home</a>
+  <a href="message.html" class="menu-item">留言板</a>
+  <a href="Inner mess.html" class="menu-item">Inner mess</a>
+  <a href="Precious love.html" class="menu-item">Precious love</a>
+  <a href="Alone world.html" class="menu-item">Alone world</a>
+  <a href="Red room.html" class="menu-item">Red room</a>
+  <a href="Kiss you.html" class="menu-item">Kiss you</a>
+  <a href="music.html" class="menu-item">Music</a>
+  <a href="More mess.html" class="menu-item">More mess</a>
+  <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
+  <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+  <a href="Contact me.html" class="menu-item" aria-current="page">Contact me</a>
+</nav>
+<div class="overlay" id="overlay"></div>
+<button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">
+  <svg class="ring" viewBox="0 0 46 46" aria-hidden="true">
+    <circle class="ring-bg" cx="23" cy="23" r="19"></circle>
+    <circle class="ring-fill" id="ringFill" cx="23" cy="23" r="19"></circle>
+  </svg>
+  <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</button>
+<audio id="bgMusic" loop autoplay preload="auto"><source src="Pretty Scene Girl.mp3" type="audio/mpeg"></audio>
+
+<script>
+(function(){
+  'use strict';
+  var $=function(selector,context){return(context||document).querySelector(selector);};
+  var $$=function(selector,context){return Array.prototype.slice.call((context||document).querySelectorAll(selector));};
+  var root=document.documentElement;
+  
+  // 1. 音乐播放
+  var audio=$('#bgMusic'),musicBtn=$('#musicBtn'),musicLabel=$('#musicLabel');
+  var savedVolume;
+  try{savedVolume=parseFloat(localStorage.getItem('pm_volume'));}catch(err){savedVolume=NaN;}
+  audio.volume=isFinite(savedVolume)&&savedVolume>=0&&savedVolume<=1?savedVolume:.68;
+  function paintMusic(playing){
+    musicBtn.classList.toggle('playing',playing);
+    musicBtn.setAttribute('aria-label',playing?'暂停背景音乐':'播放背景音乐');
+    musicLabel.textContent=playing?'PAUSE':'PLAY';
+  }
+  function toggleMusic(){
+    if(audio.paused){
+      var request=audio.play();
+      if(request&&typeof request.catch==='function')request.catch(function(err){
+        paintMusic(false);
+        if(err.name!=='NotAllowedError'&&err.name!=='AbortError')console.error('背景音乐播放失败:',err);
+      });
+    }else audio.pause();
+  }
+  musicBtn.addEventListener('click',toggleMusic);
+  audio.addEventListener('play',function(){paintMusic(true);});
+  audio.addEventListener('pause',function(){paintMusic(false);});
+  audio.addEventListener('error',function(){console.error('背景音乐文件加载失败:',audio.currentSrc);});
+  function startMusic(){
+    if(audio.paused){
+      var request=audio.play();
+      if(request&&typeof request.catch==='function')request.catch(function(){paintMusic(false);});
+    }
+  }
+  startMusic();
+  ['pointerdown','keydown','touchstart'].forEach(function(type){
+    window.addEventListener(type,function(event){
+      if(event.target.closest&&event.target.closest('#musicBtn'))return;
+      startMusic();
+    },{once:true,passive:true});
+  });
+  paintMusic(!audio.paused);
+
+  // 2. 字号调整
+  var steps=[{key:'md',label:'标准'},{key:'lg',label:'大'},{key:'xl',label:'特大'}],sizeIndex=0;
+  try{
+    var savedSize=localStorage.getItem('pm_font_size');
+    var found=steps.findIndex(function(step){return step.key===savedSize;});
+    if(found>=0)sizeIndex=found;
+  }catch(err){}
+  var fontDown=$('#fontDown'),fontUp=$('#fontUp'),fontLevel=$('#fontLevel');
+  function applySize(next){
+    sizeIndex=Math.max(0,Math.min(steps.length-1,next));
+    root.setAttribute('data-size',steps[sizeIndex].key);
+    fontLevel.textContent=steps[sizeIndex].label;
+    fontDown.disabled=sizeIndex===0;fontUp.disabled=sizeIndex===steps.length-1;
+    try{localStorage.setItem('pm_font_size',steps[sizeIndex].key);}catch(err){}
+  }
+  fontDown.addEventListener('click',function(){applySize(sizeIndex-1);});
+  fontUp.addEventListener('click',function(){applySize(sizeIndex+1);});
+  applySize(sizeIndex);
+
+  // 3. 汉堡菜单
+  var hamburger=$('#hamburgerBtn'),sidebar=$('#sidebar'),menu=$('#menuPanel'),overlay=$('#overlay'),open=false;
+  function isMobile(){return window.innerWidth<=1024;}
+  function setMenu(next){
+    open=next;
+    hamburger.setAttribute('aria-expanded',String(open));
+    hamburger.setAttribute('aria-label',open?'关闭菜单':'打开菜单');
+    if(isMobile())sidebar.classList.toggle('open',open);else menu.classList.toggle('active',open);
+    overlay.classList.toggle('active',open);
+    document.body.classList.toggle('no-scroll',open);
+  }
+  hamburger.addEventListener('click',function(){setMenu(!open);});
+  overlay.addEventListener('click',function(){if(open)setMenu(false);});
+  $$('.menu-item, .side-nav a').forEach(function(link){link.addEventListener('click',function(){if(open)setMenu(false);});});
+  document.addEventListener('keydown',function(event){if(event.key==='Escape'&&open)setMenu(false);});
+  window.addEventListener('resize',function(){if(open)setMenu(false);});
+
+  // 4. 刷新和回到顶部
+  function reloadPage(button){
+    if(button)button.classList.add('spin');
+    window.setTimeout(function(){location.reload();},420);
+  }
+  $('#refreshBtn').addEventListener('click',function(){reloadPage($('#refreshBtn'));});
+  $('#refreshDiamond').addEventListener('click',function(){reloadPage($('#refreshDiamond'));});
+  
+  var progress=$('#readProgress'),backToTop=$('#backToTop'),ring=$('#ringFill');
+  var ringCircumference=119.4;
+  function updateScroll(){
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    var fraction=max>0?Math.min(1,Math.max(0,window.scrollY/max)):0;
+    var percent=fraction*100;
+    progress.style.width=percent+'%';
+    ring.style.strokeDashoffset=ringCircumference*(1-fraction);
+    backToTop.classList.toggle('show',window.scrollY>500);
+  }
+  window.addEventListener('scroll',updateScroll,{passive:true});
+  window.addEventListener('resize',updateScroll);
+  backToTop.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  updateScroll();
+
+})();
+</script>
+<script src="music-modal.js"></script>
+</body>
+</html>

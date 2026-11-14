@@ -50,7 +50,7 @@ body.no-scroll{overflow:hidden;}a{color:inherit;text-decoration:none;}button{fon
 .sidebar{position:sticky;top:calc(var(--topbar-h) + 24px);height:calc(100vh - var(--topbar-h) - 48px);min-height:460px;display:flex;flex-direction:column;padding:24px 18px 18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);}
 .sidebar-scroll{flex:1;min-height:0;overflow-y:auto;padding-right:2px;scrollbar-width:thin;scrollbar-color:var(--accent) transparent;}.brand{font-size:var(--fs-brand);font-weight:600;line-height:1.3;color:var(--text-bright);}
 .brand span{display:block;margin-top:8px;color:var(--text-weak);font-family:var(--font-mono);font-size:var(--fs-5);font-weight:400;letter-spacing:.16em;text-transform:uppercase;}
-.brand-rule{height:1px;margin:20px 0;background:var(--line);}.side-nav{list-style:none;display:grid;gap:4px;}
+.brand-rule{height:1px;margin:20px 0;background:var(--line);}.side-nav{list-style:none;display:grid;gap:4px;}.sidebar-contact{flex:none;padding-top:12px;border-top:1px solid var(--line-soft);}
 .side-nav a{min-height:40px;padding:9px 12px;display:flex;align-items:center;gap:10px;border-radius:var(--radius-sm);color:var(--text-dim);font-size:var(--fs-2);}
 .side-nav a::before{content:'';width:4px;height:4px;flex:none;background:var(--text-weak);transform:rotate(45deg);}
 .side-nav a:hover,.side-nav a.current{background:var(--accent-soft);color:var(--text-bright);}.side-nav a.current::before,.side-nav a:hover::before{background:var(--accent-bright);}
@@ -378,6 +378,9 @@ body.no-scroll{overflow:hidden;}a{color:inherit;text-decoration:none;}button{fon
         <li><a href="More mess.html">More mess</a></li>
       </ul>
     </div>
+    <ul class="side-nav sidebar-contact">
+      <li><a href="Contact me.html">Contact me</a></li>
+    </ul>
     <div class="side-foot"><div class="np">Better off Alone</div><div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div></div>
   </aside>
   <main class="main">
@@ -808,6 +811,7 @@ body.no-scroll{overflow:hidden;}a{color:inherit;text-decoration:none;}button{fon
   <a href="More mess.html" class="menu-item">More mess</a>
   <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
   <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+  <a href="Contact me.html" class="menu-item">Contact me</a>
 </nav>
 <div class="overlay" id="overlay"></div>
 <button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">

@@ -312,6 +312,7 @@ img{display:block;max-width:100%;}
 }
 
 .side-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.sidebar-contact{flex:none;padding-top:12px;border-top:1px solid var(--line-soft);}
 .side-nav a{
   display:flex;align-items:center;gap:9px;
   padding:9px 10px;
@@ -419,48 +420,6 @@ img{display:block;max-width:100%;}
   letter-spacing:.22em;
   text-transform:uppercase;
   color:var(--text-weak);
-}
-
-/* ============================================================
-   THANKS BOX
-   ============================================================ */
-.thanks-box {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 32px;
-  margin-bottom: 60px;
-  text-align: center;
-  line-height: 2;
-  position: relative;
-  overflow: hidden;
-}
-.thanks-box::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; bottom: 0;
-  width: 3px;
-  background: var(--accent);
-}
-.thanks-box p {
-  margin-bottom: 12px;
-  font-size: var(--fs-0);
-  color: var(--text-dim);
-  font-family: var(--font-ui);
-}
-.thanks-box p:last-child { margin-bottom: 0; }
-.thanks-box a {
-  color: var(--accent-bright);
-  text-decoration: underline;
-  text-decoration-color: rgba(194, 52, 52, 0.4);
-  text-underline-offset: 4px;
-  font-weight: 500;
-  transition: all .2s;
-}
-.thanks-box a:hover {
-  color: var(--text-bright);
-  text-decoration-color: var(--text-bright);
 }
 
 /* ============================================================
@@ -692,7 +651,6 @@ img{display:block;max-width:100%;}
   .music-btn{padding:0 12px;}
   .back-to-top{right:16px;bottom:16px;}
   
-  .thanks-box { padding: 24px 20px; }
   .link-grid { gap: 10px; }
   .link-item { width: auto; max-width: 100%; justify-content: center; padding: 10px 20px; }
 }
@@ -763,6 +721,9 @@ img{display:block;max-width:100%;}
         <li><a href="More mess.html">More mess</a></li>
       </ul>
     </div>
+    <ul class="side-nav sidebar-contact">
+      <li><a href="Contact me.html">Contact me</a></li>
+    </ul>
     <div class="side-foot">
       <div class="np">Kiss Me Again</div>
       <div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div>
@@ -781,13 +742,6 @@ img{display:block;max-width:100%;}
       </div>
     </header>
 
-    <!-- 感谢框 -->
-    <div class="thanks-box">
-      <p>特别感谢暴力王，这位是我非常崇拜的创作者。</p>
-      <p>我非常喜欢她的画和网站，并且我制作网站也向 <a href="https://www.baolywang666.com/" target="_blank">such a prico</a> 吸取了很多灵感，我对这个网站的喜爱也是我也想制作自己网站的原因。</p>
-      <p>大家请多多支持。</p>
-    </div>
-
     <!-- Surprise 分类 -->
     <section class="category-section">
       <h2 class="category-title surprise-title">Surprise</h2>
@@ -805,9 +759,18 @@ img{display:block;max-width:100%;}
       </div>
     </section>
 
+    <!-- Lovely human 分类 -->
+    <section class="category-section">
+      <h2 class="category-title">Lovely human—我崇拜着的人们</h2>
+      <div class="link-grid">
+        <a href="https://eivanwqf.com/index.html" target="_blank" class="link-item">Eivanwqf</a>
+        <a href="https://baoly666.com/" target="_blank" class="link-item">暴力王666</a>
+      </div>
+    </section>
+
     <!-- 影视 -->
     <section class="category-section">
-      <h2 class="category-title">影视</h2>
+      <h2 class="category-title">Messy TV</h2>
       <div class="link-grid">
         <a href="https://bijoutheater.tv/genre#horror" target="_blank" class="link-item">Bijou theater</a>
         <a href="https://www.cabaneasang.com/en/home" target="_blank" class="link-item">Cabane a sang</a>
@@ -819,23 +782,9 @@ img{display:block;max-width:100%;}
       </div>
     </section>
 
-    <!-- 资源分享 -->
-    <section class="category-section">
-      <h2 class="category-title">资源分享</h2>
-      <div class="link-grid">
-        <a href="https://archiveofourown.org/" target="_blank" class="link-item">AO3</a>
-        <a href="https://www.feiwenge.com/" target="_blank" class="link-item">废文网</a>
-        <a href="https://mtslash.me" target="_blank" class="link-item">随缘居</a>
-        <a href="https://cn.baozimhcn.com" target="_blank" class="link-item">包子漫画</a>
-        <a href="http://fufuba.cn/forum.php?mod=guide&view=new&mobile=2" target="_blank" class="link-item">腐吧资源网</a>
-        <a href="https://www.htlvbooks.com/?act=showpaper&paperid=6522648" target="_blank" class="link-item">海棠文化</a>
-        <a href="http://www.johnwatsonblog.co.uk" target="_blank" class="link-item">约翰华生的 blog</a>
-      </div>
-    </section>
-
     <!-- 工具 -->
     <section class="category-section">
-      <h2 class="category-title">工具</h2>
+      <h2 class="category-title">Convenient life</h2>
       <div class="link-grid">
         <a href="https://www.hifast.cn" target="_blank" class="link-item">快导航网</a>
         <a href="https://caigle.zcos.net/" target="_blank" class="link-item">废才工具箱</a>
@@ -843,9 +792,9 @@ img{display:block;max-width:100%;}
       </div>
     </section>
 
-    <!-- 论坛类 -->
+    <!-- Chat time 分类 -->
     <section class="category-section">
-      <h2 class="category-title">论坛类</h2>
+      <h2 class="category-title">Chat time</h2>
       <div class="link-grid">
         <a href="https://www.dismall.com/" target="_blank" class="link-item">Discuz!</a>
         <a href="https://bbs.itzmx.com/" target="_blank" class="link-item">Itzmx</a>
@@ -853,6 +802,7 @@ img{display:block;max-width:100%;}
         <a href="https://watchpeoplelive.tv/" target="_blank" class="link-item">WPL</a>
         <a href="https://www.tianya.net/index.html" target="_blank" class="link-item">天涯论坛</a>
         <a href="https://www.csdn.net/" target="_blank" class="link-item">CSDN</a>
+        <a href="http://www.johnwatsonblog.co.uk" target="_blank" class="link-item">约翰华生的 blog</a>
       </div>
     </section>
 
@@ -873,7 +823,7 @@ img{display:block;max-width:100%;}
 
     <!-- 小游戏 -->
     <section class="category-section">
-      <h2 class="category-title">小游戏</h2>
+      <h2 class="category-title">Foolish fun</h2>
       <div class="link-grid">
         <a href="https://slowroads.io" target="_blank" class="link-item">Slow roads</a>
         <a href="https://aidn.jp/mikutap/" target="_blank" class="link-item">Miku tap</a>
@@ -909,6 +859,7 @@ img{display:block;max-width:100%;}
   <a href="More mess.html" class="menu-item">More mess</a>
   <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
   <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+  <a href="Contact me.html" class="menu-item">Contact me</a>
 </nav>
 
 <div class="overlay" id="overlay"></div>
