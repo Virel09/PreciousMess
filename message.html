@@ -750,24 +750,27 @@ html[data-theme="light"] .scanline{display:none;}
 .msg-scroll-top {
   position: fixed;
   right: 26px; bottom: 84px;
-  width: 40px; height: 40px;
+  width: 46px; height: 46px;
+  display: grid;
+  place-items: center;
   background: var(--surface-2);
   border: 1px solid var(--line);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-dim);
   cursor: pointer;
   z-index: 95;
-  transition: all .2s;
+  transition: opacity .28s var(--ease),transform .28s var(--ease),visibility .28s,border-color .2s var(--ease),background .2s var(--ease);
   box-shadow: 0 4px 12px rgba(0,0,0,.5);
 }
 .msg-scroll-top:hover {
-  color: var(--accent-bright);
   border-color: var(--accent);
   background: var(--surface-3);
 }
+.msg-scroll-top .ring { position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); }
+.msg-scroll-top .ring circle { fill:none; stroke-width:2; }
+.msg-scroll-top .ring-bg { stroke:var(--line); }
+.msg-scroll-top .ring-fill { stroke:var(--accent-bright); stroke-linecap:round; stroke-dasharray:119.4; stroke-dashoffset:119.4; transition:stroke-dashoffset .1s linear; }
+.msg-scroll-top .arrow { position:relative; width:18px; height:18px; fill:none; stroke:var(--text-dim); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.msg-scroll-top:hover .arrow { stroke:var(--accent-bright); }
 
 /* 在线状态 */
 .online-indicator {
@@ -1029,9 +1032,13 @@ html[data-theme="light"] .scanline{display:none;}
 </div>
 
 <!-- 回到顶部（留言板专用） -->
-<div id="msgScrollTop" class="msg-scroll-top" title="回到留言板顶部">
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
-</div>
+<button id="msgScrollTop" class="msg-scroll-top" type="button" aria-label="回到留言板顶部" title="回到留言板顶部">
+  <svg class="ring" viewBox="0 0 46 46" aria-hidden="true">
+    <circle class="ring-bg" cx="23" cy="23" r="19"></circle>
+    <circle class="ring-fill" id="ringFill" cx="23" cy="23" r="19"></circle>
+  </svg>
+  <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
 <!-- 快捷菜单 -->
 <nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
@@ -1306,6 +1313,15 @@ html[data-theme="light"] .scanline{display:none;}
   var msgScrollTop = $('#msgScrollTop');
   var rightPanel = $('#rightPanel');
   if (msgScrollTop && rightPanel) {
+    var ringFill = $('#ringFill');
+    var circumference = 119.4;
+    function updateMessageScrollRing() {
+      var max = rightPanel.scrollHeight - rightPanel.clientHeight;
+      var progress = max > 0 ? Math.min(1, Math.max(0, rightPanel.scrollTop / max)) : 0;
+      if (ringFill) ringFill.style.strokeDashoffset = circumference * (1 - progress);
+    }
+    rightPanel.addEventListener('scroll', updateMessageScrollRing, { passive: true });
+    updateMessageScrollRing();
     msgScrollTop.addEventListener('click', function() {
       rightPanel.scrollTo({ top: 0, behavior: 'smooth' });
     });
