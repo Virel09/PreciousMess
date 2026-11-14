@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-size="md">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0b">
+<title>Precious love — PRECIOUS MESS</title>
+<link rel="icon" type="image/x-icon" href="photo/favicon-v2.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+/* ============================================================
+   TOKENS (与主站完全一致)
+   ============================================================ */
+:root{
+  --fs-base:15px;
+  --fs-0:var(--fs-base);
+  --fs-1:calc(var(--fs-base) - 1px);
+  --fs-2:calc(var(--fs-base) - 2px);
+  --fs-3:calc(var(--fs-base) - 3px);
+  --fs-4:calc(var(--fs-base) - 4px);
+  --fs-5:calc(var(--fs-base) - 5px);
+  --fs-card-title:21px;
+  --fs-brand:20px;
+
+  --bg:#0a0a0b;
+  --grid-line:#131316;
+  --surface:#121214;
+  --surface-2:#18181b;
+  --surface-3:#1f1f24;
+  --surface-hover:#202026;
+
+  --line:#2a2a31;
+  --line-soft:#1e1e23;
+
+  --text:#c8c8d0;
+  --text-bright:#eeeeF4;
+  --text-dim:#90909b;
+  --text-weak:#65656f;
+
+  --accent:#8b1a1a;
+  --accent-bright:#c23434;
+  --accent-soft:rgba(139,26,26,.14);
+
+  --topbar-bg:rgba(10,10,11,.88);
+  --shadow:0 16px 48px rgba(0,0,0,.65);
+  --card-shadow:none;
+
+  --font-ui:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --font-mono:'Space Mono','SFMono-Regular',Consolas,'Courier New',monospace;
+  --font-serif:'Cormorant Garamond',Georgia,'Songti SC',serif;
+
+  --radius-sm:6px;
+  --radius:10px;
+  --radius-lg:14px;
+
+  --topbar-h:56px;
+  --sidebar-w:264px;
+  --rightbar-w:340px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+html[data-size="lg"]{
+  --fs-base:16.5px;
+  --fs-card-title:23px;
+  --fs-brand:22px;
+}
+html[data-size="xl"]{
+  --fs-base:18px;
+  --fs-card-title:26px;
+  --fs-brand:24px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--topbar-h) + 20px);
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:80px 80px;
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:var(--fs-0);
+  line-height:1.7;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  transition:background-color .25s var(--ease),color .25s var(--ease);
+}
+body.no-scroll{overflow:hidden;}
+
+a{color:inherit;text-decoration:none;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+img{display:block;max-width:100%;}
+::selection{background:var(--accent);color:#fff;}
+
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border:2px solid var(--bg);border-radius:6px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+:focus-visible{outline:2px solid var(--accent-bright);outline-offset:2px;}
+
+.scanline{
+  position:fixed;inset:0;z-index:200;pointer-events:none;
+  background:repeating-linear-gradient(transparent 0,rgba(255,255,255,.010) 1px,transparent 2px);
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--topbar-bg);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+  transition:border-color .2s var(--ease),background .25s var(--ease);
+}
+.topbar.scrolled{border-bottom-color:var(--line);}
+
+.topbar-inner{
+  height:var(--topbar-h);
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.hamburger{
+  width:34px;height:34px;
+  flex-shrink:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.hamburger:hover{border-color:var(--accent);background:var(--surface-2);}
+.hamburger span{width:16px;height:1.5px;background:var(--text-dim);transition:background .2s var(--ease);}
+.hamburger:hover span{background:var(--accent-bright);}
+
+.topbar-brand{
+  font-family:var(--font-ui);
+  font-weight:500;
+  font-size:var(--fs-2);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:color .2s var(--ease);
+}
+.topbar-brand:hover{color:var(--accent-bright);}
+
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+
+.tool-btn{
+  height:32px;
+  min-width:32px;
+  padding:0 9px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.06em;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.tool-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.tool-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+.font-group{
+  display:flex;
+  align-items:center;
+  gap:1px;
+  padding:2px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+}
+.font-group .tool-btn{border:none;height:26px;min-width:28px;padding:0 6px;border-radius:4px;}
+.font-level{
+  padding:0 7px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.06em;
+  color:var(--text-weak);
+  white-space:nowrap;
+  user-select:none;
+}
+
+.music-btn{
+  height:32px;
+  padding:0 14px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease);
+}
+.music-btn:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-bright);}
+.music-btn.playing{color:var(--accent-bright);border-color:var(--accent);background:var(--accent-soft);}
+.music-btn .eq{display:inline-flex;align-items:flex-end;gap:2px;height:10px;}
+.music-btn .eq i{display:block;width:2px;height:3px;background:currentColor;border-radius:1px;}
+.music-btn.playing .eq i{animation:eqBounce .9s infinite ease-in-out;}
+.music-btn.playing .eq i:nth-child(2){animation-delay:.15s;}
+.music-btn.playing .eq i:nth-child(3){animation-delay:.3s;}
+@keyframes eqBounce{0%,100%{height:3px;}50%{height:10px;}}
+
+.diamond-btn{
+  width:32px;height:32px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:50%;
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover{border-color:var(--accent);background:var(--surface-2);}
+.diamond-btn::before{
+  content:'';
+  width:7px;height:7px;
+  background:var(--accent);
+  transform:rotate(45deg);
+  transition:transform .55s var(--ease),background .2s var(--ease);
+}
+.diamond-btn:hover::before{transform:rotate(225deg);background:var(--accent-bright);}
+.diamond-btn.spin::before{transform:rotate(405deg);}
+
+.read-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:transparent;pointer-events:none;}
+.read-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));transition:width .1s linear;}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout{
+  max-width:1560px;
+  margin:0 auto;
+  padding:24px;
+  display:grid;
+  grid-template-columns:var(--sidebar-w) minmax(0,1fr);
+  gap:28px;
+  align-items:start;
+}
+
+/* ---------- 左栏 ---------- */
+.sidebar{
+  position:sticky;
+  top:calc(var(--topbar-h) + 24px);
+  height:calc(100vh - var(--topbar-h) - 48px);
+  min-height:460px;
+  display:flex;
+  flex-direction:column;
+  padding:24px 18px 18px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--card-shadow);
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+}
+.sidebar-scroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--accent) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar{width:6px;}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:3px;}
+
+.brand{
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:var(--fs-brand);
+  line-height:1.3;
+  letter-spacing:.02em;
+  color:var(--text-bright);
+}
+.brand span{
+  display:block;
+  margin-top:8px;
+  font-family:var(--font-mono);
+  font-weight:400;
+  font-size:var(--fs-5);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+.brand-rule{height:1px;margin:18px 0;background:var(--line);position:relative;}
+.brand-rule::before{
+  content:'';
+  position:absolute;left:0;top:-2px;
+  width:5px;height:5px;
+  background:var(--accent);
+  transform:rotate(45deg);
+}
+
+.side-nav{list-style:none;display:flex;flex-direction:column;gap:2px;}
+.side-nav a{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;
+  border-radius:var(--radius-sm);
+  font-size:var(--fs-2);
+  color:var(--text-dim);
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.side-nav a::before{
+  content:'';
+  width:4px;height:4px;
+  background:var(--text-weak);
+  transform:rotate(45deg);
+  flex-shrink:0;
+  transition:background .18s var(--ease);
+}
+.side-nav a:hover,
+.side-nav a.current{background:var(--surface-2);color:var(--text-bright);}
+.side-nav a:hover::before,
+.side-nav a.current::before{background:var(--accent-bright);}
+
+.side-foot{
+  flex-shrink:0;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.08em;
+  line-height:1.9;
+  color:var(--text-weak);
+}
+.side-foot .np{color:var(--accent-bright);}
+.side-foot .np::before{content:'♪ ';}
+
+/* ---------- 主内容 ---------- */
+.main{
+  width:100%;
+  max-width:1080px;
+  margin:0 auto;
+  min-width:0;
+  padding-bottom:60px;
+}
+
+/* ============================================================
+   HERO (DISPLAY)
+   ============================================================ */
+.hero{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:48px 20px 40px;
+  text-align:center;
+}
+
+.hero-mark{
+  width:42px;height:42px;
+  margin-bottom:22px;
+  border:1px solid var(--line);
+  display:grid;place-items:center;
+  transform:rotate(45deg);
+  cursor:pointer;
+  transition:border-color .3s var(--ease),transform .42s var(--ease);
+}
+.hero-mark:hover{border-color:var(--accent);}
+.hero-mark.spin{transform:rotate(405deg);}
+.hero-mark::before{
+  content:'';
+  width:9px;height:9px;
+  background:var(--accent);
+  transition:transform .5s var(--ease),background .3s var(--ease);
+}
+.hero:hover .hero-mark{border-color:var(--accent);}
+.hero:hover .hero-mark::before{transform:rotate(180deg);background:var(--accent-bright);}
+
+.hero-title{
+  font-family:var(--font-ui);
+  font-weight:300;
+  font-size:clamp(2.1rem,4.6vw,3.6rem);
+  line-height:1.1;
+  letter-spacing:.16em;
+  padding-left:.16em;
+  text-transform:uppercase;
+  color:var(--text-bright);
+  position:relative;
+}
+.hero-title::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-16px;
+  transform:translateX(-50%);
+  width:min(70%,280px);
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+
+.marquee-box{
+  margin-top:38px;
+  padding:9px 22px;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+}
+.marquee-text{
+  font-family:var(--font-mono);
+  font-size:var(--fs-4);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+
+/* ============================================================
+   MAIN GRID (PHOTO + NOTE)
+   ============================================================ */
+.main-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: 48px;
+  align-items: stretch; /* 让两列高度一致 */
+  margin-top: 20px;
+}
+
+/* 照片墙 */
+.photo-wall {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 让照片均匀分布，撑满整个高度 */
+  align-items: center;
+  padding: 10px 0;
+  height: 100%;
+}
+
+.photo-item {
+  position: relative;
+  width: 72%; /* 稍微缩小照片，适配高度 */
+  aspect-ratio: 1 / 1;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  cursor: zoom-in;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  filter: grayscale(.4) contrast(1.1);
+  transition: filter .4s ease;
+}
+
+.photo-item:hover {
+  transform: scale(1.04) translateY(-5px) rotate(0deg) !important;
+  border-color: var(--accent-bright);
+  box-shadow: 0 12px 40px rgba(139,26,26,.25);
+  z-index: 3;
+}
+.photo-item:hover img {
+  filter: grayscale(0) contrast(1.05);
+}
+
+/* 随机旋转，增加手工感（因为删了一张，重新排布顺序） */
+.photo-item:nth-child(1) { transform: rotate(-1.5deg) translateX(-4px); }
+.photo-item:nth-child(2) { transform: rotate(1.2deg) translateX(5px); }
+.photo-item:nth-child(3) { transform: rotate(-0.8deg) translateX(-6px); }
+.photo-item:nth-child(4) { transform: rotate(1.8deg) translateX(4px); }
+.photo-item:nth-child(5) { transform: rotate(-1.2deg) translateX(-5px); }
+.photo-item:nth-child(6) { transform: rotate(0.9deg) translateX(6px); }
+.photo-item:nth-child(7) { transform: rotate(-1.6deg) translateX(-3px); }
+
+/* 胶带装饰 */
+.photo-item .tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(var(--rot, -2deg));
+  width: 60px;
+  height: 20px;
+  background: rgba(200, 200, 200, 0.15);
+  backdrop-filter: blur(2px);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.photo-item .tape-2 {
+  position: absolute;
+  bottom: 10px;
+  right: -8px;
+  width: 44px;
+  height: 16px;
+  background: rgba(200, 200, 200, 0.12);
+  backdrop-filter: blur(2px);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  z-index: 2;
+  transform: rotate(18deg);
+}
+.photo-item:nth-child(1) .tape { --rot: -3deg; }
+.photo-item:nth-child(2) .tape { --rot: 4deg; }
+.photo-item:nth-child(3) .tape { --rot: -6deg; }
+.photo-item:nth-child(4) .tape { --rot: 2deg; }
+.photo-item:nth-child(5) .tape { --rot: -1deg; }
+.photo-item:nth-child(6) .tape { --rot: 5deg; }
+.photo-item:nth-child(7) .tape { --rot: -4deg; }
+
+/* 信件墙 */
+.note-wall {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.note {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--card-shadow);
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.note::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  border-radius: var(--radius) 0 0 var(--radius);
+  opacity: 0.7;
+}
+.note:hover {
+  border-color: var(--surface-hover);
+  transform: translateY(-2px);
+}
+.note p {
+  font-family: var(--font-serif);
+  font-size: calc(var(--fs-0) + 2px);
+  line-height: 1.9;
+  color: var(--text-dim);
+  letter-spacing: .02em;
+}
+.note p:last-child { margin-bottom: 0; }
+
+/* 签名 */
+.note.signature {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  text-align: right;
+  padding: 0 10px;
+}
+.note.signature::before { display: none; }
+.note.signature p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--accent-bright);
+}
+
+/* ============================================================
+   COURSE SECTION
+   ============================================================ */
+.course-section {
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line-soft);
+  position: relative;
+}
+.course-title {
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  letter-spacing: .2em;
+  text-align: center;
+  color: var(--text-bright);
+  margin-bottom: 40px;
+}
+.course-title::before, .course-title::after {
+  content: '✦';
+  font-size: 0.6em;
+  color: var(--accent);
+  margin: 0 16px;
+  vertical-align: middle;
+}
+
+/* 轮播容器 */
+.slider-wrapper {
+  position: relative;
+  padding: 0 24px;
+}
+.slider-track-wrapper {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  padding: 20px 0;
+  mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+}
+.slider-track-wrapper::-webkit-scrollbar { display: none; }
+
+.slider-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+}
+
+/* 卡片 */
+.slider-item {
+  width: 320px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.slider-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+.slider-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+  filter: grayscale(.3);
+  transition: filter .3s;
+}
+.slider-item:hover img { filter: grayscale(0); }
+
+.slider-item .caption {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.slider-item .year {
+  font-family: var(--font-mono);
+  font-size: var(--fs-3);
+  color: var(--accent-bright);
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+.slider-item .movie {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text-bright);
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.slider-item .movie .sub-en {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  color: var(--text-weak);
+  margin-top: 4px;
+}
+.slider-item .desc {
+  font-size: var(--fs-3);
+  line-height: 1.7;
+  color: var(--text-dim);
+  flex: 1;
+}
+
+/* 按钮 */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  cursor: pointer;
+  z-index: 10;
+  transition: all .2s var(--ease);
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+.slider-btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-bright);
+}
+.slider-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+.slider-btn.prev { left: -12px; }
+.slider-btn.next { right: -12px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{
+  margin-top:32px;
+  padding-top:22px;
+  border-top:1px solid var(--line-soft);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  font-family:var(--font-mono);
+  font-size:var(--fs-5);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-weak);
+}
+.site-footer a { transition: color .2s; }
+.site-footer a:hover { color: var(--accent-bright); }
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+.back-to-top{
+  position:fixed;
+  right:26px;bottom:26px;
+  width:46px;height:46px;
+  display:grid;place-items:center;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:50%;
+  z-index:95;
+  opacity:0;visibility:hidden;
+  transform:translateY(10px);
+  transition:opacity .28s var(--ease),transform .28s var(--ease),visibility .28s,border-color .2s var(--ease),background .2s var(--ease);
+}
+.back-to-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+.back-to-top:hover{border-color:var(--accent);background:var(--surface-3);}
+.back-to-top .ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.back-to-top .ring circle{fill:none;stroke-width:2;}
+.ring-bg{stroke:var(--line);}
+.ring-fill{stroke:var(--accent-bright);stroke-linecap:round;stroke-dasharray:119.4;stroke-dashoffset:119.4;transition:stroke-dashoffset .1s linear;}
+.back-to-top .arrow{
+  position:relative;
+  width:18px;height:18px;
+  fill:none;
+  stroke:var(--text-dim);
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:stroke .2s var(--ease);
+}
+.back-to-top:hover .arrow{stroke:var(--accent-bright);}
+
+/* ============================================================
+   MENU PANEL / OVERLAY
+   ============================================================ */
+.menu-panel{
+  position:fixed;
+  top:calc(var(--topbar-h) + 10px);
+  left:20px;
+  width:250px;
+  z-index:112;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  opacity:0;visibility:hidden;
+  transform:translateY(-6px);
+  transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;
+}
+.menu-panel.active{opacity:1;visibility:visible;transform:translateY(0);}
+
+.menu-panel .menu-item{
+  display:flex;align-items:center;gap:10px;
+  height:44px;
+  padding:0 16px;
+  font-size:var(--fs-2);
+  color:var(--text-dim);
+  border-bottom:1px solid var(--line-soft);
+  transition:background .16s var(--ease),color .16s var(--ease);
+}
+.menu-panel .menu-item:last-child{border-bottom:none;}
+.menu-panel .menu-item::before{
+  content:'';
+  width:4px;height:4px;
+  flex-shrink:0;
+  background:var(--text-weak);
+  transform:rotate(45deg);
+  transition:background .16s var(--ease);
+}
+.menu-panel .menu-item:hover{background:var(--surface-2);color:var(--text-bright);}
+.menu-panel .menu-item:hover::before{background:var(--accent-bright);}
+.menu-panel .menu-item[aria-current="page"]{background:var(--accent-soft);color:var(--accent-bright);}
+.menu-panel .menu-item[aria-current="page"]::before{background:var(--accent-bright);}
+
+.overlay{
+  position:fixed;inset:0;
+  z-index:108;
+  background:rgba(0,0,0,.6);
+  opacity:0;visibility:hidden;
+  transition:opacity .28s var(--ease),visibility .28s;
+}
+.overlay.active{opacity:1;visibility:visible;}
+
+/* ============================================================
+   图片灯箱
+   ============================================================ */
+.lightbox{
+  position:fixed;inset:0;
+  z-index:9998;
+  display:flex;align-items:center;justify-content:center;
+  padding:32px;
+  background:rgba(0,0,0,.9);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  opacity:0;visibility:hidden;
+  transition:opacity .3s var(--ease),visibility .3s;
+}
+.lightbox.active{opacity:1;visibility:visible;}
+.lightbox img{
+  max-width:min(92vw,900px);
+  max-height:86vh;
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  transform:scale(.96);
+  transition:transform .3s var(--ease);
+}
+.lightbox.active img{transform:scale(1);}
+.lightbox-close{
+  position:absolute;
+  top:22px;right:22px;
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:50%;
+  font-size:16px;
+  color:#ddd;
+  transition:background .2s,border-color .2s;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1280px){
+  .layout{gap:20px;padding:20px;}
+}
+@media (max-width:1024px){
+  .hamburger{display:flex;}
+  .sidebar{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:280px;
+    height:100vh;
+    max-height:none;
+    border-radius:0;
+    border:none;
+    border-right:1px solid var(--line);
+    transform:translateX(-100%);
+    transition:transform .3s var(--ease);
+    z-index:110;
+  }
+  .sidebar.open{transform:translateX(0);}
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px;gap:16px;}
+  .menu-panel{display:none;}
+}
+@media (max-width:900px){
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start; /* 手机端恢复普通排列 */
+  }
+  .photo-wall {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+    gap: 20px;
+  }
+  .photo-item {
+    width: 45%;
+    min-width: 200px;
+  }
+  .font-level{display:none;}
+}
+@media (max-width:760px){
+  .topbar-inner{padding:0 14px;gap:8px;}
+  .hero{padding:36px 16px 30px;}
+  .hero-mark{display:none;}
+  .hero-title{letter-spacing:.1em;padding-left:.1em;}
+  .site-footer{justify-content:center;text-align:center;}
+  .back-to-top{right:16px;bottom:16px;}
+  .music-btn{padding:0 12px;}
+  .slider-item { width: 280px; }
+  .slider-btn { display: none; }
+}
+@media (max-width:560px){
+  .music-btn .label{display:none;}
+  .music-btn{padding:0 11px;}
+  .photo-item { width: 100%; min-width: 0; }
+}
+@media (max-width:360px){
+  .topbar-inner{padding:0 10px;gap:4px;}
+  .topbar-brand{font-size:var(--fs-3);letter-spacing:.1em;}
+  .font-group{display:none;}
+}
+/* 在线状态 */
+.online-indicator{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--fs-5);color:var(--text-weak);text-transform:uppercase;}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-bright);box-shadow:0 0 8px var(--accent-bright);animation:onlineBreathe 2.5s infinite ease-in-out;}
+@keyframes onlineBreathe{0%,100%{opacity:.4;}50%{opacity:1;}}
+@media(max-width:760px){.online-indicator{display:none;}}
+</style>
+<link rel="stylesheet" href="music-modal.css">
+<link rel="stylesheet" href="layout-calibration.css">
+</head>
+<body>
+
+<div class="scanline" aria-hidden="true"></div>
+
+<!-- ============================ TOPBAR ============================ -->
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <button class="hamburger" id="hamburgerBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar menuPanel">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="topbar-brand" href="index.html">PRECIOUS MESS</a>
+    <div class="topbar-actions">
+      <div class="online-indicator" style="margin-right: 12px;" aria-label="在线状态"><span class="online-dot" aria-hidden="true"></span><span>ONLINE</span></div>
+      <div class="font-group" role="group" aria-label="调整字号">
+        <button class="tool-btn" id="fontDown" type="button" aria-label="减小字号" title="减小字号">A−</button>
+        <span class="font-level" id="fontLevel">标准</span>
+        <button class="tool-btn" id="fontUp" type="button" aria-label="增大字号" title="增大字号">A+</button>
+      </div>
+      <button class="music-btn" id="musicBtn" type="button" aria-label="播放背景音乐">
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="label" id="musicLabel">PLAY</span>
+      </button>
+      <button class="diamond-btn" id="diamondIcon" type="button" aria-label="刷新页面" title="刷新页面"></button>
+    </div>
+  </div>
+  <div class="read-progress" aria-hidden="true"><div class="read-progress-fill" id="readProgress"></div></div>
+</header>
+
+<!-- ============================ LAYOUT ============================ -->
+<div class="layout">
+
+  <!-- ---------- 左栏 ---------- -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-scroll">
+      <div class="brand">PRECIOUS<br>MESS<span>est. 2009 — archive</span></div>
+      <div class="brand-rule"></div>
+      <ul class="side-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="message.html">Message</a></li>
+        <li><a href="Inner mess.html">Inner mess</a></li>
+        <li><a href="Precious love.html" class="current" aria-current="page">Precious love</a></li>
+        <li><a href="Alone world.html">Alone world</a></li>
+        <li><a href="Red room.html">Red room</a></li>
+        <li><a href="Kiss you.html">Kiss you</a></li>
+        <li><a href="music.html">Music</a></li>
+        <li><a href="More mess.html">More mess</a></li>
+      </ul>
+    </div>
+    <div class="side-foot">
+      <div class="np">Too late, I already died</div>
+      <div style="margin-top:8px;">© 2026 PRECIOUS MESS<br>2009 VIREL</div>
+    </div>
+  </aside>
+
+  <!-- ---------- 主内容 ---------- -->
+  <main class="main">
+
+    <!-- Hero -->
+    <header class="hero">
+      <button class="hero-mark" id="refreshDiamond" type="button" aria-label="刷新页面" title="点击刷新"></button>
+      <h1 class="hero-title">PRECIOUS LOVE</h1>
+      <div class="marquee-box">
+        <div class="marquee-text">✦ 愚蠢的真挚的情感 ✦</div>
+      </div>
+    </header>
+
+    <!-- 主网格 -->
+    <div class="main-grid">
+      
+      <!-- 照片墙 -->
+      <div class="photo-wall">
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp1.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp3.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp4.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp5.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp6.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp7.jpg" alt="Johnny Depp" data-zoomable></div>
+        <div class="photo-item"><div class="tape"></div><div class="tape-2"></div><img src="photo/depp8.jpg" alt="Johnny Depp" data-zoomable></div>
+      </div>
+
+      <!-- 信件墙 -->
+      <div class="note-wall">
+        <div class="note"><p>我爱的你：</p></div>
+        <div class="note"><p>我常常会对着空气发呆。<br>有时候，或许很多时候，我觉得空气也并不是空的。它里面有灰尘，有光的碎屑，还有一些叫不出名字的东西。它们飘着，转着，然后就慢慢汇成了你的样子。</p></div>
+        <div class="note"><p>目光放空的时候，时间会从我眼前悄悄溜过，无声无息。但我并不在意它。你的身影就停在那里，把时间遮住了。一小时，两小时，我也不知道过去了多久。那些模糊的印象，像褪了色的照片在水里慢慢显影，一点一点被填满，最终汇成了无数个清晰的你，仿佛你就在我伸手可及的地方。</p></div>
+        <div class="note"><p>我为你所吸引。我被你卷了进去，像一片叶子落在水流里，不想挣扎，也不想上岸。</p></div>
+        <div class="note"><p>我迷恋你的眼睛，那双半眯着的、忧郁的眼睛。它们像一道缓和的流水，围绕着我，也浸透了我的眼睛。我迷恋你的声音，你在夜晚念诗的声音。我记得的，我记得的。它平和却极富深情。它没有那股力量，也没有那份激昂。它是温和的，像一只手轻轻按在我那片躁动的海浪上，让它一点一点平息下去。我迷恋你的嘴唇。当它微笑的时候，是云层后面的朝霞，忽然就亮了，把我心里的阴霾驱散。那微微弯起的弧度，比世间任何曲线都更迷人。我曾在无数个夜晚想象那道弧线，想着想着，天就亮了。</p></div>
+        <div class="note"><p>我迷恋你的一切。我爱着任何样子的你。我爱你年轻时灿烂的微笑，像夏天的阳光砸在水面上。爱你壮年时沉稳的绅士风度，像深秋的树，不言不语却让人安心。爱你中年时对孩子无私的慷慨，也爱你年老时不惧污秽的清白姿态。你的每一种情绪，开心、生气、悲伤，所有的模样，都深深地烙印在我的心里，像刻在石头上的字，风吹不掉，雨也洗不净。</p></div>
+        <div class="note"><p>别人常问，为什么会有人独自闭着眼坐在那里。因为当我闭上眼的时候，面前就是你。我想让你知道，我渴望你，渴望你出现在我面前，渴望你能坐在这里，和我一起共进晚餐。我要向你讲述我的故事，我是如何迷恋你的故事。你或许会看着我的眼睛，告诉我你在听。你或许会羞涩地低下头，惊讶于我如此直白的感情。又或许你觉得这个故事太过无聊，却还是愿意让我把它讲下去。讲到蜡烛烧完，讲到窗外的灯一盏一盏灭掉。你会在吗？你不会。可我还是要讲。</p></div>
+        <div class="note"><p>我对你的关注越来越多。我看着你的脸，想象它的触感。是柔软的？也许是冰冷的。隔着屏幕，隔着海洋，隔着无数个日夜，我永远也无法知道。可我偏偏一遍一遍地想。我收集你的资料，了解你出生的地方，记下你的生日，用最真挚的语言为你祝福。我了解你是如何成长的，了解你身边的人。我看遍了你的人生，你是如何地耀眼夺目，你拿着奖杯的身姿，你对着镜头鞠躬的模样，让我再一次迷恋上了你。每一次迷恋都像第一次，又比第一次更深。</p></div>
+        <div class="note"><p>我对你的爱，像是一座装满金银宝藏的藏屋。我向全世界炫耀它，却又害怕别人从我身前抢走它。我向别人介绍你，向别人吐露我是如何被你吸引的。当别人称赞你时，我心中无比骄傲，却又恼怒他们提到你的名字。我不能独自享有你。可当我看到荧幕里你和别人的欢声笑语，你牵着陌生人的手，你的唇落在别人脸上时，尽管知道那也许不是真的，说不清的恼怒仍会涌上心头，让我不知所措。</p></div>
+        <div class="note"><p>我的脑海里一遍遍放着你念的诗，你唱的歌，你画的画，你弹的琴。仿佛这样便能让我原谅你。可是，我有什么资格怪你呢？我是如此地爱你。我甚至没有资格说"原谅"这个词。我只是坐在黑暗里，一遍又一遍地听着你的声音，直到它把我全部淹没。</p></div>
+        <div class="note"><p>我常常后悔，自己没有早点出生，没有早点认识你。当我爱上你时，你却已是将烧尽残烛，你被日月所割出的皱纹，无声地刺痛我的心弦。我无比心疼你，却又想让你坚强。当人们误会你时，贬低你时，我的心好像也随你而去了，它与你一起经受打击，想要分担哪怕一点痛苦。</p></div>
+        <div class="note"><p>无数的岁月里，我将会一直在你身边，我用毕生的语言表达对你的支持，它会化作天上的繁星，空中的雪花，和你眼里的光辉，时刻伴随着你。所有的时光都是值得的，我会永远爱你。</p></div>
+        <div class="note"><p>我的字打完了。晚安，祝你一觉好梦。</p></div>
+        <div class="note signature"><p>BY Virel</p></div>
+      </div>
+
+    </div>
+
+    <!-- Course -->
+    <section class="course-section" id="course">
+      <h2 class="course-title">COURSE</h2>
+      <div class="slider-wrapper">
+        <div class="slider-track-wrapper" id="sliderWrapper">
+          <div class="slider-track" id="sliderTrack">
+            <div class="slider-item">
+              <img src="photo/course1.jpg" alt="猛鬼街">
+              <div class="caption">
+                <span class="year">1984</span>
+                <span class="movie">《猛鬼街》<span class="sub-en">（A Nightmare on Elm Street）</span></span>
+                <div class="desc">Depp银幕首秀饰阳光男友格伦，被拖入床底吞噬的死亡场景血腥震撼，20岁的他青涩稚嫩却已展露独特银幕魅力。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course2.jpg" alt="剪刀手爱德华">
+              <div class="caption">
+                <span class="year">1990</span>
+                <span class="movie">《剪刀手爱德华》<span class="sub-en">（Edward Scissorhands）</span></span>
+                <div class="desc">Depp成名作饰孤独机器人，仅凭眼神与肢体传递渴望融入人类的悲伤，苍白造型成流行符号，奠定怪诞深情戏路。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course3.jpg" alt="断头谷">
+              <div class="caption">
+                <span class="year">1999</span>
+                <span class="movie">《断头谷》<span class="sub-en">（Sleepy Hollow）</span></span>
+                <div class="desc">Depp饰胆小警探克瑞恩，遇事就晕却智破无头骑士案，神经质与可爱拿捏精准，贡献大量笑点，与伯顿首次合作成功。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course4.jpg" alt="加勒比海盗">
+              <div class="caption">
+                <span class="year">2003</span>
+                <span class="movie">《加勒比海盗》<span class="sub-en">（Pirates of the Caribbean）</span></span>
+                <div class="desc">Depp饰杰克船长，兰花指烟熏妆醉步疯癫，亦正亦邪即兴表演获奥斯卡提名，盘活整个系列，成其最耀目标签。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course5.jpg" alt="查理和巧克力工厂">
+              <div class="caption">
+                <span class="year">2005</span>
+                <span class="movie">《查理和巧克力工厂》<span class="sub-en">（Charlie and the Chocolate Factory）</span></span>
+                <div class="desc">Depp饰威利·旺卡，尖细嗓音神经质笑声，童真与刻薄并存，紫红天鹅绒造型诠释童年创伤的古怪天才。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course6.jpg" alt="理发师陶德">
+              <div class="caption">
+                <span class="year">2007</span>
+                <span class="movie">《理发师陶德》<span class="sub-en">（Sweeney Todd）</span></span>
+                <div class="desc">Depp饰复仇理发师，苍白眼神空洞，剃刀下爆发惊人戾气，亲自献唱低沉悲愤，凭此片获金球奖影帝，展暗黑歌剧实力。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course7.jpg" alt="爱丽丝梦游仙境">
+              <div class="caption">
+                <span class="year">2010</span>
+                <span class="movie">《爱丽丝梦游仙境》<span class="sub-en">（Alice in Wonderland）</span></span>
+                <div class="desc">Depp饰疯帽子，红发烟熏癫狂下藏破碎之心，时而疯笑时而泪崩，天真忠诚如孩子，成仙境中最温暖盟友。</div>
+              </div>
+            </div>
+            <div class="slider-item">
+              <img src="photo/course8.jpg" alt="神奇动物在哪里">
+              <div class="caption">
+                <span class="year">2016</span>
+                <span class="movie">《神奇动物在哪里》<span class="sub-en">（Fantastic Beasts and Where to Find Them）</span></span>
+                <div class="desc">Depp饰黑巫师格林德沃，苍白银发异色瞳优雅蛊惑，煽动演讲尽显反派魅力，虽戏份少却为续作埋下巨大悬念。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="slider-btn prev" id="prevBtn" aria-label="上一页">‹</button>
+        <button class="slider-btn next" id="nextBtn" aria-label="下一页">›</button>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>© 2026 PRECIOUS MESS · PRECIOUS LOVE</span>
+      <a href="index.html">← 回到主站</a>
+    </footer>
+
+  </main>
+</div>
+
+<!-- 菜单面板 -->
+<nav class="menu-panel" id="menuPanel" aria-label="快捷菜单">
+  <a href="index.html" class="menu-item">Home</a>
+  <a href="message.html" class="menu-item">留言板</a>
+  <a href="Inner mess.html" class="menu-item">Inner mess</a>
+  <a href="Precious love.html" class="menu-item" aria-current="page">Precious love</a>
+  <a href="Alone world.html" class="menu-item">Alone world</a>
+  <a href="Red room.html" class="menu-item">Red room</a>
+  <a href="Kiss you.html" class="menu-item">Kiss you</a>
+  <a href="music.html" class="menu-item">Music</a>
+  <a href="More mess.html" class="menu-item">More mess</a>
+  <a href="https://www.baolywang666.com/6chan/" class="menu-item" target="_blank" rel="noopener noreferrer">6chan-baolywang</a>
+  <a href="https://www.baolywang666.com/more-and-more/" class="menu-item" target="_blank" rel="noopener noreferrer">Feelings is so Fancy</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- 回到顶部 -->
+<button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部" title="回到顶部">
+  <svg class="ring" viewBox="0 0 46 46" aria-hidden="true">
+    <circle class="ring-bg" cx="23" cy="23" r="19"></circle>
+    <circle class="ring-fill" id="ringFill" cx="23" cy="23" r="19"></circle>
+  </svg>
+  <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="查看大图">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<audio id="bgMusic" loop autoplay preload="auto">
+  <source src="Too late, i already died.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){
+  'use strict';
+
+  var $  = function(s, c){ return (c || document).querySelector(s); };
+  var $$ = function(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var root = document.documentElement;
+
+  var store = {
+    get: function(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set: function(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  };
+
+  /* 1. 字号三档 */
+  (function initFontSize(){
+    var down = $('#fontDown');
+    var up   = $('#fontUp');
+    var level = $('#fontLevel');
+    var KEY  = 'pm_font_size';
+    var steps = [
+      { key:'md', label:'标准' },
+      { key:'lg', label:'大' },
+      { key:'xl', label:'特大' }
+    ];
+
+    function indexOf(key){
+      for (var i = 0; i < steps.length; i++) if (steps[i].key === key) return i;
+      return 0;
+    }
+
+    var current = indexOf(store.get(KEY) || 'md');
+
+    function apply(i){
+      current = Math.max(0, Math.min(steps.length - 1, i));
+      root.setAttribute('data-size', steps[current].key);
+      store.set(KEY, steps[current].key);
+      if (level) level.textContent = steps[current].label;
+      if (down) down.disabled = current === 0;
+      if (up) up.disabled = current === steps.length - 1;
+    }
+
+    apply(current);
+
+    if (down) down.addEventListener('click', function(){ apply(current - 1); });
+    if (up)   up.addEventListener('click', function(){ apply(current + 1); });
+  })();
+
+  /* 3. 阅读进度 + 回到顶部环形进度 */
+  (function initProgress(){
+    var fill  = $('#readProgress');
+    var top   = $('#backToTop');
+    var ring  = $('#ringFill');
+    var CIRC  = 119.4;
+    var ticking = false;
+
+    function update(){
+      var scrolled = window.scrollY;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = max > 0 ? Math.min(1, Math.max(0, scrolled / max)) : 0;
+
+      if (fill) fill.style.width = (pct * 100) + '%';
+      if (ring) ring.style.strokeDashoffset = CIRC * (1 - pct);
+      if (top) top.classList.toggle('show', scrolled > 500);
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive:true });
+
+    window.addEventListener('resize', update);
+    update();
+
+    if (top) {
+      top.addEventListener('click', function(){
+        window.scrollTo({ top:0, behavior:'smooth' });
+      });
+    }
+  })();
+
+  /* 4. 顶栏滚动阴影 */
+  (function initTopbar(){
+    var bar = $('#topbar');
+    if (!bar) return;
+    var ticking = false;
+
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function(){
+        bar.classList.toggle('scrolled', window.scrollY > 8);
+        ticking = false;
+      });
+    }, { passive:true });
+  })();
+
+  /* 5. 背景音乐 */
+  (function initPlayer(){
+    var audio = $('#bgMusic');
+    if (!audio) return;
+
+    var musicBtn = $('#musicBtn');
+    var musicLabel = $('#musicLabel');
+
+    function paint(playing){
+      if (musicBtn) {
+        musicBtn.classList.toggle('playing', playing);
+        musicBtn.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+      }
+      if (musicLabel) musicLabel.textContent = playing ? 'PAUSE' : 'PLAY';
+    }
+
+    function toggle(){
+      if (audio.paused) {
+        var p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(function(){ paint(false); });
+      } else {
+        audio.pause();
+      }
+    }
+
+    if (musicBtn) musicBtn.addEventListener('click', toggle);
+
+    audio.addEventListener('play',  function(){ paint(true); });
+    audio.addEventListener('pause', function(){ paint(false); });
+
+    function startOnVisit(){
+      if (!audio.paused) return;
+      var promise = audio.play();
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(function(){ paint(false); });
+      }
+    }
+
+    startOnVisit();
+
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function(type){
+      window.addEventListener(type, function(event){
+        if (audio.paused && musicBtn && event.target && event.target.closest &&
+            event.target.closest('#musicBtn')) return;
+        if (audio.paused) startOnVisit();
+      }, { once:true, passive:true });
+    });
+
+    paint(false);
+  })();
+
+  /* 6. 图片灯箱 */
+  (function initLightbox(){
+    var box = $('#lightbox');
+    var img = $('#lightboxImg');
+    var close = $('#lightboxClose');
+    if (!box || !img) return;
+
+    function open(src, alt){
+      img.src = src;
+      img.alt = alt || '';
+      box.classList.add('active');
+      document.body.classList.add('no-scroll');
+    }
+
+    function hide(){
+      box.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+      setTimeout(function(){ img.src = ''; }, 300);
+    }
+
+    $$('[data-zoomable]').forEach(function(el){
+      el.addEventListener('click', function(){
+        if (!el.naturalWidth) return;
+        open(el.currentSrc || el.src, el.alt);
+      });
+    });
+
+    if (close) close.addEventListener('click', hide);
+    box.addEventListener('click', function(e){
+      if (e.target === box) hide();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && box.classList.contains('active')) hide();
+    });
+  })();
+
+  /* 7. 汉堡菜单 */
+  (function initMenu(){
+    var btn     = $('#hamburgerBtn');
+    var panel   = $('#menuPanel');
+    var sidebar = $('#sidebar');
+    var overlay = $('#overlay');
+    if (!btn || !overlay) return;
+
+    var open = false;
+    function isMobile(){ return window.innerWidth <= 1024; }
+
+    function setOpen(next){
+      open = next;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+
+      if (isMobile()) {
+        if (sidebar) sidebar.classList.toggle('open', open);
+      } else if (panel) {
+        panel.classList.toggle('active', open);
+      }
+      overlay.classList.toggle('active', open);
+      document.body.classList.toggle('no-scroll', open);
+    }
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      setOpen(!open);
+    });
+
+    overlay.addEventListener('click', function(){ if (open) setOpen(false); });
+
+    if (panel) {
+      $$('.menu-item', panel).forEach(function(item){
+        item.addEventListener('click', function(){ if (open) setOpen(false); });
+      });
+    }
+    if (sidebar) {
+      $$('.side-nav a', sidebar).forEach(function(item){
+        item.addEventListener('click', function(){
+          if (open && isMobile()) setOpen(false);
+        });
+      });
+    }
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && open) setOpen(false);
+    });
+
+    var timer;
+    window.addEventListener('resize', function(){
+      clearTimeout(timer);
+      timer = setTimeout(function(){ if (open) setOpen(false); }, 160);
+    });
+  })();
+
+  /* 8. 刷新按钮 */
+  (function initRefresh(){
+    var btn = $('#diamondIcon');
+    var centerBtn = $('#refreshDiamond');
+    function reload(button){
+      if (button) button.classList.add('spin');
+      setTimeout(function(){ location.reload(); }, 420);
+    }
+    if (btn) btn.addEventListener('click', function(){ reload(btn); });
+    if (centerBtn) centerBtn.addEventListener('click', function(){ reload(centerBtn); });
+  })();
+
+  /* 9. 轮播图控制 */
+  (function initSlider(){
+    var wrapper = $('#sliderWrapper');
+    var track = $('#sliderTrack');
+    var prevBtn = $('#prevBtn');
+    var nextBtn = $('#nextBtn');
+    if (!wrapper || !track) return;
+
+    var scrollAmount = 344; // 卡片宽度+间距
+
+    function updateButtons(){
+      if (prevBtn) prevBtn.disabled = wrapper.scrollLeft <= 10;
+      if (nextBtn) nextBtn.disabled = wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 10;
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function(){
+        wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function(){
+        wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+    }
+
+    wrapper.addEventListener('scroll', updateButtons, { passive: true });
+    window.addEventListener('resize', updateButtons);
+    setTimeout(updateButtons, 100);
+  })();
+
+})();
+</script>
+<script src="music-modal.js"></script>
+</body>
+</html>
