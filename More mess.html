@@ -513,6 +513,50 @@ img{display:block;max-width:100%;}
   padding: 24px;
 }
 
+.video-card {
+  min-width: 0;
+}
+
+.video-card video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.video-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.video-card-label {
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: var(--fs-4);
+  letter-spacing: .1em;
+}
+
+.video-exit {
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: var(--fs-4);
+  transition: border-color .18s var(--ease), color .18s var(--ease), background .18s var(--ease);
+}
+
+.video-exit:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-bright);
+}
+
 /* 视频占位框 */
 .video-placeholder {
   aspect-ratio: 16 / 9;
@@ -786,10 +830,36 @@ img{display:block;max-width:100%;}
         </div>
         <div class="category-content">
           <div class="video-grid">
-            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 01</span></div>
-            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 02</span></div>
-            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 03</span></div>
-            <div class="video-placeholder"><div class="play-icon">▶</div><span>VIDEO 04</span></div>
+            <div class="video-card">
+              <video controls preload="none" poster="video/horror-cover.svg" aria-label="A-1">
+                <source src="video/A-1.mp4" type="video/mp4">
+                您的浏览器不支持视频播放。
+              </video>
+              <div class="video-card-footer">
+                <span class="video-card-label">A-1</span>
+                <button class="video-exit" type="button" aria-label="退出 A-1 播放并返回封面">退出播放</button>
+              </div>
+            </div>
+            <div class="video-card">
+              <video controls preload="none" poster="video/horror-cover.svg" aria-label="A-2">
+                <source src="video/A-2.mp4" type="video/mp4">
+                您的浏览器不支持视频播放。
+              </video>
+              <div class="video-card-footer">
+                <span class="video-card-label">A-2</span>
+                <button class="video-exit" type="button" aria-label="退出 A-2 播放并返回封面">退出播放</button>
+              </div>
+            </div>
+            <div class="video-card">
+              <video controls preload="none" poster="video/horror-cover.svg" aria-label="A-3">
+                <source src="video/A-3.mp4" type="video/mp4">
+                您的浏览器不支持视频播放。
+              </video>
+              <div class="video-card-footer">
+                <span class="video-card-label">A-3</span>
+                <button class="video-exit" type="button" aria-label="退出 A-3 播放并返回封面">退出播放</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1102,7 +1172,21 @@ img{display:block;max-width:100%;}
     });
   })();
 
-  /* 9. 折叠分类业务逻辑 */
+  /* 9. 退出视频播放并返回封面 */
+  (function initVideoExit(){
+    $$('.video-card').forEach(function(card){
+      var video = $('video', card);
+      var exitButton = $('.video-exit', card);
+      if (!video || !exitButton) return;
+      exitButton.addEventListener('click', function(){
+        video.pause();
+        video.currentTime = 0;
+        video.load();
+      });
+    });
+  })();
+
+  /* 10. 折叠分类业务逻辑 */
   window.toggleCategory = function(key) {
     const item = document.getElementById('cat' + key);
     if (item) item.classList.toggle('open');
