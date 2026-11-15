@@ -625,6 +625,30 @@ img{display:block;max-width:100%;}
 .action-btn.liked svg { fill: var(--like-color); }
 .action-btn.bookmarked svg { fill: var(--bookmark-color); }
 
+/* 更多内容按钮专用 */
+.more-content-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--accent-bright);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  transition: all .2s;
+  cursor: pointer;
+  text-decoration: none;
+}
+.more-content-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 /* ============================================================
    评论区
    ============================================================ */
@@ -947,6 +971,7 @@ img{display:block;max-width:100%;}
         <li><a href="index.html">Home</a></li>
         <li><a href="message.html">Message</a></li>
         <li><a href="Inner mess.html" class="current" aria-current="page">Inner mess</a></li>
+        <li><a href="Messy piece.html">Messy piece</a></li>
         <li><a href="Precious love.html">Precious love</a></li>
         <li><a href="Alone world.html">Alone world</a></li>
         <li><a href="Red room.html">Red room</a></li>
@@ -992,9 +1017,15 @@ img{display:block;max-width:100%;}
             <span class="post-author">u/Virel09</span>
             <span class="post-time" style="color: var(--accent-bright); font-weight: 600;">📌 置顶</span>
           </div>
-          <h2 class="post-title" style="color: var(--accent-bright);">写在最前面</h2>
+          <h2 class="post-title" style="color: var(--accent-bright);">THE TOP</h2>
           <div class="post-content">
             <p>在这里，此时此刻。给你所有我想告诉你的那些事。我脑子里转的……我白天不说出口的那些，我半夜醒了突然想到的那些。</p>
+          </div>
+          <!-- 新增：跳转到更多内容 -->
+          <div style="margin-top: 16px; border-top: 1px dashed var(--line); padding-top: 20px;">
+            <a href="Messy piece.html" class="more-content-btn">
+              more and more <span style="font-size: 16px;">↗</span>
+            </a>
           </div>
         </div>
       </article>
@@ -1397,6 +1428,7 @@ img{display:block;max-width:100%;}
   <a href="index.html" class="menu-item">Home</a>
   <a href="message.html" class="menu-item">留言板</a>
   <a href="Inner mess.html" class="menu-item" aria-current="page">Inner mess</a>
+  <a href="Messy piece.html" class="menu-item">Messy piece</a>
   <a href="Precious love.html" class="menu-item">Precious love</a>
   <a href="Alone world.html" class="menu-item">Alone world</a>
   <a href="Red room.html" class="menu-item">Red room</a>
