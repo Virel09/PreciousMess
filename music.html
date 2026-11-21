@@ -653,7 +653,23 @@ img{display:block;max-width:100%;}
 .playlist-list {
   display: flex;
   flex-direction: column;
+  /* 👑 修改：限制高度，使其与左侧播放器对齐，内部滚动 */
+  max-height: 540px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
 }
+.playlist-list::-webkit-scrollbar {
+  width: 6px;
+}
+.playlist-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.playlist-list::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: 3px;
+}
+
 .song-item {
   display: flex;
   align-items: center;
@@ -810,6 +826,9 @@ img{display:block;max-width:100%;}
   .record-player { width: 220px; height: 220px; }
   .album-cover { width: 130px; height: 130px; }
   .mobile-spacer { display: block; }
+  
+  /* 👑 移动端取消高度限制，自然撑开 */
+  .playlist-list { max-height: none; }
 }
 @media (max-width:760px){
   .topbar-inner{padding:0 14px;gap:8px;}
@@ -1029,43 +1048,11 @@ img{display:block;max-width:100%;}
   };
 
   /* ============================================================
-     ⚠️ 数据配置：已精准填入你提供的 5 个网易云链接
+     ⚠️ 数据配置：已补全 Time is ticking 的链接
      ============================================================ */
   var playlist = [
     {
       id: 1,
-      title: "6 Little Egg",
-      artist: "Virel09",
-      cover: "post/6-Little-Egg.jpg",
-      src: "6-Little-Egg.mp3",
-      netease: "https://music.163.com/#/song?id=501997638"
-    },
-    {
-      id: 2,
-      title: "Be Alive",
-      artist: "Virel09",
-      cover: "post/Be Alive.jpg",
-      src: "Be Alive.mp3",
-      netease: "https://music.163.com/#/song?id=1394309014"
-    },
-    {
-      id: 3,
-      title: "Better off Alone",
-      artist: "Virel09",
-      cover: "post/Better off Alone.jpg",
-      src: "Better off Alone.mp3",
-      netease: "https://music.163.com/#/song?id=5218172"
-    },
-    {
-      id: 4,
-      title: "Drugs",
-      artist: "Virel09",
-      cover: "post/Drugs.jpg",
-      src: "Drugs.mp3",
-      netease: "https://music.163.com/#/song?id=1886054393"
-    },
-    {
-      id: 5,
       title: "I Don't Know",
       artist: "Virel09",
       cover: "post/I Don't Know.jpg",
@@ -1073,23 +1060,31 @@ img{display:block;max-width:100%;}
       netease: "https://music.163.com/#/song?id=1294161099"
     },
     {
-      id: 6,
-      title: "Kiss Me Again",
+      id: 2,
+      title: "WTF",
       artist: "Virel09",
-      cover: "post/Kiss Me Again.jpg",
-      src: "Kiss Me Again.mp3",
-      netease: "https://music.163.com/#/song?id=2626808312"
+      cover: "post/WTF.jpg",
+      src: "WTF.mp3",
+      netease: "https://music.163.com/#/song?id=2754935822"
     },
     {
-      id: 7,
-      title: "Pretty Scene Girl",
+      id: 3,
+      title: "6 Little Egg",
       artist: "Virel09",
-      cover: "post/Pretty Scene Girl.jpg",
-      src: "Pretty Scene Girl.mp3",
-      netease: "https://music.163.com/#/song?id=2109451787"
+      cover: "post/6-Little-Egg.jpg",
+      src: "6-Little-Egg.mp3",
+      netease: "https://music.163.com/#/song?id=501997638"
     },
     {
-      id: 8,
+      id: 4,
+      title: "Time is ticking",
+      artist: "Virel09",
+      cover: "post/Time is ticking.jpg",
+      src: "Time is ticking.mp3",
+      netease: "https://music.163.com/#/song?id=862087049"
+    },
+    {
+      id: 5,
       title: "Too late, i already died",
       artist: "Virel09",
       cover: "post/Too late, i already died.jpg",
@@ -1097,12 +1092,44 @@ img{display:block;max-width:100%;}
       netease: "https://music.163.com/#/song?id=2638616976"
     },
     {
-      id: 9,
-      title: "WTF",
+      id: 6,
+      title: "Better off Alone",
       artist: "Virel09",
-      cover: "post/WTF.jpg",
-      src: "WTF.mp3",
-      netease: "https://music.163.com/#/song?id=2754935822"
+      cover: "post/Better off Alone.jpg",
+      src: "Better off Alone.mp3",
+      netease: "https://music.163.com/#/song?id=5218172"
+    },
+    {
+      id: 7,
+      title: "Be Alive",
+      artist: "Virel09",
+      cover: "post/Be Alive.jpg",
+      src: "Be Alive.mp3",
+      netease: "https://music.163.com/#/song?id=1394309014"
+    },
+    {
+      id: 8,
+      title: "Kiss Me Again",
+      artist: "Virel09",
+      cover: "post/Kiss Me Again.jpg",
+      src: "Kiss Me Again.mp3",
+      netease: "https://music.163.com/#/song?id=2626808312"
+    },
+    {
+      id: 9,
+      title: "Drugs",
+      artist: "Virel09",
+      cover: "post/Drugs.jpg",
+      src: "Drugs.mp3",
+      netease: "https://music.163.com/#/song?id=1886054393"
+    },
+    {
+      id: 10,
+      title: "Pretty Scene Girl",
+      artist: "Virel09",
+      cover: "post/Pretty Scene Girl.jpg",
+      src: "Pretty Scene Girl.mp3",
+      netease: "https://music.163.com/#/song?id=2109451787"
     }
   ];
 
@@ -1301,7 +1328,7 @@ img{display:block;max-width:100%;}
       el.innerHTML = `
         <button type="button" class="song-select" aria-label="播放 ${song.title} - ${song.artist}" aria-pressed="${index === currentIndex}">
           <div class="item-index">${index + 1}</div>
-          <img class="item-cover" src="${song.cover}" alt="">
+          <img class="item-cover" src="${song.cover}" alt="" onerror="this.onerror=null;this.src='photo/100day.jpg'">
           <div class="item-info">
             <div class="item-title">${song.title}</div>
             <div class="item-artist">${song.artist}</div>
