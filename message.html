@@ -1341,31 +1341,32 @@ html[data-theme="light"] .scanline{display:none;}
       ms = $('#messageStats');
 
   function us(c) { if(ms) ms.innerHTML = '共 <span>' + c + '</span> 条留言'; }
+  
+  // 👑 修复：增加类型判断，防止非字符串导致崩溃
   function eh(t){
-    if(!t) return '';
+    if(!t || typeof t !== 'string') return '';
     var m={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
     return t.replace(/[&<>"']/g,function(x){ return m[x]; });
   }
 
-  // 👑 暴力时间解析器 (获取时间戳，用于严谨排序)
+  // 👑 暴力时间解析器 (获取时间戳，用于严谨排序，防 NaN 崩溃)
   function getTimeNum(str) {
     if (!str) return 0;
     str = String(str);
-    if (/^\d+$/.test(str)) return parseInt(str, 10);
+    if (/^\d+$/.test(str)) return parseInt(str, 10) || 0;
     
     if (str.indexOf('T') > -1) {
       var parts = str.split('T');
       var ymd = parts[0].split('-');
       var hms = parts[1].split('.')[0].split(':');
-      return new Date(ymd[0], (ymd[1]||1)-1, ymd[2]||1, hms[0]||0, hms[1]||0, hms[2]||0).getTime() || 0;
+      var t = new Date(ymd[0], (ymd[1]||1)-1, ymd[2]||1, hms[0]||0, hms[1]||0, hms[2]||0).getTime();
+      return isNaN(t) ? 0 : t;
     }
     
     var safeStr = str.replace(/-/g, '/');
     var dateObj = new Date(safeStr);
-    if (!isNaN(dateObj.getTime())) {
-      return dateObj.getTime();
-    }
-    return 0;
+    var t2 = dateObj.getTime();
+    return isNaN(t2) ? 0 : t2;
   }
 
   // 👑 暴力时间格式化器 (显示用)
@@ -1420,7 +1421,7 @@ html[data-theme="light"] .scanline{display:none;}
       var m = Array.isArray(j) ? j : (j.data || []);
       
       m = m.filter(function(item) {
-        return !item.content || item.content.indexOf('MAGIC_') !== 0;
+        return item && (!item.content || item.content.indexOf('MAGIC_') !== 0);
       });
 
       mc.innerHTML = '';
@@ -1469,7 +1470,7 @@ html[data-theme="light"] .scanline{display:none;}
         m.forEach(function(msg, i){
           // 🔥 楼层倒序：第一条是最大的楼层
           var fn = m.length - i;
-          var un = msg.name && msg.name.trim() ? msg.name : '匿名用户';
+          var un = (typeof msg.name === 'string' && msg.name.trim()) ? msg.name : '匿名用户';
           
           var pt = formatTime(msg.time || msg.created_at);
 
@@ -1521,6 +1522,7 @@ html[data-theme="light"] .scanline{display:none;}
         });
       }
     } catch(e) {
+      console.error('加载失败:', e);
       mc.innerHTML = [
         '<div class="forum-post"><div class="forum-content-area">',
         '  <div class="forum-text-box" style="border-left-color:var(--accent);border-color:var(--line);">',
