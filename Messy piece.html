@@ -485,9 +485,9 @@ img{display:block;max-width:100%;}
 }
 .piece-time {
   font-family: var(--font-mono);
-  font-size: var(--fs-1); /* 👑 字体调大 */
+  font-size: var(--fs-1);
   font-weight: bold;
-  color: var(--text-dim); /* 👑 颜色提亮 */
+  color: var(--text-dim);
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -689,6 +689,114 @@ img{display:block;max-width:100%;}
 }
 
 /* ============================================================
+   右侧边缘图片按钮 & 遮罩层
+   ============================================================ */
+.gallery-trigger {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 100px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 90;
+  transition: all 0.25s var(--ease);
+  color: var(--text-dim);
+}
+.gallery-trigger:hover {
+  background: var(--surface-3);
+  color: var(--accent-bright);
+  border-color: var(--accent);
+  box-shadow: -4px 0 15px rgba(139,26,26,0.3);
+}
+.gallery-trigger svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gallery-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s var(--ease);
+  overflow-y: auto;
+}
+.gallery-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.gallery-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 1000;
+}
+.gallery-close:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.gallery-close svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.gallery-content {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.gallery-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transition: transform 0.3s;
+}
+.gallery-img:hover {
+  transform: scale(1.02);
+  border-color: var(--accent);
+}
+
+/* ============================================================
    FOOTER & 其他
    ============================================================ */
 .site-footer{
@@ -787,6 +895,8 @@ img{display:block;max-width:100%;}
   .piece-item { padding: 20px 16px; }
   .qa-box { padding: 20px 16px; }
   .qa-item { padding: 20px 16px; }
+  
+  .gallery-trigger { width: 34px; height: 80px; }
 }
 @media (max-width:560px){
   .music-btn .label{display:none;}
@@ -879,7 +989,8 @@ img{display:block;max-width:100%;}
 
     <!-- 切换按钮 -->
     <div class="tab-container"> 
-      <button class="tab-btn active" data-target="panel-daily">Messy Piece</button>
+      <button class="tab-btn active" data-target="panel-daily">piece</button>
+      <button class="tab-btn" data-target="panel-reading">reading time</button>
       <button class="tab-btn" data-target="panel-qa">匿名提问</button>
     </div>
 
@@ -894,7 +1005,7 @@ img{display:block;max-width:100%;}
 
         <div class="piece-item">
           <div class="piece-time">2026.10.29</div>
-          <div class="piece-text">我曾无数次路过海边，而到今天才走进去再赴约的想法。不过也只是个想法，并不会真正发生。</div>
+          <div class="piece-text">我曾无数次路过海边，而到今天才有了去奔赴它的想法。不过也只是个想法，并不会真正发生。</div>
         </div>
 
         <div class="piece-item">
@@ -924,17 +1035,17 @@ img{display:block;max-width:100%;}
 
         <div class="piece-item">
           <div class="piece-time">2026.8.21</div>
-          <div class="piece-text">愉快的旅程是短暂的。我离开了广州，回到了青岛。当时间变得短暂，这段记忆往往会更让人珍惜。只有短暂又开心的记忆，才让人更难忘。因为没有人会一直怀念自己过往的经历。</div>
+          <div class="piece-text">愉快的旅程是短暂的。我离开了广州，回到了青岛。当时间变得短暂，这段记忆往往会更让人珍惜。只有短暂又开心的记忆，才让人更难忘。因为没有人会一直怀念自己已经过得厌倦得生活。</div>
         </div>
 
         <div class="piece-item">
           <div class="piece-time">2026.8.19</div>
-          <div class="piece-text">我在两个不同地方遇到了同一家饭品车，而我也只买了两次，这是一种缘分，我相信，这个饮品很好喝。</div>
+          <div class="piece-text">我在两个不同地方遇到了同一家饮品车，而我也买了两次，这是一种缘分，我相信，这个饮品很好喝。</div>
         </div>
 
         <div class="piece-item">
           <div class="piece-time">2026.8.16</div>
-          <div class="piece-text">广东是个好地方，对于北方人来说，这很适合南方的短期的旅居。</div>
+          <div class="piece-text">广东是个好地方，对于北方人来说，这很适合南方的短期的旅程。</div>
         </div>
 
         <div class="piece-item">
@@ -995,12 +1106,41 @@ img{display:block;max-width:100%;}
       </div>
     </div>
 
+    <!-- ================= 3. Reading Time 面板 ================= -->
+    <div class="content-panel" id="panel-reading">
+      <div class="piece-list">
+        <div class="piece-item" style="text-align: center; color: var(--text-weak); padding: 40px 20px;">
+          <p>这里是我的阅读记录。</p>
+          <p style="margin-top: 8px; font-size: var(--fs-2);">你可以在这里写下你正在读的书，或者你的阅读心得。</p>
+        </div>
+      </div>
+    </div>
+
     <footer class="site-footer">
       <span>© 2026 PRECIOUS MESS · MESSY PIECE</span>
       <a href="Inner mess.html">← 回到 Inner mess</a>
     </footer>
 
   </main>
+</div>
+
+<!-- ============================ 右侧边缘图片按钮 & 遮罩层 ============================ -->
+<button class="gallery-trigger" id="galleryTrigger" aria-label="查看生活照片">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+
+<div class="gallery-overlay" id="galleryOverlay" role="dialog" aria-modal="true" aria-label="生活相册">
+  <button class="gallery-close" id="galleryClose" aria-label="关闭相册">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+  <div class="gallery-content">
+    <!-- 占位，JS会自动填充图片 -->
+    <img class="gallery-img" src="photo/life1.jpg" alt="Life 1" onerror="this.style.display='none'">
+    <img class="gallery-img" src="photo/life2.jpg" alt="Life 2" onerror="this.style.display='none'">
+    <img class="gallery-img" src="photo/life3.jpg" alt="Life 3" onerror="this.style.display='none'">
+    <img class="gallery-img" src="photo/life4.jpg" alt="Life 4" onerror="this.style.display='none'">
+    <img class="gallery-img" src="photo/life5.jpg" alt="Life 5" onerror="this.style.display='none'">
+  </div>
 </div>
 
 <!-- 快捷菜单 -->
@@ -1520,6 +1660,38 @@ img{display:block;max-width:100%;}
     });
 
     loadQA();
+  })();
+
+  /* ============================================================
+     10. 右侧边缘相册逻辑
+     ============================================================ */
+  (function initGallery(){
+    var trigger = $('#galleryTrigger');
+    var overlay = $('#galleryOverlay');
+    var closeBtn = $('#galleryClose');
+    if(!trigger || !overlay || !closeBtn) return;
+
+    function openGallery() {
+      overlay.classList.add('active');
+      document.body.classList.add('no-scroll');
+    }
+
+    function closeGallery() {
+      overlay.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+    }
+
+    trigger.addEventListener('click', openGallery);
+    closeBtn.addEventListener('click', closeGallery);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeGallery();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeGallery();
+      }
+    });
   })();
 
 })();
